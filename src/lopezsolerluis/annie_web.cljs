@@ -15,8 +15,7 @@
 (def lang (r/atom (keyword (getLanguage))))
 (def nombres (map first (:en translations)))
 (defn traducir
-  ([]
-    (traducir @lang))
+  ([] (traducir @lang))
   ([lang]
     (doseq [nombre nombres]
       (let [el (gdom/getElement (name nombre))]
