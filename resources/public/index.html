@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AnNIE Web</title>
+  <meta name="description" content="Versión web del AnNIE">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+  <link rel="icon" href="https://clojurescript.org/images/cljs-logo-icon-32.png">
+</head>
+<body>
+
+  <div id="menuprincipal">
+    <ul id="listamenu">
+      <li><a href="#" id="archivo">Archivo</a>
+        <ul>
+          <li><a href="#" id="crear-perfil-desde-fits">Crear perfil desde imagen FITS...</a></li>
+          <li><a href="#" id="crear-perfil-desde-dat">Crear perfil desde archivo DAT...</a></li>
+          <li><a href="#" id="abrir-pestaña-annie">Abrir pestaña ANNIE...</a></li>
+          <li><a href="#" id="grabar-pestaña-annie">Grabar pestaña ANNIE</a></li>
+          <li><a href="#" id="grabar-pestaña-annie-como">Grabar pestaña ANNIE como...</a></li>
+          <li><a href="#" id="exportar-pdf">Exportar pestaña ANNIE como PDF...</a></li>
+          <li><a href="#" id="cerrar-pestaña">Cerrar pestaña</a></li>
+          <li><a href="#" id="salir">Salir</a></li>
+        </ul>
+      </li>
+      <li><a href="#" id="edicion">Edición</a>
+        <ul>
+          <li><a href="#" id="copiar-perfil">Copiar perfil</a></li>
+          <li><a href="#" id="pegar-perfil">Pegar perfil</a></li>
+          <li><a href="#" id="cambiar-nombre">Cambiar nombre...</a></li>
+          <li><a href="#" id="cambiar-color">Cambiar color...</a></li>
+          <li><a href="#" id="cambiar-diseño-linea">Cambiar diseño de línea...</a></li>
+          <li><a href="#" id="borrar-perfil">Borrar perfil...</a></li>
+          <li><a href="#" id="borrar-etiquetas">Borrar etiquetas...</a></li>
+        </ul>
+      </li>
+      <li><a href="#" id="calibracion">Calibración</a>
+        <ul>
+          <li><a href="#" id="auto-calibracion">Auto-calibración...</a></li>
+        </ul>
+      </li>
+      <li><a href="#" id="aritmetica">Aritmética</a>
+        <ul>
+          <li><a href="#" id="para-un-perfil">Para 1 perfil</a>
+            <ul>
+              <li><a href="#" id="normalizacion">Normalización</a></li>
+              <li><a href="#" id="sumar-uno">Sumar...</a></li>
+              <li><a href="#" id="multiplicar-uno">Multiplicar...</a></li>
+            </ul>
+          </li>
+          <li><a href="#" id="para-dos-perfiles">Para 2 perfiles</a>
+            <ul>
+              <li><a href="#" id="sumar-dos">Sumar...</a></li>
+              <li><a href="#" id="restar-dos">Restar...</a></li>
+              <li><a href="#" id="multiplicar-dos">Multiplicar...</a></li>
+              <li><a href="#" id="dividir-dos">Dividir...</a></li>
+            </ul>
+          </li>
+        </ul></li>
+        <li><a href="#" id="ayuda">Ayuda</a>
+          <ul>
+            <li><a href="#" id="creditos">Créditos</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div id="app">
+    </div> <!-- end of app div -->
+    <script src="cljs-out/dev-main.js" type="text/javascript"></script>
+  </body>
+  </html>
