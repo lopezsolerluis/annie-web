@@ -1,9 +1,11 @@
 (ns ^:figwheel-hooks lopezsolerluis.annie-web
   (:require
    [goog.dom :as gdom]
+   [goog.events :as gevents]
    [reagent.core :as r :refer [atom]]
    [reagent.dom :as rdom]
-   [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]))
+   [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
+   [lopezsolerluis.fits]))
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
@@ -13,7 +15,7 @@
   (-> (or (.-language js/navigator) (.-userLanguage js/navigator) "en")
       (subs 0 2)))
 (def lang (r/atom (keyword (getLanguage))))
-(def nombres (map first (:en translations)))
+(def nombres (keys (:en translations)))
 (defn traducir
   ([] (traducir @lang))
   ([lang]
@@ -22,11 +24,26 @@
         (set! (.-innerHTML el) (app-tr lang nombre))))))
 ;; end of translation functions
 
+(defn input-file []
+  [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
+           :on-change  (fn [this]
+                        (if (not (= "" (-> this .-target .-value)))
+                          (let [^js/File file (-> this .-target .-files (aget 0))]
+                            (js/console.log (.-type file)) ;; El tipo es image/fits
+                            (let [js-file-reader (js/FileReader.)]
+                              (set! (.-onload js-file-reader)
+                                (fn [evt]
+                                    (js/console.log (-> evt .-target .-result))))
+                              (.readAsText js-file-reader file))
+                          (set! (-> this .-target .-value) ""))))}])
+
+(gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
+
 (defn get-app-element []
   (gdom/getElement "app"))
 
 (defn mount [el]
-  (rdom/render [:div] el))
+  (rdom/render [input-file] el))
 
 (defn mount-app-element []
   (when-let [el (get-app-element)]

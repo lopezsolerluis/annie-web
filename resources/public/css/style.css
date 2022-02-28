@@ -51,3 +51,7 @@ ul, ol {
   right:-140px;
   top:0px;
 }
+
+input[type=file] {
+  display: none;
+}
