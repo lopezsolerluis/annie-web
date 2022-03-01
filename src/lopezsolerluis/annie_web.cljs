@@ -21,7 +21,7 @@
   ([lang]
     (doseq [nombre nombres]
       (let [el (gdom/getElement (name nombre))]
-        (set! (.-innerHTML el) (app-tr lang nombre))))))
+        (gdom/setTextContent el (app-tr lang nombre))))))
 ;; end of translation functions
 
 (defn input-file []
@@ -37,7 +37,10 @@
                               (.readAsText js-file-reader file))
                           (set! (-> this .-target .-value) ""))))}])
 
-(gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
+(defonce is-initialized?
+  (do
+    (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
+    true))
 
 (defn get-app-element []
   (gdom/getElement "app"))
