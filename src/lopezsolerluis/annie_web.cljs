@@ -15,11 +15,11 @@
   (-> (or (.-language js/navigator) (.-userLanguage js/navigator) "en")
       (subs 0 2)))
 (def lang (r/atom (keyword (getLanguage))))
-(def nombres (keys (-> translations :en :menu)))
+(def nombres-menu (keys (-> translations :en :menu)))
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-    (doseq [nombre nombres]
+    (doseq [nombre nombres-menu]
       (let [el (gdom/getElement (name nombre))]
         (gdom/setTextContent el (app-tr lang (keyword "menu" nombre)))))))
 ;; end of translation functions
