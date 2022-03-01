@@ -5,7 +5,7 @@
    [reagent.core :as r :refer [atom]]
    [reagent.dom :as rdom]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
-   [lopezsolerluis.fits]))
+   [lopezsolerluis.fits :as fits]))
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
@@ -15,27 +15,24 @@
   (-> (or (.-language js/navigator) (.-userLanguage js/navigator) "en")
       (subs 0 2)))
 (def lang (r/atom (keyword (getLanguage))))
-(def nombres (keys (:en translations)))
+(def nombres (keys (-> translations :en :menu)))
 (defn traducir
   ([] (traducir @lang))
   ([lang]
     (doseq [nombre nombres]
       (let [el (gdom/getElement (name nombre))]
-        (gdom/setTextContent el (app-tr lang nombre))))))
+        (gdom/setTextContent el (app-tr lang (keyword "menu" nombre)))))))
 ;; end of translation functions
 
 (defn input-file []
   [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
-           :on-change  (fn [this]
+           :on-change (fn [this]
                         (if (not (= "" (-> this .-target .-value)))
-                          (let [^js/File file (-> this .-target .-files (aget 0))]
-                            (js/console.log (.-type file)) ;; El tipo es image/fits
-                            (let [js-file-reader (js/FileReader.)]
-                              (set! (.-onload js-file-reader)
-                                (fn [evt]
-                                    (js/console.log (-> evt .-target .-result))))
-                              (.readAsText js-file-reader file))
-                          (set! (-> this .-target .-value) ""))))}])
+                          (let [^js/File file (-> this .-target .-files (aget 0))
+                                resultado (fits/read-fits-file file)]
+                             (cond
+                               (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))))
+                             (set! (-> this .-target .-value) "")))}])
 
 (defonce is-initialized?
   (do
