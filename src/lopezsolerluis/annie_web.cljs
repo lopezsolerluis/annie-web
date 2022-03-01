@@ -29,7 +29,7 @@
            :on-change (fn [this]
                         (if (not (= "" (-> this .-target .-value)))
                           (let [^js/File file (-> this .-target .-files (aget 0))
-                                resultado (fits/read-fits-file file)]
+                                resultado (fits/read-file file)]
                             (js/console.log resultado)
                              (cond
                                (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))
