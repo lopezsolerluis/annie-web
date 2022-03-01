@@ -30,9 +30,11 @@
                         (if (not (= "" (-> this .-target .-value)))
                           (let [^js/File file (-> this .-target .-files (aget 0))
                                 resultado (fits/read-fits-file file)]
+                            (js/console.log resultado)
                              (cond
-                               (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))))
-                             (set! (-> this .-target .-value) "")))}])
+                               (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))
+                               (= :fits-no-simple resultado)    (js/alert (app-tr @lang :fits-no-simple))))
+                        (set! (-> this .-target .-value) "")))}])
 
 (defonce is-initialized?
   (do
