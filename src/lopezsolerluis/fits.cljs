@@ -17,7 +17,7 @@
           (let [contenido (-> evt .-target .-result)
                 array (js/Uint8Array. contenido)
                 cabecera (leer-cabecera array)]
-            (callback res))))
+            (callback cabecera))))
       (.readAsArrayBuffer js-file-reader file))))
 
 (defn read-file [file callback]
