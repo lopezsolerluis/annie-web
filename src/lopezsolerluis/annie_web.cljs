@@ -24,17 +24,21 @@
         (gdom/setTextContent el (app-tr lang (keyword "menu" nombre)))))))
 ;; end of translation functions
 
+(defn mostrar-resultado [resultado]
+  (js/console.log "Mostrar-resultado: " resultado))
+
 (defn input-file []
   [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
            :on-change (fn [this]
                         (if (not (= "" (-> this .-target .-value)))
                           (let [^js/File file (-> this .-target .-files (aget 0))
-                                resultado (fits/read-file file)]
-                            (js/console.log resultado)
+                                resultado (fits/read-file file mostrar-resultado)]
+                            (js/console.log "Final: " resultado)
                              (cond
                                (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))
                                (= :fits-no-simple resultado)    (js/alert (app-tr @lang :fits-no-simple))))
                         (set! (-> this .-target .-value) "")))}])
+
 
 (defonce is-initialized?
   (do

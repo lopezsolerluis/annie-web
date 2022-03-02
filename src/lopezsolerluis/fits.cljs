@@ -10,58 +10,23 @@
         ;(js/console.log (apply str (map char segunda-linea)))
         (apply str (map char primera-linea))))))
 
-(defn read-fits-file [file]
+(defn read-fits-file [file callback]
   (if (not= (.-type file) "image/fits")
-    :extensión-no-fits
-    (let [js-file-reader (js/FileReader.)
-          reading-result (atom nil)]
+    (callback :extensión-no-fits)
+    (let [js-file-reader (js/FileReader.)]
       (set! (.-onload js-file-reader)
         (fn [evt]
           (let [resultado (-> evt .-target .-result)
                 array (js/Uint8Array. resultado)
-                res (doall (leer-cabecera array))]
-            ;(js/console.log "Luis" res)
-            (reset! reading-result res)
-            (js/console.log "una " @reading-result))))
-            ;(js/console.log "segunda: " fits-file))))
-      (.readAsArrayBuffer js-file-reader file)
-      (js/console.log "otra " @reading-result)
-      @reading-result)))
+                res (leer-cabecera array)]
+            (callback res))))
+      (.readAsArrayBuffer js-file-reader file))))
 
-
-(defn read-file [file]
-  (let [js-file-reader (js/FileReader.)
-        reading-result (atom)
-        done? (atom false)]
+(defn read-file [file callback]
+  (let [js-file-reader (js/FileReader.)]
     (set! (.-onload js-file-reader)
       (fn [evt]
         (let [result (-> evt .-target .-result)
               array (js/Uint8Array. result)]
-          (reset! reading-result {:content array})
-          (reset! done? true)
-          (js/console.log "in: " (:content @reading-result)))))
-    (.readAsArrayBuffer js-file-reader file)
-    ;;(while (not @done?) (js/console.log (.-readyState js-file-reader)))
-    (js/console.log "out: " @reading-result)
-    @reading-result))
-
-; (defn read-file-0 [file]
-;   (let [js-file-reader (js/FileReader.)]
-;     (set! (.-onload js-file-reader)
-;       (fn [evt]
-;         (let [result (-> evt .-target .-result)
-;               array (js/Uint8Array. result)]
-;           {:content result}))) ; <- This is the value that 'read-file' should return
-;     (.readAsArrayBuffer js-file-reader file)))
-;
-;
-; (defn read-file-1 [file]
-;   (let [js-file-reader (js/FileReader.)
-;         content nil]
-;     (set! (.-onload js-file-reader)
-;       (fn [evt]
-;         (let [result (-> evt .-target .-result)
-;               array (js/Uint8Array. result)]
-;           (def content {:content result}))))
-;     (.readAsArrayBuffer js-file-reader file))
-;     content)
+          (callback array))))
+    (.readAsArrayBuffer js-file-reader file)))
