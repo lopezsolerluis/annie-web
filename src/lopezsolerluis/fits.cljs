@@ -1,4 +1,6 @@
-(ns lopezsolerluis.fits)
+(ns lopezsolerluis.fits
+  (:require
+    [clojure.string :as string :refer [trimr]]))
 
 (defn array->string
   ([array]
@@ -11,18 +13,20 @@
       (array->string))))
   ;;(apply str (map char array)))
 
+(def not-supported-keys #{"" "END" "COMMENT" "HISTORY"})
+
 (defn leer-cabecera [uint8array]
-  (let [primera-linea (array->string uint8array 0 30)]
-    (js/console.log "Primera línea: " primera-linea)
-    (if (not= primera-linea "SIMPLE  =                    T")
+  (let [primera-linea (array->string uint8array 0 30)
+        cabecera (atom {})]
+    (if-not (= primera-linea "SIMPLE  =                    T")
         :fits-no-simple
-        :fits-simple
+        (doseq [i (range 80 (* 36 80) 80)]
+          (let [linea (array->string uint8array i (+ i 80))
+                pre-key (trimr (subs linea 0 8))]
+            (if-not (not-supported-keys pre-key)
+                (let [key (keyword pre-key)]
+                  (js/console.log (str key ))))))
     )))
-  ;
-  ;       segunda-linea (.slice array 80 110)]
-  ;
-  ;     (do
-  ;       (apply str (map char primera-linea))))))
 
 (defn read-fits-file [file callback]
   (let [js-file-reader (js/FileReader.)]
