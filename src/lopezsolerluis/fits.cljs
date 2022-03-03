@@ -1,6 +1,6 @@
 (ns lopezsolerluis.fits
   (:require
-    [clojure.string :as string :refer [trimr]]))
+    [clojure.string :as str]))
 
 (defn array->string
   ([array]
@@ -13,6 +13,15 @@
       (array->string))))
   ;;(apply str (map char array)))
 
+(defn read-value-in-header [linea]
+  (let [value (str/trim linea)] ;; ver en standard si va trim o trimr
+    (cond
+      (= value "T") true
+      (= value "F") false
+      (str/includes? value "'") value ; sería lindo sacar las comillas inicial y final...
+      (str/includes? value ".") (js/parseFloat (str/replace value "D" "E"))
+      :else (js/parseInt value))))
+
 (def not-supported-keys #{"" "END" "COMMENT" "HISTORY"})
 
 (defn leer-cabecera [uint8array]
@@ -20,13 +29,15 @@
         cabecera (atom {})]
     (if-not (= primera-linea "SIMPLE  =                    T")
         :fits-no-simple
-        (doseq [i (range 80 (* 36 80) 80)]
-          (let [linea (array->string uint8array i (+ i 80))
-                pre-key (trimr (subs linea 0 8))]
-            (if-not (not-supported-keys pre-key)
-                (let [key (keyword pre-key)]
-                  (js/console.log (str key ))))))
-    )))
+        (do
+          (doseq [i (range 80 (* 36 80) 80)]
+            (let [linea (array->string uint8array i (+ i 80))
+                  pre-key (str/trimr (subs linea 0 8))]
+              (if-not (not-supported-keys pre-key)
+                  (let [key (keyword pre-key)
+                        value (read-value-in-header (subs linea 9 30))]
+                    (swap! cabecera assoc key value)))))
+          @cabecera))))
 
 (defn read-fits-file [file callback]
   (let [js-file-reader (js/FileReader.)]
