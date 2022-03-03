@@ -11,7 +11,6 @@
     (-> array
       (.slice start end)
       (array->string))))
-  ;;(apply str (map char array)))
 
 (defn read-value-in-header [linea]
   (let [value (str/trim linea)] ;; ver en standard si va trim o trimr
@@ -23,7 +22,6 @@
       :else (js/parseInt value))))
 
 (def not-supported-keys #{"" "END" "COMMENT" "HISTORY"})
-
 (defn leer-cabecera [uint8array]
   (let [primera-linea (array->string uint8array 0 30)
         cabecera (atom {})]
