@@ -21,21 +21,27 @@
       (str/includes? value ".") (js/parseFloat (str/replace value "D" "E"))
       :else (js/parseInt value))))
 
-(def not-supported-keys #{"" "END" "COMMENT" "HISTORY"})
+(def not-supported-keys #{"" "COMMENT" "HISTORY"})
 (defn leer-cabecera [uint8array]
-  (let [primera-linea (array->string uint8array 0 30)
-        cabecera (atom {})]
+  (let [primera-linea (array->string uint8array 0 30)]
     (if-not (= primera-linea "SIMPLE  =                    T")
         :fits-no-simple
-        (do
-          (doseq [i (range 80 (* 36 80) 80)]
-            (let [linea (array->string uint8array i (+ i 80))
-                  pre-key (str/trimr (subs linea 0 8))]
-              (if-not (not-supported-keys pre-key)
-                  (let [key (keyword pre-key)
-                        value (read-value-in-header (subs linea 9 30))]
-                    (swap! cabecera assoc key value)))))
-          @cabecera))))
+        (let [cabecera (atom {})
+              end? (atom false)
+              length-header (atom -1)]
+          (while (not @end?)
+            (swap! length-header inc) ; arranca en 0
+            (doseq [i (range (* @length-header 2880) (* (inc @length-header) 2880) 80)]  ; 2880 = 36*80
+              (let [linea (array->string uint8array i (+ i 80))
+                    pre-key (str/trimr (subs linea 0 8))]
+                (if (= pre-key "END")
+                    (reset! end? true)
+                    (if-not (not-supported-keys pre-key)
+                        (let [key (keyword pre-key)
+                              value (read-value-in-header (subs linea 9 30))]
+                              ;;(js/console.log (name key) ":" value)
+                              (swap! cabecera assoc key value)))))))
+            @cabecera))))
 
 (defn read-fits-file [file callback]
   (let [js-file-reader (js/FileReader.)]
