@@ -41,8 +41,7 @@
                     (if-not (not-supported-keys pre-key)
                         (let [key (keyword pre-key)
                               value (read-value-in-header (subs linea 9 30))]
-                              ;;(js/console.log (name key) ":" value)
-                              (swap! cabecera assoc key value)))))))
+                          (swap! cabecera assoc key value)))))))
             (assoc @cabecera :bloques-header (inc @length-header))))))
 
 (def funciones-bytes {8 dv/get-uint8 16 dv/get-int16 32 dv/get-int32 64 dv/get-big-int64 -32 dv/get-float32 -64 dv/get-float64})
@@ -60,7 +59,6 @@
         view (js.DataView. contenido length-header)
         funcion (get funciones-bytes bitpix)
         step (/ (js/Math.abs bitpix) 8)]
-     ;; (js/console.log bitpix ":" step ":" funcion)
      (for [y (range 0 eje-y)]
         (for [x (range 0 eje-x)]
           (let [value (funcion view (* step (+ x (* y eje-x))))]
@@ -71,16 +69,9 @@
     (set! (.-onload js-file-reader)
       (fn [evt]
         (let [contenido (-> evt .-target .-result)
-              cabecera (leer-cabecera contenido)
-              data (leer-data contenido cabecera)]
-          (callback {:cabecera cabecera :data data}))))
-    (.readAsArrayBuffer js-file-reader file)))
-
-(defn read-file [file callback]
-  (let [js-file-reader (js/FileReader.)]
-    (set! (.-onload js-file-reader)
-      (fn [evt]
-        (let [result (-> evt .-target .-result)
-              array (js/Uint8Array. result)]
-          (callback array))))
+              cabecera (leer-cabecera contenido)]
+          (if (= cabecera :fits-no-simple)
+              (callback cabecera)
+              (let [data (leer-data contenido cabecera)]
+                (callback {:cabecera cabecera :data data}))))))
     (.readAsArrayBuffer js-file-reader file)))

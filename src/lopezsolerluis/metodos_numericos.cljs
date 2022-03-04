@@ -19,5 +19,3 @@
                  (if (= (sgn f-a) (sgn (funcion c)))
                      (recur funcion c b tolerancia)
                      (recur funcion a c tolerancia)))))))
-
-(def luis 3)
