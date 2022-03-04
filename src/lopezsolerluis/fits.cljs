@@ -52,15 +52,15 @@
         naxis (:NAXIS cabecera) ;; Sabemos que son 2, pero bueh...
         ;;ejes (map (fn [n] ((keyword (str "NAXIS" n)) cabecera))   ; <- Con esta bonita expresión podría recoger n ejes...
         ;;          (range 1 (dec naxis)))                          ;  pero sabemos que sólo serán 2, no? ;)
-        eje-x (inc (:NAXIS1 cabecera))  ; El inc es necesario para los 'for' de abajo...
-        eje-y (inc (:NAXIS2 cabecera))  ;
+        eje-x (:NAXIS1 cabecera)
+        eje-y (:NAXIS2 cabecera)
         bscale (get cabecera :BSCALE 1)
         bzero (get cabecera :BZERO 0)
         view (js.DataView. contenido length-header)
         funcion (get funciones-bytes bitpix)
         step (/ (js/Math.abs bitpix) 8)]
-     (for [y (range 0 eje-y)]
-        (for [x (range 0 eje-x)]
+     (for [y (range eje-y)]
+        (for [x (range eje-x)]
           (let [value (funcion view (* step (+ x (* y eje-x))))]
             (+ bzero (* bscale value)))))))
 

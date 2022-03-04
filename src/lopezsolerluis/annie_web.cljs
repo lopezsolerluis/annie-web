@@ -5,7 +5,8 @@
    [reagent.core :as r :refer [atom]]
    [reagent.dom :as rdom]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
-   [lopezsolerluis.fits :as fits]))
+   [lopezsolerluis.fits :as fits]
+   [lopezsolerluis.metodos-numericos :as mn :refer [promedio columna-matriz]]))
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
@@ -24,11 +25,20 @@
         (gdom/setTextContent el (app-tr lang (keyword "menu" nombre)))))))
 ;; end of translation functions
 
-(defn procesar-archivo [result]
-  (js/console.log "Bloques: " result))
-  ; (cond
-  ;     (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))
-  ;     (= :fits-no-simple resultado)    (js/alert (app-tr @lang :fits-no-simple))))
+(defn crear-perfil [fits-file]
+  (let [data (:data fits-file)
+        cabecera (:cabecera fits-file)
+        ancho (:NAXIS1 cabecera)]
+        (js/console.log ancho)
+        (js/console.log (count (first data)))
+    (for [i (range ancho)]
+      (promedio (columna-matriz data i)))))
+
+(defn procesar-archivo [fits-file]
+  (if (= fits-file :fits-no-simple)
+      (js/alert (app-tr @lang :fits-no-valido))
+      (js/console.log (clj->js (vec (crear-perfil fits-file))))
+      ))
 
 (defn input-file []
   [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
@@ -37,6 +47,7 @@
                           (let [^js/File file (-> this .-target .-files (aget 0))]
                             (fits/read-fits-file file procesar-archivo)))
                           (set! (-> this .-target .-value) ""))}])
+
 
 (defonce is-initialized?
   (do

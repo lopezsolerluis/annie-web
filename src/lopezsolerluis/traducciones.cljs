@@ -36,7 +36,8 @@
             :ayuda "Help"
               :creditos "Credits"}
         :extensión-no-fits "File does not have .FITS extension"
-        :fits-no-simple "Fits file is not SIMPLE"
+        :fits-no-simple "FITS file is not SIMPLE"
+        :fits-no-valido "FITS file does not seem to be valid"
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -72,6 +73,7 @@
             }
         :extensión-no-fits "El archivo carece de extensión .FITS"
         :fits-no-simple "El archivo Fits no es SIMPLE"
+        :fits-no-valido "El archivo Fits no parece ser válido"
    }
   })
 
