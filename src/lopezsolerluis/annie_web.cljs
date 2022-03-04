@@ -4,12 +4,14 @@
    [goog.events :as gevents]
    [reagent.core :as r :refer [atom]]
    [reagent.dom :as rdom]
+   [cljsjs.react-vis :as rvis]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.metodos-numericos :as mn :refer [promedio columna-matriz]]))
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
+(def chart-data (atom (vec (map (fn [x y] {:x x :y y}) (range 1000) (repeatedly #(rand 100))))))
 
 ;; Translation functions
 (defn getLanguage []
@@ -28,17 +30,25 @@
 (defn crear-perfil [fits-file]
   (let [data (:data fits-file)
         cabecera (:cabecera fits-file)
-        ancho (:NAXIS1 cabecera)]
+        ancho (:NAXIS1 cabecera)
+        alto (:NAXIS2 cabecera)]
         (js/console.log ancho)
-        (js/console.log (count (first data)))
     (for [i (range ancho)]
-      (promedio (columna-matriz data i)))))
+      (promedio (columna-matriz data i) alto))))  ; columna-matriz es el cuello de botella...
+
+(defn crear-data-para-vis [perfil-2d]
+  (vec (map (fn [x y] {:x x :y y}) (range (count perfil-2d)) perfil-2d)))
 
 (defn procesar-archivo [fits-file]
   (if (= fits-file :fits-no-simple)
       (js/alert (app-tr @lang :fits-no-valido))
-      (js/console.log (clj->js (vec (crear-perfil fits-file))))
-      ))
+      (let [perfil (crear-perfil fits-file)
+            data-para-vis (crear-data-para-vis perfil)]
+
+      ;   ;;(js/console.log (take 5 data-para-vis))
+         (reset! chart-data data-para-vis)
+               (js/console.log "Listo" (count data-para-vis))
+      )))
 
 (defn input-file []
   [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
@@ -54,11 +64,21 @@
     (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
     true))
 
+(defn line-chart []
+  [:> rvis/XYPlot
+   {:width 800 :height 450}
+   [:> rvis/LineSeries {:data @chart-data :style {:fill "none"}}]])
+
+(defn app-scaffold []
+  [:div
+   [input-file]
+   [line-chart]])
+
 (defn get-app-element []
   (gdom/getElement "app"))
 
 (defn mount [el]
-  (rdom/render [input-file] el))
+  (rdom/render [app-scaffold] el))
 
 (defn mount-app-element []
   (when-let [el (get-app-element)]
