@@ -25,7 +25,7 @@
 ;; end of translation functions
 
 (defn procesar-archivo [result]
-  (js/console.log "Fits: " (:BITPIX result)))
+  (js/console.log "Bloques: " result))
   ; (cond
   ;     (= :extensión-no-fits resultado) (js/alert (app-tr @lang :extensión-no-fits))
   ;     (= :fits-no-simple resultado)    (js/alert (app-tr @lang :fits-no-simple))))
