@@ -33,11 +33,13 @@
         ancho (:NAXIS1 cabecera)
         alto (:NAXIS2 cabecera)]
         (js/console.log ancho)
-    (for [i (range ancho)]
-      (promedio (columna-matriz data i) alto))))  ; columna-matriz es el cuello de botella...
+    (map (fn [n] (/ n alto))    ; Las divide por alto (2)
+         (apply map + data))))  ; Suma las columnas (1)
+    ; (for [i (range ancho)]
+    ;   (promedio (columna-matriz data i) alto))))  ; columna-matriz es el cuello de botella...
 
 (defn crear-data-para-vis [perfil-2d]
-  (vec (map (fn [x y] {:x x :y y}) (range (count perfil-2d)) perfil-2d)))
+  (mapv (fn [x y] {:x x :y y}) (range (count perfil-2d)) perfil-2d))
 
 (defn procesar-archivo [fits-file]
   (if (= fits-file :fits-no-simple)
