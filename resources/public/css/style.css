@@ -55,3 +55,30 @@ ul, ol {
 input[type=file] {
   display: none;
 }
+
+#app {
+  position: absolute;
+  /* background-color: #EEEEFF;   */
+  z-index: -1;
+}
+
+.todo {
+    display: -ms-flex;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    /* background-color: #eafaf1; */
+    height: 100vh;
+    width: 100vw;
+}
+
+.graph {
+  /* background-color: #eafaf1; */
+   /* height: 700px; */
+   -ms-flex: 1 1 auto;
+   -webkit-flex: 1 1 auto;
+   flex: 1 1 auto;
+   /* margin-top: 20px; */
+}

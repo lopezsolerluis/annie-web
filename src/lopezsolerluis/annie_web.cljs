@@ -7,11 +7,12 @@
    [cljsjs.react-vis :as rvis]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
-   [lopezsolerluis.metodos-numericos :as mn :refer [promedio columna-matriz]]))
+   [lopezsolerluis.metodos-numericos :as mn]))
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
-(def chart-data (atom (vec (map (fn [x y] {:x x :y y}) (range 1000) (repeatedly #(rand 100))))))
+(def perfiles (atom []))
+(def n-perfil (atom 0))
 
 ;; Translation functions
 (defn getLanguage []
@@ -32,11 +33,8 @@
         cabecera (:cabecera fits-file)
         ancho (:NAXIS1 cabecera)
         alto (:NAXIS2 cabecera)]
-        (js/console.log ancho)
     (map (fn [n] (/ n alto))    ; Las divide por alto (2)
          (apply map + data))))  ; Suma las columnas (1)
-    ; (for [i (range ancho)]
-    ;   (promedio (columna-matriz data i) alto))))  ; columna-matriz es el cuello de botella...
 
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range (count perfil-2d)) perfil-2d))
@@ -48,8 +46,7 @@
             data-para-vis (crear-data-para-vis perfil)]
 
       ;   ;;(js/console.log (take 5 data-para-vis))
-         (reset! chart-data data-para-vis)
-               (js/console.log "Listo" (count data-para-vis))
+         (swap! perfiles conj data-para-vis)
       )))
 
 (defn input-file []
@@ -67,12 +64,13 @@
     true))
 
 (defn line-chart []
-  [:> rvis/XYPlot
-   {:width 800 :height 450}
-   [:> rvis/LineSeries {:data @chart-data :style {:fill "none"}}]])
+  [:> rvis/FlexibleXYPlot
+   {:margin {:left 100 :right 50 :top 20}} ;;{:width 800 :height 450}
+   (doall (for [data @perfiles]
+            ^{:key (str "perfil-" (swap! n-perfil inc))} [:> rvis/LineSeries {:data data :style {:fill "none"}}]))])
 
 (defn app-scaffold []
-  [:div
+  [:div.todo
    [input-file]
    [line-chart]])
 

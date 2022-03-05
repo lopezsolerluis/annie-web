@@ -19,9 +19,3 @@
                  (if (= (sgn f-a) (sgn (funcion c)))
                      (recur funcion c b tolerancia)
                      (recur funcion a c tolerancia)))))))
-
-(defn promedio [seq count]
-  (/ (apply + seq) count))
-
-(defn columna-matriz [matriz columna]
-  (map #(nth % columna) matriz))

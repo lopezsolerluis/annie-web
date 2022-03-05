@@ -60,12 +60,11 @@
         view (js.DataView. contenido length-header)
         funcion (get funciones-bytes bitpix)
         step (/ (js/Math.abs bitpix) 8)]
-;        (doall
      (for [y (range eje-y)]
         (for [x (range eje-x)]
-          (let [value (funcion view (* step (+ x (* y eje-x))))]
+          (let [value (funcion view (* step (+ x (* y eje-x))))]          
             (+ bzero (* bscale value)))))))
-;)
+
 (defn read-fits-file [file callback]
   (let [js-file-reader (js/FileReader.)]
     (set! (.-onload js-file-reader)
