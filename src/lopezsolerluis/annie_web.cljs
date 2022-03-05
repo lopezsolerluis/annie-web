@@ -49,7 +49,7 @@
          (swap! perfiles conj data-para-vis)
       )))
 
-(defn input-file []
+(defn input-fits-file []
   [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
            :on-change (fn [this]
                         (if (not (= "" (-> this .-target .-value)))
@@ -63,15 +63,25 @@
     (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
     true))
 
+(def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
+(def axis-style {:line {:stroke "#333"}
+                 :ticks {:stroke "#999"}
+                 :text {:stroke "none"
+                        :fill "#333"}})
 (defn line-chart []
+  [:div.graph
   [:> rvis/FlexibleXYPlot
-   {:margin {:left 100 :right 50 :top 20}} ;;{:width 800 :height 450}
+   {:margin {:left 100 :right 50 :top 20}}
+   [:> rvis/VerticalGridLines {:style axis-style}]
+   [:> rvis/HorizontalGridLines {:style axis-style}]
+   [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
+   [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    (doall (for [data @perfiles]
-            ^{:key (str "perfil-" (swap! n-perfil inc))} [:> rvis/LineSeries {:data data :style {:fill "none"}}]))])
+            ^{:key (str "perfil-" (swap! n-perfil inc))} [:> rvis/LineSeries {:data data :style {:fill "none"}}]))]])
 
 (defn app-scaffold []
   [:div.todo
-   [input-file]
+   [input-fits-file]
    [line-chart]])
 
 (defn get-app-element []

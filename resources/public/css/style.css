@@ -57,12 +57,14 @@ input[type=file] {
 }
 
 #app {
-  position: absolute;
-  /* background-color: #EEEEFF;   */
+  /* position: absolute; */
+  /* height: 500px; */
+  background-color: #DDFFDD;
   z-index: -1;
 }
 
 .todo {
+    margin-top: 50px;
     display: -ms-flex;
     display: -webkit-flex;
     display: flex;
@@ -70,13 +72,14 @@ input[type=file] {
     -webkit-flex-direction: column;
     flex-direction: column;
     /* background-color: #eafaf1; */
-    height: 100vh;
+    height: 90vh;
     width: 100vw;
 }
 
 .graph {
   /* background-color: #eafaf1; */
-   /* height: 700px; */
+   height: 90vh;
+   /* height: 90%; */
    -ms-flex: 1 1 auto;
    -webkit-flex: 1 1 auto;
    flex: 1 1 auto;
