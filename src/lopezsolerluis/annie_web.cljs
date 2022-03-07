@@ -54,9 +54,7 @@
          (set! (-> icono-espera .-style .-display) "none")
          (set! (-> fondo-gris .-style .-display) "none")
          ;;(js/console.log (pr-str (nth @perfiles 0)))
-         ;;(export-data (nth @perfiles 0))
          (download-object-as-json (clj->js (nth @perfiles 0)) "myfile.annie")
-
       )))
 
 (defn input-fits-file []
