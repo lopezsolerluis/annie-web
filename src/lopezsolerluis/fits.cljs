@@ -62,8 +62,11 @@
         step (/ (js/Math.abs bitpix) 8)]
      (for [y (range eje-y)]
         (for [x (range eje-x)]
-          (let [value (funcion view (* step (+ x (* y eje-x))))]          
+          (let [value (funcion view (* step (+ x (* y eje-x))))]
             (+ bzero (* bscale value)))))))
+
+(defn nombre [file]
+  ((clojure.string/split (.-name file) ".") 0))
 
 (defn read-fits-file [file callback]
   (let [js-file-reader (js/FileReader.)]
@@ -74,5 +77,5 @@
           (if (= cabecera :fits-no-simple)
               (callback cabecera)
               (let [data (leer-data contenido cabecera)]
-                (callback {:cabecera cabecera :data data}))))))
+                (callback {:nombre-archivo (nombre file) :cabecera cabecera :data data}))))))
     (.readAsArrayBuffer js-file-reader file)))

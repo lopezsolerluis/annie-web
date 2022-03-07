@@ -12,7 +12,6 @@
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
 (def perfiles (atom []))
-(def n-perfil (atom 0))
 
 ;; Translation functions
 (defn getLanguage []
@@ -43,10 +42,10 @@
   (if (= fits-file :fits-no-simple)
       (js/alert (app-tr @lang :fits-no-valido))
       (let [perfil (crear-perfil fits-file)
-            data-para-vis (crear-data-para-vis perfil)]
-
-      ;   ;;(js/console.log (take 5 data-para-vis))
-         (swap! perfiles conj data-para-vis)
+            data-para-vis (crear-data-para-vis perfil)
+            nombre (:nombre-archivo fits-file)]
+      ;;(js/console.log (:nombre-archivo fits-file))
+         (swap! perfiles conj {:nombre nombre :data-vis data-para-vis})
       )))
 
 (defn input-fits-file []
@@ -76,8 +75,8 @@
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
-   (doall (for [data @perfiles]
-            ^{:key (str "perfil-" (swap! n-perfil inc))} [:> rvis/LineSeries {:data data :style {:fill "none"}}]))]])
+   (doall (for [perfil @perfiles]
+            ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}}]))]])
 
 (defn app-scaffold []
   [:div.todo
