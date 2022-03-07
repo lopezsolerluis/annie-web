@@ -12,6 +12,8 @@
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
 (def perfiles (atom []))
+(def icono-espera (gdom/getElement "loader"))
+(def fondo-gris (gdom/getElement "fondogris"))
 
 ;; Translation functions
 (defn getLanguage []
@@ -36,7 +38,7 @@
          (apply map + data))))  ; Suma las columnas (1)
 
 (defn crear-data-para-vis [perfil-2d]
-  (mapv (fn [x y] {:x x :y y}) (range (count perfil-2d)) perfil-2d))
+  (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
 (defn procesar-archivo [fits-file]
   (if (= fits-file :fits-no-simple)
@@ -46,6 +48,8 @@
             nombre (:nombre-archivo fits-file)]
       ;;(js/console.log (:nombre-archivo fits-file))
          (swap! perfiles conj {:nombre nombre :data-vis data-para-vis})
+         (set! (-> icono-espera .-style .-display) "none")
+         (set! (-> fondo-gris .-style .-display) "none")
       )))
 
 (defn input-fits-file []
@@ -53,6 +57,8 @@
            :on-change (fn [this]
                         (if (not (= "" (-> this .-target .-value)))
                           (let [^js/File file (-> this .-target .-files (aget 0))]
+                            (set! (-> icono-espera .-style .-display) "block")
+                            (set! (-> fondo-gris .-style .-display) "block")
                             (fits/read-fits-file file procesar-archivo)))
                           (set! (-> this .-target .-value) ""))}])
 
