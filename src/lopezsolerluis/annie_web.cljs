@@ -7,7 +7,10 @@
    [cljsjs.react-vis :as rvis]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
-   [lopezsolerluis.metodos-numericos :as mn]))
+   [lopezsolerluis.metodos-numericos :as mn]
+   [lopezsolerluis.save-file :as save :refer [download-object-as-json]]))
+
+(enable-console-print!)
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
@@ -50,6 +53,10 @@
          (swap! perfiles conj {:nombre nombre :data-vis data-para-vis})
          (set! (-> icono-espera .-style .-display) "none")
          (set! (-> fondo-gris .-style .-display) "none")
+         ;;(js/console.log (pr-str (nth @perfiles 0)))
+         ;;(export-data (nth @perfiles 0))
+         (download-object-as-json (clj->js (nth @perfiles 0)) "myfile.annie")
+
       )))
 
 (defn input-fits-file []
