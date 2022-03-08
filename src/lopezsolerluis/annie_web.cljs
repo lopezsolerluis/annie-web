@@ -13,7 +13,7 @@
 (enable-console-print!)
 
 ;; define your app data so that it doesn't get over-written on reload
-(defonce perfiles (atom []))  ; ¿defonce o def..?
+(defonce perfiles (atom {}))  ; ¿defonce o def..?
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
 
@@ -52,7 +52,7 @@
       (let [perfil (crear-perfil fits-file)
             data-para-vis (crear-data-para-vis perfil)
             nombre (:nombre-archivo fits-file)]
-         (swap! perfiles conj {:nombre nombre :data-vis data-para-vis})))
+         (swap! perfiles assoc nombre {:nombre nombre :data-vis data-para-vis})))
   (apagar-espera))
 
 (defn input-fits-file []
@@ -63,13 +63,10 @@
                             (encender-espera)
                             (fits/read-fits-file file procesar-archivo)))
                           (set! (-> this .-target .-value) ""))}])
-
-
 (defonce is-initialized?
   (do
     (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
     true))
-
 
 (def nearest-xy (atom {}))
 (def nearest-xy-pressed (atom {}))
@@ -98,20 +95,25 @@
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
-   (doall (for [perfil @perfiles]
+   (doall (for [[id perfil] @perfiles]
             ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
                                                                 :strokeWidth 1
                                                                 :onNearestX (fn [e]
-                                                                  (reset! nearest-xy (js->clj e)))}]))
-   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}]
-                       :style {:line {:background "black" :strokeStyle "dashed"}}}
+                                                                    (reset! nearest-xy (js->clj e)))}]))
+   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed"
+                       :style {:line {:background "black"}}}
       [:div]]
-  [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
-                      :style {:line {:background "black" :strokeStyle "dashed" :opacity (if @button-pressed? 1 0)}}}
+   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
+                       :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-   ; [:> rvis/Hint {:value {:x (nearest-x nearest-xy) :y (nearest-y nearest-xy)}}
-   ;                [:div {:style {:color "#333" :fontWeight "bold" :opacity (if @button-pressed? 1 0)}}
-   ;                            "Hidrógeno"]]
+   [:> rvis/Hint {:value {:x (nearest-x nearest-xy) :y (nearest-y nearest-xy)}}
+                  [:div {:style {:color "#333" :fontWeight "bold"}}
+                              "Hidrógeno"[:br]"alfa"]]
+  [:> rvis/Hint {:value {:x (nearest-x nearest-xy-pressed) :y (nearest-y nearest-xy-pressed)}}
+                  [:div {:style {:color "#333" :fontWeight "bold"}}
+                             "Hidrógeno"]]
+  [:> rvis/LabelSeries {:data [{:x 200 :y 4000 :label "Helio" :xOffset 0 :yOffset 0 :style {:cursor "pointer"}}]
+                        :onValueMouseOver (fn [e] (js/console.log (pr-str e)))}]
    ]])
 
 (defn app-scaffold []
