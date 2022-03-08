@@ -13,10 +13,16 @@
 (enable-console-print!)
 
 ;; define your app data so that it doesn't get over-written on reload
-(defonce app-state (atom {:text "Hello world!"}))
-(def perfiles (atom []))
+(defonce perfiles (atom []))  ; ¿defonce o def..?
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
+
+(defn encender-espera []
+  (set! (-> icono-espera .-style .-display) "block")
+  (set! (-> fondo-gris .-style .-display) "block"))
+(defn apagar-espera []
+  (set! (-> icono-espera .-style .-display) "none")
+  (set! (-> fondo-gris .-style .-display) "none"))
 
 ;; Translation functions
 (defn getLanguage []
@@ -46,21 +52,15 @@
       (let [perfil (crear-perfil fits-file)
             data-para-vis (crear-data-para-vis perfil)
             nombre (:nombre-archivo fits-file)]
-      ;;(js/console.log (:nombre-archivo fits-file))
-         (swap! perfiles conj {:nombre nombre :data-vis data-para-vis})
-         (set! (-> icono-espera .-style .-display) "none")
-         (set! (-> fondo-gris .-style .-display) "none")
-         ;;(js/console.log (pr-str (nth @perfiles 0)))
-         (download-object-as-json (clj->js (nth @perfiles 0)) (str nombre ".annie"))
-      )))
+         (swap! perfiles conj {:nombre nombre :data-vis data-para-vis})))
+  (apagar-espera))
 
 (defn input-fits-file []
-  [:input {:type "file" :id "fits" :name "imagenFits" :accept "image/fits" ;; este atributo no funciona...
+  [:input {:type "file" :id "fits"
            :on-change (fn [this]
-                        (if (not (= "" (-> this .-target .-value)))
+                        (if-not (= "" (-> this .-target .-value))
                           (let [^js/File file (-> this .-target .-files (aget 0))]
-                            (set! (-> icono-espera .-style .-display) "block")
-                            (set! (-> fondo-gris .-style .-display) "block")
+                            (encender-espera)
                             (fits/read-fits-file file procesar-archivo)))
                           (set! (-> this .-target .-value) ""))}])
 
@@ -75,16 +75,26 @@
                  :ticks {:stroke "#999"}
                  :text {:stroke "none"
                         :fill "#333"}})
+
+(def button-pressed? (atom false))
+(defn cambiar-estado-boton [e]
+  (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
+    (if (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
+        (swap! button-pressed? not))))
+
 (defn line-chart []
   [:div.graph
   [:> rvis/FlexibleXYPlot
-   {:margin {:left 100 :right 50 :top 20}}
+   {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (cambiar-estado-boton e))
+                                          :onMouseUp   (fn [e] (cambiar-estado-boton e))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    (doall (for [perfil @perfiles]
-            ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}}]))]])
+            ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
+            :onNearestX (fn [e] (if @button-pressed? (js/console.log (pr-str e))))
+            }]))]])
 
 (defn app-scaffold []
   [:div.todo
