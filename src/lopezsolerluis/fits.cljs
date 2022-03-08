@@ -48,6 +48,7 @@
 (def funciones-bytes {8 dv/get-uint8 16 dv/get-int16 32 dv/get-int32 64 dv/get-big-int64 -32 dv/get-float32 -64 dv/get-float64})
 
 (defn leer-data [contenido cabecera]
+  "Optimizado para AnNIE (ver 'scale' y los dos 'for')"
   (let [length-header (* 2880 (:bloques-header cabecera))
         bitpix (:BITPIX cabecera)
         naxis (:NAXIS cabecera) ;; Sabemos que son 2, pero bueh...
@@ -55,15 +56,16 @@
         ;;          (range 1 (dec naxis)))                          ;  pero sabemos que sólo serán 2, no? ;)
         eje-x (:NAXIS1 cabecera)
         eje-y (:NAXIS2 cabecera)
-        bscale (get cabecera :BSCALE 1)
         bzero (get cabecera :BZERO 0)
+        bscale (get cabecera :BSCALE 1)
+        scale (/ bscale eje-y)  ;; Para dividir ahora mismo cada elemento, y así evitarlo al calcular el promedio por columna
         view (js.DataView. contenido length-header)
         funcion (get funciones-bytes bitpix)
         step (/ (js/Math.abs bitpix) 8)]
-     (for [y (range eje-y)]
-        (for [x (range eje-x)]
+     (for [x (range eje-x)]                                        ;  Intercambiamos ejes para que luego sumemos sobre filas
+        (for [y (range eje-y)]                                     ;  en lugar de columnas
           (let [value (funcion view (* step (+ x (* y eje-x))))]
-            (+ bzero (* bscale value)))))))
+            (+ bzero (* scale value)))))))
 
 (defn nombre [file]
   ((clojure.string/split (.-name file) ".") 0))

@@ -33,12 +33,9 @@
 ;; end of translation functions
 
 (defn crear-perfil [fits-file]
-  (let [data (:data fits-file)
-        cabecera (:cabecera fits-file)
-        ancho (:NAXIS1 cabecera)
-        alto (:NAXIS2 cabecera)]
-    (map (fn [n] (/ n alto))    ; Las divide por alto (2)
-         (apply map + data))))  ; Suma las columnas (1)
+  (let [data (:data fits-file)]
+          ;(apply map + data))) ; Para sumar las columnas (tarda mucho más)
+         (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'
 
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
@@ -54,7 +51,7 @@
          (set! (-> icono-espera .-style .-display) "none")
          (set! (-> fondo-gris .-style .-display) "none")
          ;;(js/console.log (pr-str (nth @perfiles 0)))
-         (download-object-as-json (clj->js (nth @perfiles 0)) "myfile.annie")
+         (download-object-as-json (clj->js (nth @perfiles 0)) (str nombre ".annie"))
       )))
 
 (defn input-fits-file []
