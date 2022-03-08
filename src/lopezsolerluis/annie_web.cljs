@@ -96,7 +96,7 @@
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    (doall (for [[id perfil] @perfiles]
-            ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
+            ^{:key (str id)} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
                                                                 :strokeWidth 1
                                                                 :onNearestX (fn [e]
                                                                     (reset! nearest-xy (js->clj e)))}]))
