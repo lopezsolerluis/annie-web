@@ -70,27 +70,30 @@
     (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
     true))
 
+
+(def nearest-xy (atom {}))
+(def nearest-xy-pressed (atom {}))
+(defn nearest-x [nearest] (get @nearest "x"))
+(defn nearest-y [nearest] (get @nearest "y"))
+
+(def button-pressed? (r/atom false))
+(defn mouse-pressed [e dir]
+  (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
+    (when (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
+      (reset! nearest-xy-pressed (if (= dir :down) @nearest-xy {}))
+      (swap! button-pressed? not))))
+
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
                  :ticks {:stroke "#999"}
                  :text {:stroke "none"
-                        :fill "#333"}})
-
-(def button-pressed? (r/atom false))
-(defn cambiar-estado-boton [e]
-  (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
-    (if (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
-        (swap! button-pressed? not))))
-(def nearest-xy (atom {}))
-
-(defn nearest-x [] (get @nearest-xy "x"))
-(defn nearest-y [] (get @nearest-xy "y"))
+                 :fill "#333"}})
 
 (defn line-chart []
   [:div.graph
   [:> rvis/FlexibleXYPlot
-   {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (cambiar-estado-boton e))
-                                          :onMouseUp   (fn [e] (cambiar-estado-boton e))}
+   {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
+                                          :onMouseUp   (fn [e] (mouse-pressed e :up))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
@@ -98,19 +101,17 @@
    (doall (for [perfil @perfiles]
             ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
                                                                 :strokeWidth 1
-            :onNearestX (fn [e]
-              ;(js/console.log "dentro: " (get (js->clj e) "x") @nearest-x)
-              (reset! nearest-xy (js->clj e)))}]))
-   ; ^{:key (str "cursor")} [:> rvis/LineSeries {:data [{:x @nearest-x :y 4000}{:x @nearest-x :y 9500}]
-   ;                                             :strokeStyle "dashed" :color "black"
-   ;                                             :opacity (if @button-pressed? .5 0)}]
-   [:> rvis/Crosshair {:values [{:x (nearest-x) :y 0}]
-                       :style {:line {:stroke "black" :opacity (if @button-pressed? .5 0)}}}
+                                                                :onNearestX (fn [e]
+                                                                  (reset! nearest-xy (js->clj e)))}]))
+   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}]
+                       :style {:line {:background "black" :strokeStyle "dashed"}}}
       [:div]]
-   [:> rvis/Hint {:value {:x (nearest-x) :y (nearest-y)}}
-                  [:div {:style {:color "#333" :fontWeight "bold" :opacity (if @button-pressed? 1 0)}}
-                              "Hidrógeno"]]
-   ;(js/console.log @nearest-x)
+  [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
+                      :style {:line {:background "black" :strokeStyle "dashed" :opacity (if @button-pressed? 1 0)}}}
+      [:div]]
+   ; [:> rvis/Hint {:value {:x (nearest-x nearest-xy) :y (nearest-y nearest-xy)}}
+   ;                [:div {:style {:color "#333" :fontWeight "bold" :opacity (if @button-pressed? 1 0)}}
+   ;                            "Hidrógeno"]]
    ]])
 
 (defn app-scaffold []
