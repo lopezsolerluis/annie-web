@@ -81,25 +81,37 @@
   (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
     (if (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
         (swap! button-pressed? not))))
+(def nearest-xy (atom {}))
+
+(defn nearest-x [] (get @nearest-xy "x"))
+(defn nearest-y [] (get @nearest-xy "y"))
 
 (defn line-chart []
-  (let [nearest-x (atom 0)]
-    [:div.graph
-    [:> rvis/FlexibleXYPlot
-     {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (cambiar-estado-boton e))
-                                            :onMouseUp   (fn [e] (cambiar-estado-boton e))}
-     [:> rvis/VerticalGridLines {:style axis-style}]
-     [:> rvis/HorizontalGridLines {:style axis-style}]
-     [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
-     [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
-     (doall (for [perfil @perfiles]
-              ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
-              :onNearestX (fn [e] (if @button-pressed? (reset! nearest-x (get (js->clj e) "x"))))}]))
-    (if @button-pressed?
-      ^{:key (str "cursor")} [:> rvis/LineSeries {:data [{:x 247 :y 4000}{:x 247 :y 9500}] :strokeStyle "dashed" :color "black"
-                                                  :opacity .5}]
-      )
-      ]]))
+  [:div.graph
+  [:> rvis/FlexibleXYPlot
+   {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (cambiar-estado-boton e))
+                                          :onMouseUp   (fn [e] (cambiar-estado-boton e))}
+   [:> rvis/VerticalGridLines {:style axis-style}]
+   [:> rvis/HorizontalGridLines {:style axis-style}]
+   [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
+   [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
+   (doall (for [perfil @perfiles]
+            ^{:key (str (:nombre perfil))} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
+                                                                :strokeWidth 1
+            :onNearestX (fn [e]
+              ;(js/console.log "dentro: " (get (js->clj e) "x") @nearest-x)
+              (reset! nearest-xy (js->clj e)))}]))
+   ; ^{:key (str "cursor")} [:> rvis/LineSeries {:data [{:x @nearest-x :y 4000}{:x @nearest-x :y 9500}]
+   ;                                             :strokeStyle "dashed" :color "black"
+   ;                                             :opacity (if @button-pressed? .5 0)}]
+   [:> rvis/Crosshair {:values [{:x (nearest-x) :y 0}]
+                       :style {:line {:stroke "black" :opacity (if @button-pressed? .5 0)}}}
+      [:div]]
+   [:> rvis/Hint {:value {:x (nearest-x) :y (nearest-y)}}
+                  [:div {:style {:color "#333" :fontWeight "bold" :opacity (if @button-pressed? 1 0)}}
+                              "Hidrógeno"]]
+   ;(js/console.log @nearest-x)
+   ]])
 
 (defn app-scaffold []
   [:div.todo
