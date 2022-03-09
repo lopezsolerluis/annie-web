@@ -68,17 +68,49 @@
     (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
     true))
 
+
+
 (def nearest-xy (atom {}))
 (def nearest-xy-pressed (atom {}))
 (defn nearest-x [nearest] (get @nearest "x"))
 (defn nearest-y [nearest] (get @nearest "y"))
 
+(def pos-mouse-pixels (r/atom {}))
+
 (def button-pressed? (r/atom false))
 (defn mouse-pressed [e dir]
+  ;;(js/console.log (.-clientX e))
   (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
     (when (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
       (reset! nearest-xy-pressed (if (= dir :down) @nearest-xy {}))
+      (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})
       (swap! button-pressed? not))))
+
+(defn calcular-xy-etiqueta [encima]
+  [(if (and button-pressed? encima) (:x @pos-mouse-pixels) 0)
+   (if (and button-pressed? encima) (:y @pos-mouse-pixels) 0)]
+  )
+
+(defn crear-etiqueta [x y]
+  (let [encima (atom false)
+        ]
+    (js/console.log @button-pressed? (:x @pos-mouse-pixels))
+    ^{:key "etiq"}
+    [:> rvis/CustomSVGSeries {:data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
+                                :customComponent (fn [_ position-in-pixels]
+                                  (let [[inc-x inc-y] (calcular-xy-etiqueta @encima)]                                    
+                                   (r/as-element [:g {:className "etiqueta"}
+                                                    ;[:circle {:cx 0 :cy 0 :r 20 :fill "orange"}]
+                                                    [:text
+                                                      [:tspan {:x inc-x :y inc-y} "Hidrógeno " (.-x position-in-pixels)]
+                                                      [:tspan {:x inc-x :y "1em"} "Alfa"]]])))}]
+                              :onValueMouseOver (fn [d] (reset! encima true))
+                              :onValueMouseOut  (fn [d] (reset! encima false))
+                                  ;  (reset! inc-x (if (and button-pressed? ) (:x @pos-mouse-pixels) 0))
+                                  ;  (reset! inc-y (if (and button-pressed? ) (:y @pos-mouse-pixels) 0))
+                                  ; )
+                                }]
+      ))
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
@@ -106,16 +138,7 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-   [:> rvis/CustomSVGSeries {:data [{:x 300 :y 4000 ; :style {:cursor "wait"} no funciona... (?)
-                                     :customComponent (fn [_ position-in-pixels]
-                                        (r/as-element [:g {:className "etiqueta"}
-                                          [:text
-                                             [:tspan {:x 0 :y 0} "Hidrógeno" (.-x position-in-pixels)]
-                                             [:tspan {:x 0 :y "1em"} "Alfa"]]]))}]
-                            :onValueMouseOver (fn [d e]
-                                 (js/console.log  (keys  (pr-str e) )))
-                            }]
-
+   (crear-etiqueta 300 4000)
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
