@@ -106,12 +106,15 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-   [:> rvis/CustomSVGSeries {:data [{:x 300 :y 4000
+   [:> rvis/CustomSVGSeries {:data [{:x 300 :y 4000 ; :style {:cursor "wait"} no funciona... (?)
                                      :customComponent (fn [_ position-in-pixels]
-                                        (r/as-element [:g
+                                        (r/as-element [:g {:className "etiqueta"}
                                           [:text
                                              [:tspan {:x 0 :y 0} "Hidrógeno" (.-x position-in-pixels)]
-                                             [:tspan {:x 0 :y "1em"} "Alfa"]]]))}]}]
+                                             [:tspan {:x 0 :y "1em"} "Alfa"]]]))}]
+                            :onValueMouseOver (fn [d e]
+                                 (js/console.log  (keys  (pr-str e) )))
+                            }]
 
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
