@@ -106,17 +106,13 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-   [:> rvis/CustomSVGSeries {:data [{:x 300 :y 4000 :size 30
-                                     :customComponent (fn [row position-in-pixels]
-                                       [:g
-                                         [:text {:x 0 :y 0}
-                                            [:tspan {:x 0 :y 0} "Hidrógeno"]]])}]}]
-   ; [:> rvis/Hint {:value {:x (nearest-x nearest-xy) :y (nearest-y nearest-xy)}}
-   ;                [:div {:style {:color "#333" :fontWeight "bold"}}
-   ;                            "Hidrógeno"[:br]"alfa"]]
-  ; [:> rvis/Hint {:value {:x 200 :y 3000}}
-  ;                 [:div {:style {:color "#333" :fontWeight "bold"}}
-  ;                            "Hidrógeno"]]
+   [:> rvis/CustomSVGSeries {:data [{:x 300 :y 4000
+                                     :customComponent (fn [_ position-in-pixels]
+                                        (r/as-element [:g
+                                          [:text
+                                             [:tspan {:x 0 :y 0} "Hidrógeno" (.-x position-in-pixels)]
+                                             [:tspan {:x 0 :y "1em"} "Alfa"]]]))}]}]
+
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
