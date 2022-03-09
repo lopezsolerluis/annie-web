@@ -100,20 +100,28 @@
                                                                 :strokeWidth 1
                                                                 :onNearestX (fn [e]
                                                                     (reset! nearest-xy (js->clj e)))}]))
-   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed"
-                       :style {:line {:background "black"}}}
+   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed" :strokeDasharray  "10,10"
+                       :style {:line {:background "black" :strokeDasharray "10,10" }}}
       [:div]]
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-   [:> rvis/Hint {:value {:x (nearest-x nearest-xy) :y (nearest-y nearest-xy)}}
-                  [:div {:style {:color "#333" :fontWeight "bold"}}
-                              "Hidrógeno"[:br]"alfa"]]
-  [:> rvis/Hint {:value {:x (nearest-x nearest-xy-pressed) :y (nearest-y nearest-xy-pressed)}}
-                  [:div {:style {:color "#333" :fontWeight "bold"}}
-                             "Hidrógeno"]]
-  [:> rvis/LabelSeries {:data [{:x 200 :y 4000 :label "Helio" :xOffset 0 :yOffset 0 :style {:cursor "pointer"}}]
-                        :onValueMouseOver (fn [e] (js/console.log (pr-str e)))}]
+   [:> rvis/CustomSVGSeries {:data [{:x 300 :y 4000 :size 30
+                                     :customComponent (fn [row position-in-pixels]
+                                       [:g
+                                         [:text {:x 0 :y 0}
+                                            [:tspan {:x 0 :y 0} "Hidrógeno"]]])}]}]
+   ; [:> rvis/Hint {:value {:x (nearest-x nearest-xy) :y (nearest-y nearest-xy)}}
+   ;                [:div {:style {:color "#333" :fontWeight "bold"}}
+   ;                            "Hidrógeno"[:br]"alfa"]]
+  ; [:> rvis/Hint {:value {:x 200 :y 3000}}
+  ;                 [:div {:style {:color "#333" :fontWeight "bold"}}
+  ;                            "Hidrógeno"]]
+  ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
+  ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
+  ;                       :style {:cursor "pointer"}
+  ;                       ; :allowOffsetToBeReversed "false"
+  ;                       :onValueClick (fn [d] (js/console.log (pr-str d)))}]
    ]])
 
 (defn app-scaffold []
