@@ -106,11 +106,15 @@
                                   (let [[inc-x inc-y] @pos]
                                    ;;(js/console.log inc-x inc-y @button-pressed?)
                                    (r/as-element [:g {:className "etiqueta"}
-                                                    ;[:circle {:cx 0 :cy 0 :r 20 :fill "orange"}]
+                                                    [:circle {:cx inc-x :cy inc-y :r 20 :fill "orange"}]
+                                                    [:line {:x1 0 :y1 0 :x2 600 :y2 600 :strokeWidth 5 :fill "red"}]
+                                                    [:polyline {:points [0 0 600 600]}]
+                                                    [:path {:d "M0 0 L600 600 L300 300 Z"}]
+                                                    [:ellipse {:cx 0 :cy 10 :rx 61 :ry 30 :fill "yellow"}]
+                                                    [:rect {:x 0 :y 0 :width 100 :height 50}]
                                                     [:text
                                                       [:tspan {:x inc-x :y inc-y} "Hidrógeno "]
                                                       [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]
-
                               ;:id "mi-etiqueta"
                                 }]))
 
@@ -119,8 +123,6 @@
                  :ticks {:stroke "#999"}
                  :text {:stroke "none"
                  :fill "#333"}})
-
-(def etiquetas (atom []))
 
 (defn line-chart []
   [:div.graph
@@ -132,17 +134,18 @@
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
-   (doall (for [[id perfil] @perfiles]
-            ^{:key (str id)} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
-                                                                :strokeWidth 1
-                                                                :onNearestX (fn [e]
-                                                                    (reset! nearest-xy (js->clj e)))}]))
+
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed" :strokeDasharray  "10,10"
                        :style {:line {:background "black" :strokeDasharray "10,10" }}}
       [:div]]
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
+   (doall (for [[id perfil] @perfiles]
+               ^{:key (str id)} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
+                                                     :strokeWidth 1
+                                                     :onNearestX (fn [e]
+                                                            (reset! nearest-xy (js->clj e)))}]))
   ; (let [etiqueta (crear-etiqueta 300 4000)]
   ;    (swap! etiquetas conj etiqueta)
   ;    etiqueta)
