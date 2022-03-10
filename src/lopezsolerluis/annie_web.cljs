@@ -77,14 +77,15 @@
 (def pos-mouse-pixels (r/atom {}))
 
 (def button-pressed? (r/atom false))
+(def button-1-pressed? (atom false))
 (defn mouse-pressed [e dir]
-  ;;(js/console.log (.-clientX e))
   (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
     (when (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
       (reset! nearest-xy-pressed (if (= dir :down) @nearest-xy {}))
-      (swap! button-pressed? not))))
+      (swap! button-pressed? not))
+    (if (= boton 1) (swap! button-1-pressed? not))))
 (defn mouse-moved [e]
-  (if @button-pressed?
+  (if (or @button-pressed? @button-1-pressed?)
     (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
 
 (defn calcular-xy-etiqueta [position-in-pixels]
@@ -92,16 +93,15 @@
      [(- (:x @pos-mouse-pixels) x 110)
       (- (:y @pos-mouse-pixels) y 20 35)]))
 
-(let [mouse-over? (atom false)
+(let [mouse-over? (atom false)  ;; ¡Aguanten las 'closures'!
       pos (atom [0 0])]
   (defn crear-etiqueta [x y]
-    ;;(js/console.log "Crear" @button-pressed?  (:x @pos-mouse-pixels))
     ^{:key "etiq"}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
-                              :onValueMouseOut  (fn [d] (if-not @button-pressed? (reset! mouse-over? false)))
+                              :onValueMouseOut  (fn [d] (if-not @button-1-pressed? (reset! mouse-over? false)))
                               :data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
                                 :customComponent (fn [_ position-in-pixels]
-                                  (if (and @button-pressed? @mouse-over?)
+                                  (if (and @button-1-pressed? @mouse-over?)
                                     (reset! pos (calcular-xy-etiqueta position-in-pixels)))
                                   (let [[inc-x inc-y] @pos]
                                    ;;(js/console.log inc-x inc-y @button-pressed?)
@@ -112,8 +112,7 @@
                                                       [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]
 
                               ;:id "mi-etiqueta"
-                                }]
-      ))
+                                }]))
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
