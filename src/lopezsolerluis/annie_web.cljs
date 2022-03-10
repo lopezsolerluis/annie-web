@@ -97,7 +97,7 @@
     ;;(js/console.log "Crear" @button-pressed?  (:x @pos-mouse-pixels))
     ^{:key "etiq"}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
-                              :onValueMouseOut  (fn [d] (reset! mouse-over? false))
+                              :onValueMouseOut  (fn [d] (if-not @button-pressed? (reset! mouse-over? false)))
                               :data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
                                 :customComponent (fn [_ position-in-pixels]
                                   (let [[inc-x inc-y] (calcular-xy-etiqueta)]
