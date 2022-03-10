@@ -92,26 +92,24 @@
    (if (and button-pressed? ) (:y @pos-mouse-pixels) 0)]
   )
 
-(def etiqueta-señalada (atom {}))
-
-(defn crear-etiqueta [x y]
-    (js/console.log "Crear" @button-pressed?  (:x @pos-mouse-pixels))
+(let [mouse-over? (atom false)]
+  (defn crear-etiqueta [x y]
+    ;;(js/console.log "Crear" @button-pressed?  (:x @pos-mouse-pixels))
     ^{:key "etiq"}
-    [:> rvis/CustomSVGSeries {:data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
+    [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
+                              :onValueMouseOut  (fn [d] (reset! mouse-over? false))
+                              :data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
                                 :customComponent (fn [_ position-in-pixels]
                                   (let [[inc-x inc-y] (calcular-xy-etiqueta)]
                                    (r/as-element [:g {:className "etiqueta"}
                                                     ;[:circle {:cx 0 :cy 0 :r 20 :fill "orange"}]
                                                     [:text
-                                                      [:tspan {:x (- inc-x (.-x position-in-pixels) 100) :y (- inc-y (.-y position-in-pixels) 20)} "Hidrógeno " (.-x position-in-pixels)]
-                                                      [:tspan {:x inc-x :y "1em"} "Alfa"]]])))}]
-                              :onValueMouseOver (fn [d] (reset! etiqueta-señalada d))
-                              :onValueMouseOut  (fn [d] (reset! etiqueta-señalada {}))
-                                  ;  (reset! inc-x (if (and button-pressed? ) (:x @pos-mouse-pixels) 0))
-                                  ;  (reset! inc-y (if (and button-pressed? ) (:y @pos-mouse-pixels) 0))
-                                  ; )
+                                                      [:tspan {:x (- inc-x (.-x position-in-pixels) 110) :y (- inc-y (.-y position-in-pixels) 20 35)} "Hidrógeno "]
+                                                      [:tspan {:x inc-x :y "1em"} "Alfa" (str @mouse-over?)]]])))}]
+
+                              ;:id "mi-etiqueta"
                                 }]
-      )
+      ))
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
@@ -119,7 +117,7 @@
                  :text {:stroke "none"
                  :fill "#333"}})
 
-(def etiquetas (atom {}))
+(def etiquetas (atom []))
 
 (defn line-chart []
   [:div.graph
@@ -142,9 +140,10 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-  (let [etiqueta (crear-etiqueta 300 4000)]
-     (swap! etiquetas assoc "mi-etiqueta" etiqueta)
-     etiqueta)
+  ; (let [etiqueta (crear-etiqueta 300 4000)]
+  ;    (swap! etiquetas conj etiqueta)
+  ;    etiqueta)
+  (crear-etiqueta 300 4000)
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
