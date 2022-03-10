@@ -87,12 +87,13 @@
   (if @button-pressed?
     (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
 
-(defn calcular-xy-etiqueta []
-  [(if (and button-pressed? ) (:x @pos-mouse-pixels) 0)
-   (if (and button-pressed? ) (:y @pos-mouse-pixels) 0)]
-  )
+(defn calcular-xy-etiqueta [position-in-pixels]
+  (let [[x y] [(.-x position-in-pixels) (.-y position-in-pixels)]]
+     [(- (:x @pos-mouse-pixels) x 110)
+      (- (:y @pos-mouse-pixels) y 20 35)]))
 
-(let [mouse-over? (atom false)]
+(let [mouse-over? (atom false)
+      pos (atom [0 0])]
   (defn crear-etiqueta [x y]
     ;;(js/console.log "Crear" @button-pressed?  (:x @pos-mouse-pixels))
     ^{:key "etiq"}
@@ -100,12 +101,15 @@
                               :onValueMouseOut  (fn [d] (if-not @button-pressed? (reset! mouse-over? false)))
                               :data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
                                 :customComponent (fn [_ position-in-pixels]
-                                  (let [[inc-x inc-y] (calcular-xy-etiqueta)]
+                                  (if (and @button-pressed? @mouse-over?)
+                                    (reset! pos (calcular-xy-etiqueta position-in-pixels)))
+                                  (let [[inc-x inc-y] @pos]
+                                   ;;(js/console.log inc-x inc-y @button-pressed?)
                                    (r/as-element [:g {:className "etiqueta"}
                                                     ;[:circle {:cx 0 :cy 0 :r 20 :fill "orange"}]
                                                     [:text
-                                                      [:tspan {:x (- inc-x (.-x position-in-pixels) 110) :y (- inc-y (.-y position-in-pixels) 20 35)} "Hidrógeno "]
-                                                      [:tspan {:x inc-x :y "1em"} "Alfa" (str @mouse-over?)]]])))}]
+                                                      [:tspan {:x inc-x :y inc-y} "Hidrógeno "]
+                                                      [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]
 
                               ;:id "mi-etiqueta"
                                 }]
