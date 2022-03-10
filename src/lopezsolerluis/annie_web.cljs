@@ -69,7 +69,6 @@
     true))
 
 
-
 (def nearest-xy (atom {}))
 (def nearest-xy-pressed (atom {}))
 (defn nearest-x [nearest] (get @nearest "x"))
@@ -83,34 +82,36 @@
   (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
     (when (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
       (reset! nearest-xy-pressed (if (= dir :down) @nearest-xy {}))
-      (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})
       (swap! button-pressed? not))))
+(defn mouse-moved [e]
+  (if @button-pressed?
+    (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
 
-(defn calcular-xy-etiqueta [encima]
-  [(if (and button-pressed? encima) (:x @pos-mouse-pixels) 0)
-   (if (and button-pressed? encima) (:y @pos-mouse-pixels) 0)]
+(defn calcular-xy-etiqueta []
+  [(if (and button-pressed? ) (:x @pos-mouse-pixels) 0)
+   (if (and button-pressed? ) (:y @pos-mouse-pixels) 0)]
   )
 
+(def etiqueta-señalada (atom {}))
+
 (defn crear-etiqueta [x y]
-  (let [encima (atom false)
-        ]
-    (js/console.log @button-pressed? (:x @pos-mouse-pixels))
+    (js/console.log "Crear" @button-pressed?  (:x @pos-mouse-pixels))
     ^{:key "etiq"}
     [:> rvis/CustomSVGSeries {:data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
                                 :customComponent (fn [_ position-in-pixels]
-                                  (let [[inc-x inc-y] (calcular-xy-etiqueta @encima)]                                    
+                                  (let [[inc-x inc-y] (calcular-xy-etiqueta)]
                                    (r/as-element [:g {:className "etiqueta"}
                                                     ;[:circle {:cx 0 :cy 0 :r 20 :fill "orange"}]
                                                     [:text
-                                                      [:tspan {:x inc-x :y inc-y} "Hidrógeno " (.-x position-in-pixels)]
+                                                      [:tspan {:x (- inc-x (.-x position-in-pixels) 100) :y (- inc-y (.-y position-in-pixels) 20)} "Hidrógeno " (.-x position-in-pixels)]
                                                       [:tspan {:x inc-x :y "1em"} "Alfa"]]])))}]
-                              :onValueMouseOver (fn [d] (reset! encima true))
-                              :onValueMouseOut  (fn [d] (reset! encima false))
+                              :onValueMouseOver (fn [d] (reset! etiqueta-señalada d))
+                              :onValueMouseOut  (fn [d] (reset! etiqueta-señalada {}))
                                   ;  (reset! inc-x (if (and button-pressed? ) (:x @pos-mouse-pixels) 0))
                                   ;  (reset! inc-y (if (and button-pressed? ) (:y @pos-mouse-pixels) 0))
                                   ; )
                                 }]
-      ))
+      )
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
@@ -118,11 +119,14 @@
                  :text {:stroke "none"
                  :fill "#333"}})
 
+(def etiquetas (atom {}))
+
 (defn line-chart []
   [:div.graph
   [:> rvis/FlexibleXYPlot
    {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
-                                          :onMouseUp   (fn [e] (mouse-pressed e :up))}
+                                          :onMouseUp   (fn [e] (mouse-pressed e :up))
+                                          :onMouseMove (fn [e] (mouse-moved e))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
@@ -138,7 +142,9 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
       [:div]]
-   (crear-etiqueta 300 4000)
+  (let [etiqueta (crear-etiqueta 300 4000)]
+     (swap! etiquetas assoc "mi-etiqueta" etiqueta)
+     etiqueta)
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
