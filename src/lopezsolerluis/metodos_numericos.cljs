@@ -21,6 +21,7 @@
                      (recur funcion a c tolerancia)))))))
 
 (defn calcular-baricentro [perfil x0 x1]
+  "Devuelve el baricentro de una porción de perfil (entre (x0 y x1) como punto {:x :y}"
   (let [x-min (min x0 x1)
         x-max (max x0 x1)
         potencia 2 ;; ¿O -2?

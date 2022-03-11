@@ -14,6 +14,7 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce perfiles (atom {}))  ; ¿defonce o def..?
+(def perfil-activo (atom "")) ;idem
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
 
@@ -41,7 +42,7 @@
 (defn crear-perfil [fits-file]
   (let [data (:data fits-file)]
           ;(apply map + data))) ; Para sumar las columnas (tarda mucho más)
-         (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'
+         (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'...¡casi hacker!
 
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
@@ -52,7 +53,8 @@
       (let [perfil (crear-perfil fits-file)
             data-para-vis (crear-data-para-vis perfil)
             nombre (:nombre-archivo fits-file)]
-         (swap! perfiles assoc nombre {:nombre nombre :data-vis data-para-vis})))
+         (reset! perfil-activo nombre)
+         (swap! perfiles assoc nombre {:nombre nombre :data-vis data-para-vis :etiquetas {}})))
   (apagar-espera))
 
 (defn input-fits-file []
@@ -64,9 +66,8 @@
                             (fits/read-fits-file file procesar-archivo)))
                           (set! (-> this .-target .-value) ""))}])
 (defonce is-initialized?
-  (do
-    (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
-    true))
+  (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
+      true))
 
 (def nearest-xy (atom {}))
 (def nearest-xy-0 (atom {}))
@@ -112,11 +113,11 @@
       ]))
 
 (defn colocar-etiqueta []
-  (let [baricentro (mn/calcular-baricentro (:data-vis (second (first @perfiles)))
+  (let [baricentro (mn/calcular-baricentro (:data-vis @perfil-activo)
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))]
+;;          (assoc-in @perfiles [@perfil-activo :etiquetas 1] "pepe")                                 
      (js/console.log (pr-str baricentro))
-
-        ))
+))
 
 (defn mouse-pressed [e dir]
   (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
@@ -150,7 +151,7 @@
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
 
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed" :strokeDasharray  "10,10"
-                       :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0) :strokeDasharray "10,10" }}}
+                       :style {:line {:background "black" :opacity 1 :strokeDasharray "10,10" }}}
       [:div]]
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
