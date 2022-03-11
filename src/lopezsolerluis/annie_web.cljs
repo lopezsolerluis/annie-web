@@ -95,8 +95,9 @@
 
 (let [mouse-over? (atom false)  ;; ¡Aguanten las 'closures'!
       pos (atom [0 0])]
-  (defn crear-etiqueta [x y]
-    ^{:key "etiq"}
+  (defn crear-etiqueta [x y key position]  ;; position is the 'delta' position in pixels
+    (if-not (= position [0 0]) (reset! pos position))
+    ^{:key key}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
                               :onValueMouseOut  (fn [d] (if-not @button-1-pressed? (reset! mouse-over? false)))
                               :data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
@@ -106,10 +107,10 @@
                                   (let [[inc-x inc-y] @pos]
                                    ;;(js/console.log inc-x inc-y @button-pressed?)
                                    (r/as-element [:g {:className "etiqueta"}
-                                                    [:polyline {:points [0 0 0 inc-y inc-x inc-y] :stroke "red" :fill "none"}]
+                                                    [:polyline {:points [0 0 0 inc-y inc-x inc-y] :stroke "black" :fill "none"}]
                                                     [:text
-                                                      [:tspan {:x inc-x :y inc-y} "Hidrógeno "]
-                                                      [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]
+                                                      [:tspan {:x inc-x :y (+ inc-y 18)} "Hidrógeno "]
+                                                      [:tspan {:x inc-x :y (+ inc-y 36)} "Alfa"]]])))}]
                               ;:id "mi-etiqueta"
                                 }]))
 
@@ -144,7 +145,7 @@
   ; (let [etiqueta (crear-etiqueta 300 4000)]
   ;    (swap! etiquetas conj etiqueta)
   ;    etiqueta)
-  (crear-etiqueta 300 4000)
+  (crear-etiqueta 300 4000 "eti" [0 0])
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
