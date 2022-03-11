@@ -19,3 +19,16 @@
                  (if (= (sgn f-a) (sgn (funcion c)))
                      (recur funcion c b tolerancia)
                      (recur funcion a c tolerancia)))))))
+
+(defn calcular-baricentro [perfil x0 x1]
+  (let [x-min (min x0 x1)
+        x-max (max x0 x1)
+        potencia -2
+        perfil-acotado (remove (fn [punto]
+                                  (let [x (:x punto)]
+                                    (or (< x x-min) (> x x-max)))) perfil)
+        [suma-ponderada suma-intensidades] (reduce (fn [[suma-p suma-i] {:keys [x y]}]
+                                                          [(+ suma-p (* x y))
+                                                           (+ suma-i y)])
+                                                    [0 0] perfil-acotado)]
+    (/ suma-ponderada suma-intensidades)))

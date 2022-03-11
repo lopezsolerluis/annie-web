@@ -81,7 +81,9 @@
 (defn mouse-pressed [e dir]
   (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
     (case boton          ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
-      0 (do (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
+      0 (do (if (= dir :up) (mn/calcular-baricentro (:data-vis (second (first @perfiles)))
+                                                    (nearest-x nearest-xy-0) (nearest-x nearest-xy)))
+            (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
             (swap! button-izq-pressed? not))
       1 (swap! button-cen-pressed? not)
       2 )))
