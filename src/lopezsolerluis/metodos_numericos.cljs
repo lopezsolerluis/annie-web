@@ -28,7 +28,9 @@
                                   (let [x (:x punto)]
                                     (or (< x x-min) (> x x-max)))) perfil)
         [suma-ponderada suma-intensidades] (reduce (fn [[suma-p suma-i] {:keys [x y]}]
-                                                          [(+ suma-p (* x y))
-                                                           (+ suma-i y)])
+                                                      (let [valor (js/Math.pow y potencia)]
+                                                         [(+ suma-p (* x valor))
+                                                          (+ suma-i valor)]))
                                                     [0 0] perfil-acotado)]
+    ; (js/console.log (/ suma-ponderada suma-intensidades) )                                                    
     (/ suma-ponderada suma-intensidades)))
