@@ -106,12 +106,7 @@
                                   (let [[inc-x inc-y] @pos]
                                    ;;(js/console.log inc-x inc-y @button-pressed?)
                                    (r/as-element [:g {:className "etiqueta"}
-                                                    [:circle {:cx inc-x :cy inc-y :r 20 :fill "orange"}]
-                                                    [:line {:x1 0 :y1 0 :x2 600 :y2 600 :strokeWidth 5 :fill "red"}]
-                                                    [:polyline {:points [0 0 600 600]}]
-                                                    [:path {:d "M0 0 L600 600 L300 300 Z"}]
-                                                    [:ellipse {:cx 0 :cy 10 :rx 61 :ry 30 :fill "yellow"}]
-                                                    [:rect {:x 0 :y 0 :width 100 :height 50}]
+                                                    [:polyline {:points [0 0 0 inc-y inc-x inc-y] :stroke "red" :fill "none"}]
                                                     [:text
                                                       [:tspan {:x inc-x :y inc-y} "Hidrógeno "]
                                                       [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]
