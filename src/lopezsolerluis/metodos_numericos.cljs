@@ -23,7 +23,7 @@
 (defn calcular-baricentro [perfil x0 x1]
   (let [x-min (min x0 x1)
         x-max (max x0 x1)
-        potencia -2
+        potencia 2 ;; ¿O -2?
         perfil-acotado (remove (fn [punto]
                                   (let [x (:x punto)]
                                     (or (< x x-min) (> x x-max)))) perfil)
@@ -31,6 +31,18 @@
                                                       (let [valor (js/Math.pow y potencia)]
                                                          [(+ suma-p (* x valor))
                                                           (+ suma-i valor)]))
-                                                    [0 0] perfil-acotado)]
-    ; (js/console.log (/ suma-ponderada suma-intensidades) )                                                    
-    (/ suma-ponderada suma-intensidades)))
+                                                    [0 0] perfil-acotado)
+        baricentro-x (/ suma-ponderada suma-intensidades)
+        primer-punto (first perfil-acotado)
+        baricentro-xy (dissoc
+                        (reduce (fn [{:keys [x y min-delta-x] :as acc} punto]
+                                  (let [diff (js/Math.abs (- baricentro-x (:x punto)))]
+                                    (if (< diff min-delta-x)
+                                        (assoc punto :min-delta-x diff)
+                                        acc)))
+                                (assoc primer-punto :min-delta-x (js/Math.abs (- baricentro-x (:x primer-punto))))
+                                (rest perfil-acotado))
+                          :min-delta-x)]
+    ; (js/console.log (pr-str perfil-acotado))
+     ;;(js/console.log (/ suma-ponderada suma-intensidades) )
+    baricentro-xy))

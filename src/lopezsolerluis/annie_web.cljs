@@ -68,7 +68,6 @@
     (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
     true))
 
-
 (def nearest-xy (atom {}))
 (def nearest-xy-0 (atom {}))
 (defn nearest-x [nearest] (get @nearest "x"))
@@ -78,18 +77,6 @@
 
 (def button-izq-pressed? (r/atom false))
 (def button-cen-pressed? (atom false))
-(defn mouse-pressed [e dir]
-  (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
-    (case boton          ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
-      0 (do (if (= dir :up) (mn/calcular-baricentro (:data-vis (second (first @perfiles)))
-                                                    (nearest-x nearest-xy-0) (nearest-x nearest-xy)))
-            (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
-            (swap! button-izq-pressed? not))
-      1 (swap! button-cen-pressed? not)
-      2 )))
-(defn mouse-moved [e]
-  (if (or @button-izq-pressed? @button-cen-pressed?)
-    (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
 
 (defn calcular-xy-etiqueta [position-in-pixels]
   (let [[x y] [(.-x position-in-pixels) (.-y position-in-pixels)]]
@@ -123,6 +110,27 @@
                                                      [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
                                                                  :stroke "black" :fill "none"}]])))}]}]
       ]))
+
+(defn colocar-etiqueta []
+  (let [baricentro (mn/calcular-baricentro (:data-vis (second (first @perfiles)))
+                                           (nearest-x nearest-xy-0) (nearest-x nearest-xy))]
+     (js/console.log (pr-str baricentro))
+
+        ))
+
+(defn mouse-pressed [e dir]
+  (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
+    (case boton               ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
+      0 (do (if (= dir :up) (colocar-etiqueta))
+            (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
+            (swap! button-izq-pressed? not))
+      1 (swap! button-cen-pressed? not)
+      2 )))
+(defn mouse-moved [e]
+  (if (or @button-izq-pressed? @button-cen-pressed?)
+    (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
+
+
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
