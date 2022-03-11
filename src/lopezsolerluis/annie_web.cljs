@@ -70,22 +70,23 @@
 
 
 (def nearest-xy (atom {}))
-(def nearest-xy-pressed (atom {}))
+(def nearest-xy-0 (atom {}))
 (defn nearest-x [nearest] (get @nearest "x"))
 (defn nearest-y [nearest] (get @nearest "y"))
 
 (def pos-mouse-pixels (r/atom {}))
 
-(def button-pressed? (r/atom false))
-(def button-1-pressed? (atom false))
+(def button-izq-pressed? (r/atom false))
+(def button-cen-pressed? (atom false))
 (defn mouse-pressed [e dir]
-  (let [boton (.-button e)] ; 0: izq, 1: centro, 2: derecho
-    (when (= boton 0)         ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
-      (reset! nearest-xy-pressed (if (= dir :down) @nearest-xy {}))
-      (swap! button-pressed? not))
-    (if (= boton 1) (swap! button-1-pressed? not))))
+  (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
+    (case boton          ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
+      0 (do (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
+            (swap! button-izq-pressed? not))
+      1 (swap! button-cen-pressed? not)
+      2 )))
 (defn mouse-moved [e]
-  (if (or @button-pressed? @button-1-pressed?)
+  (if (or @button-izq-pressed? @button-cen-pressed?)
     (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
 
 (defn calcular-xy-etiqueta [position-in-pixels]
@@ -94,25 +95,34 @@
       (- (:y @pos-mouse-pixels) y 20 35)]))
 
 (let [mouse-over? (atom false)  ;; ¡Aguanten las 'closures'!
-      pos (atom [0 0])]
+      pos (atom [0 18])]
   (defn crear-etiqueta [x y key position]  ;; position is the 'delta' position in pixels
-    (if-not (= position [0 0]) (reset! pos position))
-    ^{:key key}
-    [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
-                              :onValueMouseOut  (fn [d] (if-not @button-1-pressed? (reset! mouse-over? false)))
-                              :data [{:x x :y y ; :style {:cursor "wait"} no funciona... (?)
-                                :customComponent (fn [_ position-in-pixels]
-                                  (if (and @button-1-pressed? @mouse-over?)
-                                    (reset! pos (calcular-xy-etiqueta position-in-pixels)))
-                                  (let [[inc-x inc-y] @pos]
-                                   ;;(js/console.log inc-x inc-y @button-pressed?)
-                                   (r/as-element [:g {:className "etiqueta"}
-                                                    [:polyline {:points [0 0 0 inc-y inc-x inc-y] :stroke "black" :fill "none"}]
-                                                    [:text
-                                                      [:tspan {:x inc-x :y (+ inc-y 18)} "Hidrógeno "]
-                                                      [:tspan {:x inc-x :y (+ inc-y 36)} "Alfa"]]])))}]
-                              ;:id "mi-etiqueta"
-                                }]))
+    (if-not (= position [0 18]) (reset! pos position))
+    (js/console.log @mouse-over? @button-cen-pressed?)
+    ;(if-not @button-cen-pressed? (reset! mouse-over? false))
+    ; [:div
+      ^{:key key}
+      [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
+                                :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (reset! mouse-over? false)))
+                                :data [{:x x :y y
+                                  :customComponent (fn [_ position-in-pixels]
+                                    (if (and @button-cen-pressed? @mouse-over?)
+                                      (reset! pos (calcular-xy-etiqueta position-in-pixels)))
+                                    (let [[inc-x inc-y] @pos]
+                                     (r/as-element [:g {:className "etiqueta"}
+                                     [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                 :stroke "black" :fill "none"}]
+                                                      [:text
+                                                        [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno "]
+                                                        [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]}]
+      ; ^{:key (str key "line")}
+      ; [:> rvis/CustomSVGSeries {:data [{:x x :y y
+      ;                             :customComponent (fn []
+      ;                               (let [[inc-x inc-y] @pos]
+      ;                                (r/as-element [:g {:className "etiqueta"}
+      ;                                                 [:polyline {:points [0 0 0 inc-y inc-x inc-y]
+      ;                                                             :stroke "black" :fill "none"}]])))}]}]
+      ))
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
@@ -132,10 +142,10 @@
    [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
 
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed" :strokeDasharray  "10,10"
-                       :style {:line {:background "black" :strokeDasharray "10,10" }}}
+                       :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0) :strokeDasharray "10,10" }}}
       [:div]]
-   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-pressed) :y 0}]
-                       :style {:line {:background "black" :opacity (if @button-pressed? 1 0)}}}
+   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
+                       :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
       [:div]]
    (doall (for [[id perfil] @perfiles]
                ^{:key (str id)} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
@@ -145,7 +155,7 @@
   ; (let [etiqueta (crear-etiqueta 300 4000)]
   ;    (swap! etiquetas conj etiqueta)
   ;    etiqueta)
-  (crear-etiqueta 300 4000 "eti" [0 0])
+  (crear-etiqueta 176 5550 "eti" [0 18])
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
