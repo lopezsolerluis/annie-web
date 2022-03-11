@@ -92,7 +92,7 @@
 (defn calcular-xy-etiqueta [position-in-pixels]
   (let [[x y] [(.-x position-in-pixels) (.-y position-in-pixels)]]
      [(- (:x @pos-mouse-pixels) x 110)
-      (- (:y @pos-mouse-pixels) y 20 35)]))
+      (- (:y @pos-mouse-pixels) y 55)]))
 
 (let [mouse-over? (atom false)  ;; ¡Aguanten las 'closures'!
       pos (atom [0 18])]
