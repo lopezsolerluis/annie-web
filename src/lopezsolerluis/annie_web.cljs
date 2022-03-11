@@ -14,7 +14,7 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce perfiles (atom {}))  ; ¿defonce o def..?
-(def perfil-activo (atom "")) ;idem
+(defonce perfil-activo (atom "")) ;idem
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
 
@@ -90,7 +90,7 @@
     (if-not (= position [0 18]) (reset! pos position))
     ;(js/console.log @mouse-over? @button-cen-pressed?)
     ;(if-not @button-cen-pressed? (reset! mouse-over? false))
-    [:<>
+  ;  [:<>
       ^{:key key}
       [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! mouse-over? true))
                                 :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (reset! mouse-over? false)))
@@ -100,23 +100,41 @@
                                       (reset! pos (calcular-xy-etiqueta position-in-pixels)))
                                     (let [[inc-x inc-y] @pos]
                                      (r/as-element [:g {:className "etiqueta"}
+                                                      [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                                  :stroke "black" :fill "none"}]
                                                       [:text
                                                         [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno "]
                                                         [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]}]
-      ^{:key (str key "line")}
-       [:> rvis/CustomSVGSeries {:data [{:x x :y y
-                                  :customComponent (fn []
-                                    (let [[inc-x inc-y] @pos]
-                                     (r/as-element [:g {:className "etiqueta"}
-                                                     [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                                 :stroke "black" :fill "none"}]])))}]}]
-      ]))
+      ; ^{:key (str key "line")}
+      ;  [:> rvis/CustomSVGSeries {:data [{:x x :y y
+      ;                             :customComponent (fn []
+      ;                               (let [[inc-x inc-y] @pos]
+      ;                                (r/as-element [:g {:className "etiqueta"}
+      ;                                                [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+      ;                                                            :stroke "black" :fill "none"}]])))}]}]
+      ))
+
+(defn test-component [x y]
+  ^{:key key}
+      [:> rvis/CustomSVGSeries {:data [{:x x :y y :customComponent "square" :size 30}]}])
+
+(defn elegir-nombre [nombres-usados sufijo]
+   (let [nombres-set (set nombres-usados)]   
+      (loop [n 1]
+         (let [nombre (keyword (str sufijo n))]
+           (if-not (nombres-set nombre)
+                   (keyword nombre)
+                   (recur (inc n)))))))
 
 (defn colocar-etiqueta []
-  (let [baricentro (mn/calcular-baricentro (:data-vis @perfil-activo)
-                                           (nearest-x nearest-xy-0) (nearest-x nearest-xy))]
-;;          (assoc-in @perfiles [@perfil-activo :etiquetas 1] "pepe")                                 
-     (js/console.log (pr-str baricentro))
+  (let [baricentro (mn/calcular-baricentro (:data-vis (get @perfiles @perfil-activo))
+                                           (nearest-x nearest-xy-0) (nearest-x nearest-xy))
+        nombre (elegir-nombre (keys (:etiquetas (get @perfiles @perfil-activo))) "etiqueta-")
+        etiqueta (assoc baricentro :key nombre :pos [0 18])]
+     (swap! perfiles assoc-in [@perfil-activo :etiquetas nombre] etiqueta)
+;;          (assoc-in @perfiles [@perfil-activo :etiquetas 1] "pepe")
+     ;(js/console.log (pr-str (get @perfiles @perfil-activo)))
+     ;(js/console.log (pr-str baricentro))
 ))
 
 (defn mouse-pressed [e dir]
@@ -130,8 +148,6 @@
 (defn mouse-moved [e]
   (if (or @button-izq-pressed? @button-cen-pressed?)
     (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
-
-
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
 (def axis-style {:line {:stroke "#333"}
@@ -164,7 +180,8 @@
   ; (let [etiqueta (crear-etiqueta 300 4000)]
   ;    (swap! etiquetas conj etiqueta)
   ;    etiqueta)
-  (crear-etiqueta 176 5550 "eti" [0 18])
+  (crear-etiqueta 300 4000 "key" [0 18])
+  ;[test-component 176 555]
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
