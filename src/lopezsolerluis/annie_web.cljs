@@ -118,8 +118,10 @@
       ))
 
 (defn test-component [x y]
-  ^{:key key}
-      [:> rvis/CustomSVGSeries {:data [{:x x :y y :customComponent "square" :size 30}]}])
+  (let [n 30]
+    (fn []
+      [:> rvis/CustomSVGSeries {:data [{:x x :y y :customComponent "square" :size n}]}]))
+      )
 
 (defn elegir-nombre [nombres-usados sufijo]
    (let [nombres-set (set nombres-usados)]
@@ -184,7 +186,7 @@
   ;    (swap! etiquetas conj etiqueta)
   ;    etiqueta)
   ;;(crear-etiqueta 300 4000 "key" [0 18])
-  ;[test-component 176 555]
+  (test-component 176 555)
   ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
   ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
   ;                       :style {:cursor "pointer"}
