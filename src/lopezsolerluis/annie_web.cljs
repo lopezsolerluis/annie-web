@@ -67,6 +67,9 @@
                           (set! (-> this .-target .-value) ""))}])
 (defonce is-initialized?
   (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
+      (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click"
+                  (fn [] (download-object-as-json (clj->js (get @perfiles @perfil-activo))
+                                                  (str @perfil-activo ".annie"))))
       true))
 
 (def nearest-xy (atom {}))
@@ -143,6 +146,7 @@
             (swap! button-izq-pressed? not))
       1 (swap! button-cen-pressed? not)
       2 )))
+
 (defn mouse-moved [e]
   (if (or @button-izq-pressed? @button-cen-pressed?)
     (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
@@ -176,10 +180,7 @@
                                                      :onNearestX (fn [e]
                                                             (reset! nearest-xy (js->clj e)))}]))
    (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
-      ;          ^{:key id}
                 (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
-
-;(crear-etiqueta 500 500 "luis" [0 18] [@perfil-])
 
    ]])
 
