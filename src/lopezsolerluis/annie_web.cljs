@@ -84,35 +84,39 @@
      [(- (:x @pos-mouse-pixels) x 110)
       (- (:y @pos-mouse-pixels) y 55)]))
 
- ; (let [mouse-over? (atom false)  ;; ¡Aguanten las 'closures'!
- ;       pos (atom [0 18])]
-  (defn crear-etiqueta [x y id position key-in]  ;; position is the 'delta' position in pixels
-    ;(js/console.log  (pr-str (conj key-in :mouse-over?)))
-    (let [mouse-over (conj key-in :mouse-over?)
-          pos (conj key-in :pos)]
-  ;  [:<>
-     ^{:key id}
-      [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in mouse-over true))
-                                :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in mouse-over false)))
-                                :data [{:x x :y y
-                                  :customComponent (fn [_ position-in-pixels]
-                                    (if (and @button-cen-pressed? (get-in @perfiles mouse-over))
-                                      (swap! perfiles assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
-                                    (let [[inc-x inc-y] (get-in @perfiles pos)]
-                                     (r/as-element [:g {:className "etiqueta"}
-                                                       [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                                   :stroke "black" :fill "none"}]
+(defn crear-etiqueta [id x y texto key-in]  ;; position is the 'delta' position in pixels
+  ;(js/console.log  (pr-str key-in) (pr-str texto))
+  (let [mouse-over (conj key-in :mouse-over?)
+        pos (conj key-in :pos)]
+;  [:<>
+   ^{:key id}
+    [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in mouse-over true))
+                              :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in mouse-over false)))
+                              :data [{:x x :y y
+                                :customComponent (fn [_ position-in-pixels]
+                                  (if (and @button-cen-pressed? (get-in @perfiles mouse-over))
+                                    (swap! perfiles assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
+                                  (let [[inc-x inc-y] (get-in @perfiles pos)]
+                                    (r/as-element [:g {:className "etiqueta"}
+                                                      [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                                  :stroke "black" :fill "none"}]
                                                       [:text
-                                                        [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno "]
-                                                        [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]]])))}]}]
-      ; ^{:key (str key "line")}
-      ;  [:> rvis/CustomSVGSeries {:data [{:x x :y y
-      ;                             :customComponent (fn []
-      ;                               (let [[inc-x inc-y] @pos]
-      ;                                (r/as-element [:g {:className "etiqueta"}
-      ;                                                [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-      ;                                                            :stroke "black" :fill "none"}]])))}]}]
-      ))
+                                                        (map-indexed (fn [i linea]
+                                                                        ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
+                                                                      texto)
+                                                        ; (for [i (range (count texto))]
+                                                        ;   [:tspan {:x inc-x :y (+ inc-y (* i 18))} (get texto i)])
+                                                        ; [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno"]
+                                                        ; [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]
+                                                        ]])))}]}]
+    ; ^{:key (str key "line")}
+    ;  [:> rvis/CustomSVGSeries {:data [{:x x :y y
+    ;                             :customComponent (fn []
+    ;                               (let [[inc-x inc-y] @pos]
+    ;                                (r/as-element [:g {:className "etiqueta"}
+    ;                                                [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+    ;                                                            :stroke "black" :fill "none"}]])))}]}]
+    ))
 
 (defn elegir-nombre [nombres-usados sufijo]
    (let [nombres-set (set nombres-usados)]
@@ -123,10 +127,12 @@
                    (recur (inc n)))))))
 
 (defn colocar-etiqueta []
-  (let [baricentro (mn/calcular-baricentro (:data-vis (get @perfiles @perfil-activo))
+  (let [perfil (get @perfiles @perfil-activo)
+        baricentro (mn/calcular-baricentro (:data-vis perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
-        nombre (elegir-nombre (keys (:etiquetas (get @perfiles @perfil-activo))) "etiqueta-")
-        etiqueta (assoc baricentro :key nombre :pos [0 18] :mouse-over? false)]
+        nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
+        texto ["Hidrógeno" "Beta"]
+        etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)]
      (swap! perfiles assoc-in [@perfil-activo :etiquetas nombre] etiqueta)))
 
 (defn mouse-pressed [e dir]
@@ -169,10 +175,11 @@
                                                      :strokeWidth 1
                                                      :onNearestX (fn [e]
                                                             (reset! nearest-xy (js->clj e)))}]))
-   (doall (for [[id {:keys [x y pos]}] (:etiquetas (get @perfiles @perfil-activo))]
-                ^{:key id}(crear-etiqueta x y id pos [@perfil-activo :etiquetas id])))
+   (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
+      ;          ^{:key id}
+                (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
 
-;(crear-etiqueta 500 500 "luis" [0 18] [@perfil-])  
+;(crear-etiqueta 500 500 "luis" [0 18] [@perfil-])
 
    ]])
 
