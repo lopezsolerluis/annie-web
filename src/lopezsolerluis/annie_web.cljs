@@ -88,17 +88,17 @@
  ;       pos (atom [0 18])]
   (defn crear-etiqueta [x y id position key-in]  ;; position is the 'delta' position in pixels
     ;(js/console.log  (pr-str (conj key-in :mouse-over?)))
-    ;(js/console.log @mouse-over? @button-cen-pressed?)
-    ;(if-not @button-cen-pressed? (reset! mouse-over? false))
+    (let [mouse-over (conj key-in :mouse-over?)
+          pos (conj key-in :pos)]
   ;  [:<>
      ^{:key id}
-      [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in (conj key-in :mouse-over?) true))
-                                :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in (conj key-in :mouse-over?) false)))
+      [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in mouse-over true))
+                                :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in mouse-over false)))
                                 :data [{:x x :y y
                                   :customComponent (fn [_ position-in-pixels]
-                                    (if (and @button-cen-pressed? (get-in @perfiles (conj key-in :mouse-over?)))
-                                      (swap! perfiles assoc-in (conj key-in :pos) (calcular-xy-etiqueta position-in-pixels)))
-                                    (let [[inc-x inc-y] (get-in @perfiles (conj key-in :pos))]
+                                    (if (and @button-cen-pressed? (get-in @perfiles mouse-over))
+                                      (swap! perfiles assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
+                                    (let [[inc-x inc-y] (get-in @perfiles pos)]
                                      (r/as-element [:g {:className "etiqueta"}
                                                        [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
                                                                    :stroke "black" :fill "none"}]
@@ -112,13 +112,7 @@
       ;                                (r/as-element [:g {:className "etiqueta"}
       ;                                                [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
       ;                                                            :stroke "black" :fill "none"}]])))}]}]
-      )
-
-(defn test-component [x y]
-  (let [n 30]
-    (fn []
-      [:> rvis/CustomSVGSeries {:data [{:x x :y y :customComponent "square" :size n}]}]))
-      )
+      ))
 
 (defn elegir-nombre [nombres-usados sufijo]
    (let [nombres-set (set nombres-usados)]
@@ -133,8 +127,7 @@
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         nombre (elegir-nombre (keys (:etiquetas (get @perfiles @perfil-activo))) "etiqueta-")
         etiqueta (assoc baricentro :key nombre :pos [0 18] :mouse-over? false)]
-     (swap! perfiles assoc-in [@perfil-activo :etiquetas nombre] etiqueta)
-))
+     (swap! perfiles assoc-in [@perfil-activo :etiquetas nombre] etiqueta)))
 
 (defn mouse-pressed [e dir]
   (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
@@ -179,17 +172,8 @@
    (doall (for [[id {:keys [x y pos]}] (:etiquetas (get @perfiles @perfil-activo))]
                 ^{:key id}(crear-etiqueta x y id pos [@perfil-activo :etiquetas id])))
 
-;(crear-etiqueta 500 500 "luis" [0 18] [@perfil-])
-  ; (let [etiqueta (crear-etiqueta 300 4000)]
-  ;    (swap! etiquetas conj etiqueta)
-  ;    etiqueta)
-  ;;(crear-etiqueta 300 4000 "key" [0 18])
-  (test-component 176 555)
-  ; [:> rvis/LabelSeries {:data [{:x 650 :y 4000 :label "Hidrógeno"}
-  ;                              {:x 650 :y 4000 :label "alfa" :yOffset 18}]
-  ;                       :style {:cursor "pointer"}
-  ;                       ; :allowOffsetToBeReversed "false"
-  ;                       :onValueClick (fn [d] (js/console.log (pr-str d)))}]
+;(crear-etiqueta 500 500 "luis" [0 18] [@perfil-])  
+
    ]])
 
 (defn app-scaffold []
