@@ -15,30 +15,34 @@
 ;; define your app data so that it doesn't get over-written on reload
 (defonce perfiles (atom {}))  ; ¿defonce o def..?
 (defonce perfil-activo (atom "")) ;idem
+(def etiqueta-activa (atom []))
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
 (def ventana-elementos (gdom/getElement "ventana-elementos"))
 (def fondo-transparente (gdom/getElement "fondoblanco"))
+(def etiqueta-ok (gdom/getElement "ok-etiqueta"))
+(def etiqueta-cancel (gdom/getElement "cancel-etiqueta"))
+(def etiqueta-delete (gdom/getElement "delete-etiqueta"))
 
 (defn encender-espera []
-  (set! (-> icono-espera .-style .-display) "block")
-  (set! (-> fondo-gris .-style .-display) "block"))
+  (set! (.. icono-espera -style -display) "block")
+  (set! (.. fondo-gris -style -display) "block"))
 (defn apagar-espera []
-  (set! (-> icono-espera .-style .-display) "none")
-  (set! (-> fondo-gris .-style .-display) "none"))
+  (set! (.. icono-espera -style -display) "none")
+  (set! (.. fondo-gris -style -display) "none"))
 
 ;; Translation functions
 (defn getLanguage []
   (-> (or (.-language js/navigator) (.-userLanguage js/navigator) "en")
       (subs 0 2)))
 (def lang (r/atom (keyword (getLanguage))))
-(def nombres-menu (keys (-> translations :en :menu)))
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-    (doseq [nombre nombres-menu]
-      (let [el (gdom/getElement (name nombre))]
-        (gdom/setTextContent el (app-tr lang (keyword "menu" nombre)))))))
+    (doseq [key-1 [:menu :ventana-etiqueta]]
+      (doseq [key-2 (-> translations :es key-1 keys)]
+        (let [el (gdom/getElement (name key-2))]
+          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))    
 ;; end of translation functions
 
 (defn crear-perfil [fits-file]
@@ -131,12 +135,13 @@
                    (keyword nombre)
                    (recur (inc n)))))))
 
-(defn mostrar-ventana-elementos []
-  (set! (.. ventana-elementos -style -display) "block")
-  (set! (.. fondo-transparente -style -display) "block"))
-(defn cerrar-ventana-elementos []
-  (set! (.. ventana-elementos -style -display) "none")
-  (set! (.. fondo-transparente -style -display) "none"))
+(defn change-ventana-elementos [state]  ; state es "block" o "none"
+  (set! (.. ventana-elementos -style -display) state)
+  (set! (.. fondo-transparente -style -display) state))
+
+(defn open-ventana-elementos [etiqueta]
+  (change-ventana-elementos "block")
+  (reset! etiqueta-activa etiqueta))
 
 (defn colocar-etiqueta []
   (let [perfil (get @perfiles @perfil-activo)
@@ -144,9 +149,10 @@
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
         texto [(.toFixed (:x baricentro) 2)]  ;["Hidrógeno" "Beta"]
-        etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)]
-     (mostrar-ventana-elementos)
-     (swap! perfiles assoc-in [@perfil-activo :etiquetas nombre] etiqueta)))
+        etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)
+        key [@perfil-activo :etiquetas nombre]]
+     (open-ventana-elementos key)
+     (swap! perfiles assoc-in key etiqueta)))
 
 (defn mouse-pressed [e dir]
   (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
