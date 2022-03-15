@@ -5,6 +5,7 @@
    [reagent.core :as r :refer [atom]]
    [reagent.dom :as rdom]
    [cljsjs.react-vis :as rvis]
+   [clojure.string :as str]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.metodos-numericos :as mn]
@@ -78,12 +79,17 @@
   (set! (.. fondo-transparente -style -display) state))
 
 (defn agregar-texto-etiqueta []
-  (let [texto (clojure.string/split-lines (.-value etiqueta-texto))]
+  (let [texto (str/split-lines (.-value etiqueta-texto))]
     (swap! perfiles assoc-in (conj @etiqueta-activa :texto) texto)
     (set! (.-value etiqueta-texto) "")
     (change-ventana-elementos "none")))
-(defn cancelar-texto-etiqueta [])
-(defn borrar-etiqueta [])
+(defn cancelar-texto-etiqueta []
+  (set! (.-value etiqueta-texto) "")
+  (change-ventana-elementos "none"))
+(defn borrar-etiqueta []
+  (swap! perfiles update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa))
+  (change-ventana-elementos "none")
+  )
 
 (defonce is-initialized?
   (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
@@ -161,7 +167,7 @@
         baricentro (mn/calcular-baricentro (:data-vis perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
-        texto [(.toFixed (:x baricentro) 2)]  ;["Hidrógeno" "Beta"]
+        texto [(.toFixed (:x baricentro) 1)]
         etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)
         key [@perfil-activo :etiquetas nombre]]
      (open-ventana-elementos key)
