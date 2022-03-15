@@ -88,8 +88,7 @@
   (change-ventana-elementos "none"))
 (defn borrar-etiqueta []
   (swap! perfiles update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa))
-  (change-ventana-elementos "none")
-  )
+  (change-ventana-elementos "none"))
 
 (defonce is-initialized?
   (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
@@ -120,8 +119,8 @@
   ;(js/console.log  (pr-str key-in) (pr-str texto))
   (let [mouse-over (conj key-in :mouse-over?)
         pos (conj key-in :pos)]
-;  [:<>
-   ^{:key id}
+  ;(vector
+   ;^{:key id}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in mouse-over true))
                               :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in mouse-over false)))
                               :data [{:x x :y y
@@ -130,8 +129,8 @@
                                     (swap! perfiles assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
                                   (let [[inc-x inc-y] (get-in @perfiles pos)]
                                     (r/as-element [:g {:className "etiqueta"}
-                                                      [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                                  :stroke "black" :fill "none"}]
+                                                       [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                                   :stroke "black" :fill "none"}]
                                                       [:text
                                                         (map-indexed (fn [i linea]
                                                                         ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
@@ -141,13 +140,13 @@
                                                         ; [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno"]
                                                         ; [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]
                                                         ]])))}]}]
-    ; ^{:key (str key "line")}
-    ;  [:> rvis/CustomSVGSeries {:data [{:x x :y y
-    ;                             :customComponent (fn []
-    ;                               (let [[inc-x inc-y] @pos]
-    ;                                (r/as-element [:g {:className "etiqueta"}
-    ;                                                [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-    ;                                                            :stroke "black" :fill "none"}]])))}]}]
+     ;^{:key (str key "line")}
+     ; [:> rvis/CustomSVGSeries {:data [{:x x :y y
+     ;                            :customComponent (fn []
+     ;                              (let [[inc-x inc-y] (get-in @perfiles pos)]
+     ;                               (r/as-element [:g {:className "etiqueta"}
+     ;                                               [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+     ;                                                           :stroke "black" :fill "none"}]])))}]}]
     ))
 
 (defn elegir-nombre [nombres-usados sufijo]
@@ -194,7 +193,8 @@
 
 (defn line-chart []
   [:div.graph
-  [:> rvis/FlexibleXYPlot
+  ;(into
+    [:> rvis/FlexibleXYPlot
    {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
                                           :onMouseUp   (fn [e] (mouse-pressed e :up))
                                           :onMouseMove (fn [e] (mouse-moved e))}
@@ -216,8 +216,12 @@
                                                             (reset! nearest-xy (js->clj e)))}]))
    (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
                 (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
+   ]
+    ; (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
+    ;             (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
 
-   ]])
+   ;)
+   ])
 
 (defn app-scaffold []
   [:div.todo
