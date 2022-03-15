@@ -72,11 +72,27 @@
                             (encender-espera)
                             (fits/read-fits-file file procesar-archivo)))
                           (set! (-> this .-target .-value) ""))}])
+
+(defn change-ventana-elementos [state]  ; state es "block" o "none"
+  (set! (.. ventana-elementos -style -display) state)
+  (set! (.. fondo-transparente -style -display) state))
+
+(defn agregar-texto-etiqueta []
+  (let [texto (clojure.string/split-lines (.-value etiqueta-texto))]
+    (swap! perfiles assoc-in (conj @etiqueta-activa :texto) texto)
+    (set! (.-value etiqueta-texto) "")
+    (change-ventana-elementos "none")))
+(defn cancelar-texto-etiqueta [])
+(defn borrar-etiqueta [])
+
 (defonce is-initialized?
   (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
       (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click"
                   (fn [] (download-object-as-json (clj->js (get @perfiles @perfil-activo))
                                                   (str @perfil-activo ".annie"))))
+      (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
+      (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
+      (gevents/listen etiqueta-delete "click" borrar-etiqueta)
       true))
 
 (def nearest-xy (atom {}))
@@ -135,10 +151,6 @@
            (if-not (nombres-set nombre)
                    (keyword nombre)
                    (recur (inc n)))))))
-
-(defn change-ventana-elementos [state]  ; state es "block" o "none"
-  (set! (.. ventana-elementos -style -display) state)
-  (set! (.. fondo-transparente -style -display) state))
 
 (defn open-ventana-elementos [etiqueta]
   (change-ventana-elementos "block")
