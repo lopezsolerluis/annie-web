@@ -17,6 +17,8 @@
 (defonce perfil-activo (atom "")) ;idem
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
+(def ventana-elementos (gdom/getElement "ventana-elementos"))
+(def fondo-transparente (gdom/getElement "fondoblanco"))
 
 (defn encender-espera []
   (set! (-> icono-espera .-style .-display) "block")
@@ -129,13 +131,21 @@
                    (keyword nombre)
                    (recur (inc n)))))))
 
+(defn mostrar-ventana-elementos []
+  (set! (.. ventana-elementos -style -display) "block")
+  (set! (.. fondo-transparente -style -display) "block"))
+(defn cerrar-ventana-elementos []
+  (set! (.. ventana-elementos -style -display) "none")
+  (set! (.. fondo-transparente -style -display) "none"))
+
 (defn colocar-etiqueta []
   (let [perfil (get @perfiles @perfil-activo)
         baricentro (mn/calcular-baricentro (:data-vis perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
-        texto ["Hidrógeno" "Beta"]
+        texto [(.toFixed (:x baricentro) 2)]  ;["Hidrógeno" "Beta"]
         etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)]
+     (mostrar-ventana-elementos)
      (swap! perfiles assoc-in [@perfil-activo :etiquetas nombre] etiqueta)))
 
 (defn mouse-pressed [e dir]
