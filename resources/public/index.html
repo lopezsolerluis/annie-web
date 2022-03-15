@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="css/style.css" rel="stylesheet" type="text/css">
+  <link href="css/caja-elementos.css" rel="stylesheet" type="text/css">
   <link href="css/radial-chart.css" rel="stylesheet" type="text/css">
   <link href="css/plot.css" rel="stylesheet" type="text/css">
   <link href="css/treemap.css" rel="stylesheet" type="text/css">
@@ -69,6 +70,20 @@
         </li>
       </ul>
     </div>
+
+    <!-- Para ingresar los elementos -->
+    <div class="form-popup" id="elementForm">
+      <div class="form-container">
+        <!-- <h1>Login</h1> -->
+        <label for="elementos-texto"><b>Elementos:</b></label>
+        <textarea id="elementos-texto" placeholder="Ingrese los elementos presuntos" name="elementos-texto" cols="10" rows="5"></textarea>
+
+        <button type="button" class="btn delete">Borrar</button>
+        <button type="button" class="btn">Ok</button>
+        <button type="button" class="btn cancel">Cancelar</button>
+      </div>
+    </div>
+
 
     <div id="fondogris"></div>
     <div id="loader"></div> <!-- Para el iconito de espera... -->
