@@ -79,6 +79,10 @@
   opacity: 1;
 }
 
+.form-container label {
+  font-weight: bold;
+}
+
 #fondoblanco {
   display: none;
   position: absolute;

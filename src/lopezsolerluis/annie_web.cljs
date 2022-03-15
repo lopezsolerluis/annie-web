@@ -23,6 +23,7 @@
 (def etiqueta-ok (gdom/getElement "ok-etiqueta"))
 (def etiqueta-cancel (gdom/getElement "cancel-etiqueta"))
 (def etiqueta-delete (gdom/getElement "delete-etiqueta"))
+(def etiqueta-texto (gdom/getElement "etiqueta-texto"))
 
 (defn encender-espera []
   (set! (.. icono-espera -style -display) "block")
@@ -42,7 +43,7 @@
     (doseq [key-1 [:menu :ventana-etiqueta]]
       (doseq [key-2 (-> translations :es key-1 keys)]
         (let [el (gdom/getElement (name key-2))]
-          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))    
+          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
 ;; end of translation functions
 
 (defn crear-perfil [fits-file]

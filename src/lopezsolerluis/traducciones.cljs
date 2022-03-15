@@ -37,7 +37,8 @@
               :creditos "Credits"}
         :ventana-etiqueta {:ok-etiqueta "Ok"
                            :cancel-etiqueta "Cancel"
-                           :delete-etiqueta "Delete"}
+                           :delete-etiqueta "Delete"
+                           :etiqueta-label "Elements:"}
         :extensión-no-fits "File does not have .FITS extension"
         :fits-no-simple "FITS file is not SIMPLE"
         :fits-no-valido "FITS file does not seem to be valid"
@@ -76,7 +77,8 @@
             }
         :ventana-etiqueta {:ok-etiqueta "Ok"
                            :cancel-etiqueta "Cancelar"
-                           :delete-etiqueta "Borrar"}
+                           :delete-etiqueta "Borrar"
+                           :etiqueta-label "Elementos:"}
         :extensión-no-fits "El archivo carece de extensión .FITS"
         :fits-no-simple "El archivo Fits no es SIMPLE"
         :fits-no-valido "El archivo Fits no parece ser válido"
