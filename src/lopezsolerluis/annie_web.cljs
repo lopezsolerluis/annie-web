@@ -89,7 +89,9 @@
   (let [perfil-calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo :calibrado?])
         texto (if perfil-calibrado?
                   (str/split-lines (.-value etiqueta-texto))
-                  (.toFixed (get-in @pestañas [@pestaña-activa @perfil-activo @etiqueta-activa :x]) 1))]
+                  [(-> (get-in @pestañas (conj @etiqueta-activa :x))
+                       (.toFixed 1)
+                       str)])]
     (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)
     (change-ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
@@ -235,7 +237,7 @@
                                                             (reset! nearest-xy (js->clj e)))}]))
    (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
    (doall (for [[id {:keys [x y texto]}] (:etiquetas perfil)
-                :let [texto-a-mostrar (if (:perfil-calibrado? perfil) texto [(.toFixed x 1)])]]
+                :let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]]
                 (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
     ; (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
