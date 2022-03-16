@@ -81,7 +81,6 @@
 (defn agregar-texto-etiqueta []
   (let [texto (str/split-lines (.-value etiqueta-texto))]
     (swap! perfiles assoc-in (conj @etiqueta-activa :texto) texto)
-    ; (set! (.-value etiqueta-texto) "")
     (change-ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
   (change-ventana-elementos "none"))
@@ -114,16 +113,15 @@
      [(- (:x @pos-mouse-pixels) x 110)
       (- (:y @pos-mouse-pixels) y 55)]))
 
-(defn crear-etiqueta [id x y texto key-in]  ;; position is the 'delta' position in pixels
-  ;(js/console.log  (pr-str key-in) (pr-str texto))
-  (let [mouse-over (conj key-in :mouse-over?)
-        pos (conj key-in :pos)]
+(defn crear-etiqueta [id x y texto etiqueta]  ;; position is the 'delta' position in pixels
+  ;(js/console.log  (pr-str etiqueta) (pr-str texto))
+  (let [pos (conj etiqueta :pos)]
    ^{:key id}
-    [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in mouse-over true))
-                              :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in mouse-over false)))
+    [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
+                              :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (reset! etiqueta-activa [])))
                               :data [{:x x :y y
                                 :customComponent (fn [_ position-in-pixels]
-                                  (if (and @button-cen-pressed? (get-in @perfiles mouse-over))
+                                  (if (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
                                     (swap! perfiles assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
                                   (let [[inc-x inc-y] (get-in @perfiles pos)]
                                     (r/as-element [:g {:className "etiqueta"}
@@ -156,9 +154,9 @@
                    (recur (inc n)))))))
 
 (defn open-ventana-elementos [etiqueta]
-  (let [texto (->> (get-in @perfiles (conj etiqueta :texto))
-                   (str/join "\n"))]
-    (set! (.-value etiqueta-texto) texto)
+  (let [texto-en-string (->> (get-in @perfiles (conj etiqueta :texto))
+                             (str/join "\n"))]
+    (set! (.-value etiqueta-texto) texto-en-string)
     (reset! etiqueta-activa etiqueta)
     (change-ventana-elementos "block")
     (.select etiqueta-texto)))
@@ -169,7 +167,7 @@
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
         texto [(.toFixed (:x baricentro) 1)]
-        etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)
+        etiqueta (assoc baricentro :texto texto :pos [0 18])
         key [@perfil-activo :etiquetas nombre]]
      (swap! perfiles assoc-in key etiqueta)
      (open-ventana-elementos key)))
