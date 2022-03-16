@@ -39,6 +39,7 @@
                            :cancel-etiqueta "Cancel"
                            :delete-etiqueta "Delete"
                            :etiqueta-label "Elements:"}
+        :confirmar-borrar-etiqueta "Do you really want to delete this label?"                           
         :extensión-no-fits "File does not have .FITS extension"
         :fits-no-simple "FITS file is not SIMPLE"
         :fits-no-valido "FITS file does not seem to be valid"
@@ -79,6 +80,7 @@
                            :cancel-etiqueta "Cancelar"
                            :delete-etiqueta "Borrar"
                            :etiqueta-label "Elementos:"}
+        :confirmar-borrar-etiqueta "¿Realmente desea borrar esta etiqueta?"
         :extensión-no-fits "El archivo carece de extensión .FITS"
         :fits-no-simple "El archivo Fits no es SIMPLE"
         :fits-no-valido "El archivo Fits no parece ser válido"

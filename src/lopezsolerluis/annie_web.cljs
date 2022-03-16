@@ -81,6 +81,9 @@
   (set! (.. ventana-elementos -style -display) state)
   (set! (.. fondo-transparente -style -display) state))
 
+(defn confirmar-operación [texto]
+  (js/window.confirm texto))
+  
 (defn agregar-texto-etiqueta []
   (let [texto (str/split-lines (.-value etiqueta-texto))]
     (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)
@@ -88,7 +91,8 @@
 (defn cancelar-texto-etiqueta []
   (change-ventana-elementos "none"))
 (defn borrar-etiqueta []
-  (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa))
+  (if (confirmar-operación (app-tr @lang :confirmar-borrar-etiqueta))
+      (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
   (change-ventana-elementos "none"))
 
 (defonce is-initialized?
