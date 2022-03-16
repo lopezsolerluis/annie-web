@@ -65,7 +65,8 @@
             nombre (:nombre-archivo fits-file)]
          (reset! pestaña-activa nombre)
          (reset! perfil-activo nombre)
-         (swap! pestañas assoc-in [@pestaña-activa @perfil-activo] {:data-vis data-para-vis :etiquetas {}})))
+         (swap! pestañas assoc-in [@pestaña-activa @perfil-activo]
+                                  {:data-vis data-para-vis :etiquetas {} :calibrado? false})))
   (apagar-espera))
 
 (defn input-fits-file []
@@ -83,9 +84,12 @@
 
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
-  
+
 (defn agregar-texto-etiqueta []
-  (let [texto (str/split-lines (.-value etiqueta-texto))]
+  (let [perfil-calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo :calibrado?])
+        texto (if perfil-calibrado?
+                  (str/split-lines (.-value etiqueta-texto))
+                  (.toFixed (get-in @pestañas [@pestaña-activa @perfil-activo @etiqueta-activa :x]) 1))]
     (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)
     (change-ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
@@ -162,12 +166,15 @@
                    (recur (inc n)))))))
 
 (defn open-ventana-elementos [etiqueta]
-  (let [texto-en-string (->> (get-in @pestañas (conj etiqueta :texto))
-                             (str/join "\n"))]
-    (set! (.-value etiqueta-texto) texto-en-string)
-    (reset! etiqueta-activa etiqueta)
+  (let [perfil-calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo :calibrado?])
+        texto-en-string (if perfil-calibrado?
+                            (->> (get-in @pestañas (conj etiqueta :texto))
+                                 (str/join "\n"))
+                            (app-tr @lang :etiquetas-no-calibrado))]
     (change-ventana-elementos "block")
-    (.select etiqueta-texto)))
+    (set! (.-value etiqueta-texto) texto-en-string)
+    (set! (.-readOnly etiqueta-texto) (not perfil-calibrado?))
+    (if perfil-calibrado? (.select etiqueta-texto))))
 
 (defn colocar-etiqueta []
   (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])
@@ -178,6 +185,7 @@
         etiqueta (assoc baricentro :texto texto :pos [0 18])
         key [@pestaña-activa @perfil-activo :etiquetas nombre]]
      (swap! pestañas assoc-in key etiqueta)
+     (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
 
 (defn mouse-pressed [e dir]
@@ -225,8 +233,10 @@
                                                      :strokeWidth 1
                                                      :onNearestX (fn [e]
                                                             (reset! nearest-xy (js->clj e)))}]))
-   (doall (for [[id {:keys [x y texto]}] (:etiquetas (get-in @pestañas [@pestaña-activa @perfil-activo]))]
-                (crear-etiqueta id x y texto [@pestaña-activa @perfil-activo :etiquetas id])))
+   (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
+   (doall (for [[id {:keys [x y texto]}] (:etiquetas perfil)
+                :let [texto-a-mostrar (if (:perfil-calibrado? perfil) texto [(.toFixed x 1)])]]
+                (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
     ; (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
     ;             (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
