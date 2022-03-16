@@ -57,7 +57,7 @@
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
-(defn procesar-archivo [fits-file]
+(defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
       (js/alert (app-tr @lang :fits-no-valido))
       (let [perfil (crear-perfil fits-file)
@@ -75,7 +75,7 @@
                         (if-not (= "" (-> this .-target .-value))
                           (let [^js/File file (-> this .-target .-files (aget 0))]
                             (encender-espera)
-                            (fits/read-fits-file file procesar-archivo)))
+                            (fits/read-fits-file file procesar-archivo-fits)))
                           (set! (-> this .-target .-value) ""))}])
 
 (defn change-ventana-elementos [state]  ; state es "block" o "none"
@@ -116,9 +116,9 @@
 (defn nearest-x [nearest] (get @nearest "x"))
 (defn nearest-y [nearest] (get @nearest "y"))
 
-(def pos-mouse-pixels (r/atom {}))
+(def pos-mouse-pixels (atom {}))
 
-(def button-izq-pressed? (r/atom false))
+(def button-izq-pressed? (atom false))
 (def button-cen-pressed? (atom false))
 
 (defn calcular-xy-etiqueta [position-in-pixels]
@@ -140,24 +140,18 @@
                                   (if (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
                                     (swap! pestañas assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
                                   (r/as-element [:g {:className "etiqueta"}
-                                                       ; [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                       ;             :stroke "black" :fill "none"}]
                                                       [:text
                                                         (map-indexed (fn [i linea]
                                                                         ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
-                                                                      texto)
+                                                                      texto)]]))}]}]
                                                         ; (for [i (range (count texto))]
                                                         ;   [:tspan {:x inc-x :y (+ inc-y (* i 18))} (get texto i)])
-                                                        ; [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno"]
-                                                        ; [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]
-                                                        ]]))}]}]
      ;^{:key (str key "line")}
      [:> rvis/CustomSVGSeries {:data [{:x x :y y
                                 :customComponent (fn []
                                    (r/as-element [:g {:className "etiqueta cursor-normal"}
                                                    [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                               :stroke "black" :fill "none"}]]))}]}]
-    )))
+                                                               :stroke "black" :fill "none"}]]))}]}])))
 
 (defn elegir-nombre [nombres-usados sufijo]
    (let [nombres-set (set nombres-usados)]
