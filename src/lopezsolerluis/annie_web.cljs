@@ -81,10 +81,9 @@
 (defn agregar-texto-etiqueta []
   (let [texto (str/split-lines (.-value etiqueta-texto))]
     (swap! perfiles assoc-in (conj @etiqueta-activa :texto) texto)
-    (set! (.-value etiqueta-texto) "")
+    ; (set! (.-value etiqueta-texto) "")
     (change-ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
-  (set! (.-value etiqueta-texto) "")
   (change-ventana-elementos "none"))
 (defn borrar-etiqueta []
   (swap! perfiles update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa))
@@ -119,8 +118,7 @@
   ;(js/console.log  (pr-str key-in) (pr-str texto))
   (let [mouse-over (conj key-in :mouse-over?)
         pos (conj key-in :pos)]
-  ;(vector
-   ;^{:key id}
+   ^{:key id}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (swap! perfiles assoc-in mouse-over true))
                               :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (swap! perfiles assoc-in mouse-over false)))
                               :data [{:x x :y y
@@ -158,8 +156,12 @@
                    (recur (inc n)))))))
 
 (defn open-ventana-elementos [etiqueta]
-  (change-ventana-elementos "block")
-  (reset! etiqueta-activa etiqueta))
+  (let [texto (->> (get-in @perfiles (conj etiqueta :texto))
+                   (str/join "\n"))]
+    (set! (.-value etiqueta-texto) texto)
+    (reset! etiqueta-activa etiqueta)
+    (change-ventana-elementos "block")
+    (.select etiqueta-texto)))
 
 (defn colocar-etiqueta []
   (let [perfil (get @perfiles @perfil-activo)
@@ -169,8 +171,8 @@
         texto [(.toFixed (:x baricentro) 1)]
         etiqueta (assoc baricentro :texto texto :pos [0 18] :mouse-over? false)
         key [@perfil-activo :etiquetas nombre]]
-     (open-ventana-elementos key)
-     (swap! perfiles assoc-in key etiqueta)))
+     (swap! perfiles assoc-in key etiqueta)
+     (open-ventana-elementos key)))
 
 (defn mouse-pressed [e dir]
   (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
