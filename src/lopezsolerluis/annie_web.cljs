@@ -78,7 +78,7 @@
   (set! (.. ventana-elementos -style -display) state)
   (set! (.. fondo-transparente -style -display) state))
 
-(defn agregar-texto-etiqueta []
+(defn agregar-texto-etiqueta []  
   (let [texto (str/split-lines (.-value etiqueta-texto))]
     (swap! perfiles assoc-in (conj @etiqueta-activa :texto) texto)
     (change-ventana-elementos "none")))
@@ -113,12 +113,13 @@
      [(- (:x @pos-mouse-pixels) x 110)
       (- (:y @pos-mouse-pixels) y 55)]))
 
-(defn crear-etiqueta [id x y texto etiqueta]  ;; position is the 'delta' position in pixels
-  ;(js/console.log  (pr-str etiqueta) (pr-str texto))
+(defn crear-etiqueta [id x y texto etiqueta]
   (let [pos (conj etiqueta :pos)]
    ^{:key id}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
-                              :onValueMouseOut  (fn [d] (if-not @button-cen-pressed? (reset! etiqueta-activa [])))
+                              :onValueMouseOut  (fn [d] (if-not (or @button-cen-pressed?
+                                                                (= "block" (.. ventana-elementos -style -display)))
+                                                          (reset! etiqueta-activa [])))
                               :data [{:x x :y y
                                 :customComponent (fn [_ position-in-pixels]
                                   (if (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
@@ -173,13 +174,14 @@
      (open-ventana-elementos key)))
 
 (defn mouse-pressed [e dir]
-  (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
-    (case boton               ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
-      0 (do (if (= dir :up) (colocar-etiqueta))
-            (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
-            (swap! button-izq-pressed? not))
-      1 (swap! button-cen-pressed? not)
-      2 )))
+  (if-not (.-ctrlKey e)    ; Con la tecla "Control" se editan etiquetas
+    (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
+      (case boton               ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
+        0 (do (if (= dir :up) (colocar-etiqueta))
+              (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
+                (swap! button-izq-pressed? not))
+        1 (swap! button-cen-pressed? not)
+        2 ))))
 
 (defn mouse-moved [e]
   (if (or @button-izq-pressed? @button-cen-pressed?)
@@ -194,10 +196,12 @@
 (defn line-chart []
   [:div.graph
   ;(into
-    [:> rvis/FlexibleXYPlot
+  [:> rvis/FlexibleXYPlot
    {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
                                           :onMouseUp   (fn [e] (mouse-pressed e :up))
-                                          :onMouseMove (fn [e] (mouse-moved e))}
+                                          :onMouseMove (fn [e] (mouse-moved e))
+                                          :onClick     (fn [e] (if-not (= @etiqueta-activa [])
+                                                                  (open-ventana-elementos @etiqueta-activa)))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
