@@ -245,12 +245,7 @@
                     (let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]
                       (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
                   (:etiquetas perfil)))
-   )
-    ; (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
-    ;             (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
-
-   ;)
-   ])
+   )])
 
 (defn app-scaffold []
   [:div.todo
