@@ -127,8 +127,10 @@
       (- (:y @pos-mouse-pixels) y 55)]))
 
 (defn crear-etiqueta [id x y texto etiqueta]
-  (let [pos (conj etiqueta :pos)]
-   ^{:key id}
+  (let [pos (conj etiqueta :pos)
+        [inc-x inc-y] (get-in @pestañas pos)]
+  (vector
+   ;^{:key id}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
                               :onValueMouseOut  (fn [d] (if-not (or @button-cen-pressed?
                                                                 (= "block" (.. ventana-elementos -style -display)))
@@ -137,10 +139,9 @@
                                 :customComponent (fn [_ position-in-pixels]
                                   (if (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
                                     (swap! pestañas assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
-                                  (let [[inc-x inc-y] (get-in @pestañas pos)]
-                                    (r/as-element [:g {:className "etiqueta"}
-                                                       [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                                   :stroke "black" :fill "none"}]
+                                  (r/as-element [:g {:className "etiqueta"}
+                                                       ; [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                       ;             :stroke "black" :fill "none"}]
                                                       [:text
                                                         (map-indexed (fn [i linea]
                                                                         ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
@@ -149,15 +150,14 @@
                                                         ;   [:tspan {:x inc-x :y (+ inc-y (* i 18))} (get texto i)])
                                                         ; [:tspan {:x inc-x :y (+ inc-y 0)} "Hidrógeno"]
                                                         ; [:tspan {:x inc-x :y (+ inc-y 18)} "Alfa"]
-                                                        ]])))}]}]
+                                                        ]]))}]}]
      ;^{:key (str key "line")}
-     ; [:> rvis/CustomSVGSeries {:data [{:x x :y y
-     ;                            :customComponent (fn []
-     ;                              (let [[inc-x inc-y] (get-in @perfiles pos)]
-     ;                               (r/as-element [:g {:className "etiqueta"}
-     ;                                               [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-     ;                                                           :stroke "black" :fill "none"}]])))}]}]
-    ))
+     [:> rvis/CustomSVGSeries {:data [{:x x :y y
+                                :customComponent (fn []
+                                   (r/as-element [:g {:className "etiqueta"}
+                                                   [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                               :stroke "black" :fill "none"}]]))}]}]
+    )))
 
 (defn elegir-nombre [nombres-usados sufijo]
    (let [nombres-set (set nombres-usados)]
@@ -212,7 +212,7 @@
 
 (defn line-chart []
   [:div.graph
-  ;(into
+  (into
   [:> rvis/FlexibleXYPlot
    {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
                                           :onMouseUp   (fn [e] (mouse-pressed e :up))
@@ -235,11 +235,17 @@
                                                      :strokeWidth 1
                                                      :onNearestX (fn [e]
                                                             (reset! nearest-xy (js->clj e)))}]))
-   (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
-   (doall (for [[id {:keys [x y texto]}] (:etiquetas perfil)
-                :let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]]
-                (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
+   ; (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
+   ;    (doall (for [[id {:keys [x y texto]}] (:etiquetas perfil)
+   ;                 :let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]]
+   ;              (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
+      (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
+          (mapcat (fn [[id {:keys [x y texto]}]]
+                    (let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]
+                      (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
+                  (:etiquetas perfil)))
+   )
     ; (doall (for [[id {:keys [x y texto]}] (:etiquetas (get @perfiles @perfil-activo))]
     ;             (crear-etiqueta id x y texto [@perfil-activo :etiquetas id])))
 
