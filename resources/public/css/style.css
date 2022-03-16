@@ -127,5 +127,9 @@ input[type=file] {
 }
 
 .etiqueta {
-  cursor: pointer;  
+  cursor: pointer;
+}
+
+.cursor-normal {
+  cursor: default;
 }

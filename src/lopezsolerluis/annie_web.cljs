@@ -154,7 +154,7 @@
      ;^{:key (str key "line")}
      [:> rvis/CustomSVGSeries {:data [{:x x :y y
                                 :customComponent (fn []
-                                   (r/as-element [:g {:className "etiqueta"}
+                                   (r/as-element [:g {:className "etiqueta cursor-normal"}
                                                    [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
                                                                :stroke "black" :fill "none"}]]))}]}]
     )))
