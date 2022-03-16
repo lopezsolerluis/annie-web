@@ -62,7 +62,7 @@
             data-para-vis (crear-data-para-vis perfil)
             nombre (:nombre-archivo fits-file)]
          (reset! perfil-activo nombre)
-         (swap! perfiles assoc nombre {:nombre nombre :data-vis data-para-vis :etiquetas {}})))
+         (swap! perfiles assoc nombre {:data-vis data-para-vis :etiquetas {}})))
   (apagar-espera))
 
 (defn input-fits-file []
@@ -78,7 +78,7 @@
   (set! (.. ventana-elementos -style -display) state)
   (set! (.. fondo-transparente -style -display) state))
 
-(defn agregar-texto-etiqueta []  
+(defn agregar-texto-etiqueta []
   (let [texto (str/split-lines (.-value etiqueta-texto))]
     (swap! perfiles assoc-in (conj @etiqueta-activa :texto) texto)
     (change-ventana-elementos "none")))
