@@ -203,8 +203,8 @@
    {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
                                           :onMouseUp   (fn [e] (mouse-pressed e :up))
                                           :onMouseMove (fn [e] (mouse-moved e))
-                                          :onClick     (fn [e] (if-not (= @etiqueta-activa [])
-                                                                  (open-ventana-elementos @etiqueta-activa)))}
+                                          :onClick     (fn [e] (if (seq @etiqueta-activa)
+                                                                   (open-ventana-elementos @etiqueta-activa)))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
    [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
