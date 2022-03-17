@@ -31,7 +31,9 @@
 (def x1-calibración-number (gdom/getElement "x1-calibración-number"))
 (def x2-calibración-number (gdom/getElement "x2-calibración-number"))
 (def lambda1-calibración-number (gdom/getElement "lambda1-calibración-number"))
-(def lambda2-calibración-number (gdom/getElement "lambda2calibración-number"))
+(def lambda2-calibración-number (gdom/getElement "lambda2-calibración-number"))
+(def calibración-ok (gdom/getElement "ok-calibración"))
+(def calibración-cancel (gdom/getElement "cancel-calibración"))
 
 (defn encender-espera []
   (set! (.. icono-espera -style -display) "block")
@@ -74,8 +76,11 @@
          (reset! pestaña-activa nombre)
          (reset! perfil-activo nombre)
          (swap! pestañas assoc-in [@pestaña-activa @perfil-activo]
-                                  {:data-vis data-para-vis :etiquetas {} :calibrado? false})))
+                                  {:data-vis data-para-vis :calibración [] :etiquetas {}})))
   (apagar-espera))
+
+(defn calibrado? [perfil]
+  (seq (:calibración perfil)))
 
 (defn input-fits-file []
   [:input {:type "file" :id "fits"
@@ -94,7 +99,7 @@
   (js/window.confirm texto))
 
 (defn agregar-texto-etiqueta []
-  (let [perfil-calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo :calibrado?])
+  (let [perfil-calibrado? (calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo]))
         texto (if perfil-calibrado?
                   (str/split-lines (.-value etiqueta-texto))
                   [(-> (get-in @pestañas (conj @etiqueta-activa :x))
@@ -109,6 +114,10 @@
       (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
   (change-ventana ventana-elementos "none"))
 
+(defn calibrar-data [data a b]
+  )
+  ; (mapv (fn [{:keys [x y]}] {:x 1 :y y}) data)
+
 (defn abrir-ventana-calibración []
   (let [ultimas-etiquetas (take-last 2 (get-in @pestañas [@pestaña-activa @perfil-activo :etiquetas]))]
     (if-not (= 2 (count ultimas-etiquetas))
@@ -116,9 +125,19 @@
             (let [baricentros (map :x (vals ultimas-etiquetas))
                   x1 (apply min baricentros)
                   x2 (apply max baricentros)]
-              (change-ventana ventana-calibración "block") 
+              (change-ventana ventana-calibración "block")
               (set! (.-value x1-calibración-number) x1)
               (set! (.-value x2-calibración-number) x2)))))
+
+(defn calibrar-ok []
+  (let [lambda1 (js/parseFloat (.-value lambda1-calibración-number))
+        lambda2 (js/parseFloat (.-value lambda2-calibración-number))]
+        (if (or (js/isNaN lambda1) (js/isNaN lambda2))
+            (alert (app-tr @lang :deben-ingresarse-dos-lambdas))
+
+        )))
+(defn calibrar-cancel []
+  (change-ventana ventana-calibración "none"))
 
 (defonce is-initialized?
   (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
@@ -130,6 +149,8 @@
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)
       (gevents/listen (gdom/getElement "auto-calibracion") "click" abrir-ventana-calibración)
+      (gevents/listen calibración-ok "click" calibrar-ok)
+      (gevents/listen calibración-cancel "click" calibrar-cancel)
       true))
 
 (def nearest-xy (atom {}))
@@ -183,7 +204,7 @@
                    (recur (inc n)))))))
 
 (defn open-ventana-elementos [etiqueta]
-  (let [perfil-calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo :calibrado?])
+  (let [perfil-calibrado? (calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo]))
         texto-en-string (if perfil-calibrado?
                             (->> (get-in @pestañas (conj etiqueta :texto))
                                  (str/join "\n"))
@@ -257,7 +278,7 @@
    ]
       (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
           (mapcat (fn [[id {:keys [x y texto]}]]
-                    (let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]
+                    (let [texto-a-mostrar (if (calibrado? perfil) texto [(.toFixed x 1)])]
                       (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
                   (:etiquetas perfil)))
    )])
