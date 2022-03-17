@@ -35,12 +35,9 @@
 (def calibración-ok (gdom/getElement "ok-calibración"))
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 
-(defn encender-espera []
-  (set! (.. icono-espera -style -display) "block")
-  (set! (.. fondo-gris -style -display) "block"))
-(defn apagar-espera []
-  (set! (.. icono-espera -style -display) "none")
-  (set! (.. fondo-gris -style -display) "none"))
+(defn encender-espera [on] ; true or false
+  (set! (.. icono-espera -style -display) (if on "block" "none"))
+  (set! (.. fondo-gris -style -display) (if on "block" "none")))
 
 ;; Translation functions
 (defn getLanguage []
@@ -77,7 +74,7 @@
          (reset! perfil-activo nombre)
          (swap! pestañas assoc-in [@pestaña-activa @perfil-activo]
                                   {:data-vis data-para-vis :calibración [] :etiquetas {}})))
-  (apagar-espera))
+  (encender-espera false))
 
 (defn calibrado? [perfil]
   (seq (:calibración perfil)))
@@ -87,7 +84,7 @@
            :on-change (fn [this]
                         (if-not (= "" (-> this .-target .-value))
                           (let [^js/File file (-> this .-target .-files (aget 0))]
-                            (encender-espera)
+                            (encender-espera true)
                             (fits/read-fits-file file procesar-archivo-fits)))
                           (set! (-> this .-target .-value) ""))}])
 
@@ -99,14 +96,10 @@
   (js/window.confirm texto))
 
 (defn agregar-texto-etiqueta []
-  (let [perfil-calibrado? (calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo]))
-        texto (if perfil-calibrado?
-                  (str/split-lines (.-value etiqueta-texto))
-                  [(-> (get-in @pestañas (conj @etiqueta-activa :x))
-                       (.toFixed 1)
-                       str)])]
-    (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)
-    (change-ventana ventana-elementos "none")))
+  (when (calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo]))
+    (let [texto (str/split-lines (.-value etiqueta-texto))]
+      (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)))
+  (change-ventana ventana-elementos "none"))
 (defn cancelar-texto-etiqueta []
   (change-ventana ventana-elementos "none"))
 (defn borrar-etiqueta []
@@ -121,10 +114,15 @@
       (let [[a b] (:calibración perfil)]
         (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) (:data-vis perfil)))
       (:data-vis perfil)))
-(defn obtener-x [perfil x]
+(defn calcular-x-calibrado [perfil x]
   (if (calibrado? perfil)
       (let [[a b] (:calibración perfil)]
         (+ (* a x) b))
+      x))
+(defn calcular-x-no-calibrado [perfil x]
+  (if (calibrado? perfil)
+      (let [[a b] (:calibración perfil)]
+        (/ (- x b) a))
       x))
 
 (defn abrir-ventana-calibración []
@@ -233,12 +231,14 @@
 
 (defn colocar-etiqueta []
   (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])
-        baricentro (mn/calcular-baricentro (:data-vis perfil) ; Tiene la forma {:x x :y y}
+        baricentro (mn/calcular-baricentro (obtener-data perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
+        baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
         nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
-        texto [(.toFixed (:x baricentro) 1)]
-        etiqueta (assoc baricentro :texto texto :pos [0 18])
+        ; texto [(.toFixed (:x baricentro) 1)]
+        etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
         key [@pestaña-activa @perfil-activo :etiquetas nombre]]
+        ; (js/console.log (pr-str baricentro) (pr-str baricentro-c) (nearest-x nearest-xy-0))
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
@@ -295,8 +295,9 @@
    ]
       (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
           (mapcat (fn [[id {:keys [x y texto]}]]
-                    (let [xc (obtener-x perfil x)
-                          texto-a-mostrar (if (calibrado? perfil) texto [(.toFixed xc 1)])]
+                    (let [xc (calcular-x-calibrado perfil x)
+                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil) texto))]
+                      ;(js/console.log (pr-str (into [] texto-a-mostrar)))
                       (crear-etiqueta id xc y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
                   (:etiquetas perfil)))
    )])
