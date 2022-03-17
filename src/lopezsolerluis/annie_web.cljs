@@ -121,6 +121,11 @@
       (let [[a b] (:calibración perfil)]
         (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) (:data-vis perfil)))
       (:data-vis perfil)))
+(defn obtener-x [perfil x]
+  (if (calibrado? perfil)
+      (let [[a b] (:calibración perfil)]
+        (+ (* a x) b))
+      x))
 
 (defn abrir-ventana-calibración []
   (let [ultimas-etiquetas (take-last 2 (get-in @pestañas [@pestaña-activa @perfil-activo :etiquetas]))]
@@ -290,8 +295,9 @@
    ]
       (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
           (mapcat (fn [[id {:keys [x y texto]}]]
-                    (let [texto-a-mostrar (if (calibrado? perfil) texto [(.toFixed x 1)])]
-                      (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
+                    (let [xc (obtener-x perfil x)
+                          texto-a-mostrar (if (calibrado? perfil) texto [(.toFixed xc 1)])]
+                      (crear-etiqueta id xc y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
                   (:etiquetas perfil)))
    )])
 
