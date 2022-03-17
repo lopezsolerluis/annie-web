@@ -114,7 +114,7 @@
       (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
   (change-ventana ventana-elementos "none"))
 
-(defn calibrar-data [data a b]
+(defn calibrar-data-vis [data a b]
   )
   ; (mapv (fn [{:keys [x y]}] {:x 1 :y y}) data)
 
@@ -129,13 +129,21 @@
               (set! (.-value x1-calibración-number) x1)
               (set! (.-value x2-calibración-number) x2)))))
 
+(defn calcular-calibración [x1 x2 lambda1 lambda2]
+  (let [a (/ (- lambda2 lambda1) (- x2 x1)) ;(/ (- l2 l1) (- x2 x1))
+        b (/ (- (* lambda1 x2) (* lambda2 x1)) (- x2 x1))] ; (/ (- (* l1 x2) (* l2 x1)) (- x2 x1))))
+     [a b]))
+
 (defn calibrar-ok []
   (let [lambda1 (js/parseFloat (.-value lambda1-calibración-number))
         lambda2 (js/parseFloat (.-value lambda2-calibración-number))]
         (if (or (js/isNaN lambda1) (js/isNaN lambda2))
             (alert (app-tr @lang :deben-ingresarse-dos-lambdas))
-
-        )))
+            (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
+                  x2 (js/parseFloat (.-value x2-calibración-number))
+                  params (calcular-calibración x1 x2 lambda1 lambda2)]
+              (swap! pestañas assoc-in [@pestaña-activa @perfil-activo :calibración] params)
+              (change-ventana ventana-calibración "none")))))
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
 
