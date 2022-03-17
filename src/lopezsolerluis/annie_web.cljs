@@ -15,14 +15,14 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
-(defonce perfil-activo (atom "")) ;idem
-(defonce pestaña-activa (atom ""))
+(defonce pestaña-activa (atom "")) ;idem
+(defonce perfil-activo (atom ""))
 (def etiqueta-activa (atom []))
 
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
-(def ventana-elementos (gdom/getElement "ventana-elementos"))
 (def fondo-transparente (gdom/getElement "fondoblanco"))
+(def ventana-elementos (gdom/getElement "ventana-elementos"))
 (def etiqueta-ok (gdom/getElement "ok-etiqueta"))
 (def etiqueta-cancel (gdom/getElement "cancel-etiqueta"))
 (def etiqueta-delete (gdom/getElement "delete-etiqueta"))
@@ -50,7 +50,7 @@
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-    (doseq [key-1 [:menu :ventana-etiqueta]]
+    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración]]
       (doseq [key-2 (-> translations :es key-1 keys)]
         (let [el (gdom/getElement (name key-2))]
           (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
