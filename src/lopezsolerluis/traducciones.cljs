@@ -41,6 +41,7 @@
                            :etiqueta-label "Elements:"}
         :confirmar-borrar-etiqueta "Do you really want to delete this label?"
         :etiquetas-no-calibrado "Labels can't be renamed until\nthe profile has been calibrated."
+        :debería-seleccionar-dos-líneas "Al least two lines should be selected."
         :extensión-no-fits "File does not have .FITS extension"
         :fits-no-simple "FITS file is not SIMPLE"
         :fits-no-valido "FITS file does not seem to be valid"
@@ -84,6 +85,7 @@
         :confirmar-borrar-etiqueta "¿Realmente desea borrar esta etiqueta?"
         :etiquetas-no-calibrado "Las etiquetas no pueden renombrarse\nhasta tanto se calibre el perfil."
         :extensión-no-fits "El archivo carece de extensión .FITS"
+        :debería-seleccionar-dos-líneas "Debería seleccionar al menos dos líneas."
         :fits-no-simple "El archivo Fits no es SIMPLE"
         :fits-no-valido "El archivo Fits no parece ser válido"
    }

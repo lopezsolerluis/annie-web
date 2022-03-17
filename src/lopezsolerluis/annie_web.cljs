@@ -27,6 +27,11 @@
 (def etiqueta-cancel (gdom/getElement "cancel-etiqueta"))
 (def etiqueta-delete (gdom/getElement "delete-etiqueta"))
 (def etiqueta-texto (gdom/getElement "etiqueta-texto"))
+(def ventana-calibración (gdom/getElement "ventana-calibración"))
+(def x1-calibración-number (gdom/getElement "x1-calibración-number"))
+(def x2-calibración-number (gdom/getElement "x2-calibración-number"))
+(def lambda1-calibración-number (gdom/getElement "lambda1-calibración-number"))
+(def lambda2-calibración-number (gdom/getElement "lambda2calibración-number"))
 
 (defn encender-espera []
   (set! (.. icono-espera -style -display) "block")
@@ -48,6 +53,9 @@
         (let [el (gdom/getElement (name key-2))]
           (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
 ;; end of translation functions
+
+(defn alert [mensaje]
+  (js/alert mensaje))
 
 (defn crear-perfil [fits-file]
   (let [data (:data fits-file)]
@@ -78,8 +86,8 @@
                             (fits/read-fits-file file procesar-archivo-fits)))
                           (set! (-> this .-target .-value) ""))}])
 
-(defn change-ventana-elementos [state]  ; state es "block" o "none"
-  (set! (.. ventana-elementos -style -display) state)
+(defn change-ventana [ventana state]  ; state es "block" o "none"
+  (set! (.. ventana -style -display) state)
   (set! (.. fondo-transparente -style -display) state))
 
 (defn confirmar-operación [texto]
@@ -93,22 +101,35 @@
                        (.toFixed 1)
                        str)])]
     (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)
-    (change-ventana-elementos "none")))
+    (change-ventana ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
-  (change-ventana-elementos "none"))
+  (change-ventana ventana-elementos "none"))
 (defn borrar-etiqueta []
   (if (confirmar-operación (app-tr @lang :confirmar-borrar-etiqueta))
       (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
-  (change-ventana-elementos "none"))
+  (change-ventana ventana-elementos "none"))
+
+(defn abrir-ventana-calibración []
+  (let [ultimas-etiquetas (take-last 2 (get-in @pestañas [@pestaña-activa @perfil-activo :etiquetas]))]
+    (if-not (= 2 (count ultimas-etiquetas))
+            (alert (app-tr @lang :debería-seleccionar-dos-líneas))
+            (let [baricentros (map :x (vals ultimas-etiquetas))
+                  x1 (apply min baricentros)
+                  x2 (apply max baricentros)]
+              (change-ventana ventana-calibración "block")
+              (set! (.-value x1-calibración-number) x1)
+              (set! (.-value x2-calibración-number) x2)))))
 
 (defonce is-initialized?
-  (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click (gdom/getElement "fits")))
+  (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
+                  #(.click (gdom/getElement "fits")))
       (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click"
                   (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
                                                   (str @pestaña-activa ".annie"))))
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)
+      (gevents/listen (gdom/getElement "auto-calibracion") "click" abrir-ventana-calibración)
       true))
 
 (def nearest-xy (atom {}))
@@ -167,7 +188,7 @@
                             (->> (get-in @pestañas (conj etiqueta :texto))
                                  (str/join "\n"))
                             (app-tr @lang :etiquetas-no-calibrado))]
-    (change-ventana-elementos "block")
+    (change-ventana ventana-elementos "block")
     (set! (.-value etiqueta-texto) texto-en-string)
     (set! (.-readOnly etiqueta-texto) (not perfil-calibrado?))
     (if perfil-calibrado? (.select etiqueta-texto))))
