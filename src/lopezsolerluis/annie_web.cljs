@@ -115,8 +115,12 @@
   (change-ventana ventana-elementos "none"))
 
 (defn calibrar-data-vis [data a b]
-  )
-  ; (mapv (fn [{:keys [x y]}] {:x 1 :y y}) data)
+  (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) data))
+(defn obtener-data [perfil]
+  (if (calibrado? perfil)
+      (let [[a b] (:calibración perfil)]
+        (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) (:data-vis perfil)))
+      (:data-vis perfil)))
 
 (defn abrir-ventana-calibración []
   (let [ultimas-etiquetas (take-last 2 (get-in @pestañas [@pestaña-activa @perfil-activo :etiquetas]))]
@@ -275,7 +279,7 @@
                        :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
       [:div]]
    (doall (for [[id perfil] (get @pestañas @pestaña-activa)]
-               ^{:key (str id)} [:> rvis/LineSeries {:data (:data-vis perfil) :style {:fill "none"}
+               ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
                                                      :strokeWidth 1
                                                      :onNearestX (fn [e]
                                                             (reset! nearest-xy (js->clj e)))}]))
