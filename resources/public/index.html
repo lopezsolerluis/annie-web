@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="css/style.css" rel="stylesheet" type="text/css">
-  <link href="css/caja-elementos.css" rel="stylesheet" type="text/css">
+  <link href="css/popup-form.css" rel="stylesheet" type="text/css">
   <link href="css/radial-chart.css" rel="stylesheet" type="text/css">
   <link href="css/plot.css" rel="stylesheet" type="text/css">
   <link href="css/treemap.css" rel="stylesheet" type="text/css">
@@ -71,9 +71,10 @@
       </ul>
     </div>
 
-
     <!-- Para impedir interacción con lo de "abajo" (o sea, para que la ventana de abajo sea "modal") -->
     <div id="fondoblanco"></div>
+
+
     <!-- Para ingresar los elementos -->
     <div class="form-popup" id="ventana-elementos">
       <div class="form-container">
@@ -81,12 +82,50 @@
         <label for="elementos-texto" id="etiqueta-label">Elementos:</label>
         <textarea id="etiqueta-texto" name="elementos-texto" cols="10" rows="5"></textarea>
 
-        <button type="button" id="delete-etiqueta" class="btn delete">Borrar</button>
+
         <button type="button" id="ok-etiqueta" class="btn">Ok</button>
         <button type="button" id="cancel-etiqueta" class="btn cancel">Cancelar</button>
+        <button type="button" id="delete-etiqueta" class="btn delete">Borrar</button>
       </div>
     </div>
 
+<!-- Para calibrar un perfil -->
+
+<div class="form-popup" id="ventana-calibración">
+    <div class="form-container calibración-container">
+      <h3 id="calibración-titulo">Calibración</h3>
+
+      <div class="dos-elementos">
+        <span>
+        <label for="x1-calibración" id="x1-calibración-label">x<sub>1</sub>:</label>
+        <input type="number" id="x1-calibración-number" name="x1-calibración" required>
+        <!-- <span class="validity"></span> -->
+        </span>
+        <span class="arrow">➠</span>
+        <span>
+        <label for="lambda1-calibración" id="lambda1-calibración-label">λ<sub>1</sub>:</label>
+        <input type="number" id="lambda1-calibración-number" name="lambda1-calibración" required>
+        <!-- <span class="validity"></span> -->
+        </span>
+      </div>
+      <div class="dos-elementos">
+        <span>
+        <label for="x2-calibración" id="x2-calibración-label">x<sub>2</sub>:</label>
+        <input type="number" id="x2-calibración-number" name="x2-calibración" required>
+        <!-- <span class="validity"></span> -->
+        </span>
+        <span class="arrow">➠</span>
+        <span>
+        <label for="lambda2-calibración" id="lambda2-calibración-label">λ<sub>2</sub>:</label>
+        <input type="number" id="lambda2-calibración-number" name="lambda2-calibración" required>
+        <!-- <span class="validity"></span> -->
+        </span>
+      </div>
+
+      <button type="button" id="ok-etiqueta" class="btn">Ok</button>
+      <button type="button" id="cancel-etiqueta" class="btn cancel">Cancelar</button>
+    </div>
+  </div>
 
     <div id="fondogris"></div>
     <div id="loader"></div> <!-- Para el iconito de espera... -->

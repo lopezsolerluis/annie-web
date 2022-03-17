@@ -1,19 +1,5 @@
 {box-sizing: border-box;}
 
-/* Button used to open the contact form - fixed at the bottom of the page */
-.open-button {
-  background-color: #555;
-  color: white;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  opacity: 0.8;
-  position: fixed;
-  bottom: 23px;
-  right: 28px;
-  width: 280px;
-}
-
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -81,6 +67,38 @@
 
 .form-container label {
   font-weight: bold;
+}
+
+.calibración-container {
+  width: 350px;
+}
+
+.calibración-container input[type=number] {
+  width: 7em;
+}
+
+.dos-elementos {
+  margin: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+input[type=number]:invalid+span:after {
+  content: '✖';
+  color: red;
+  padding-left: 5px;
+}
+
+input[type=number]:valid+span:after {
+  content: '✓';
+  color: green;
+  padding-left: 5px;
+}
+
+.arrow {
+  font-size: 200%;
 }
 
 #fondoblanco {
