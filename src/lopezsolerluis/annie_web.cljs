@@ -116,7 +116,7 @@
             (let [baricentros (map :x (vals ultimas-etiquetas))
                   x1 (apply min baricentros)
                   x2 (apply max baricentros)]
-              (change-ventana ventana-calibración "block")
+              (change-ventana ventana-calibración "block") 
               (set! (.-value x1-calibración-number) x1)
               (set! (.-value x2-calibración-number) x2)))))
 
