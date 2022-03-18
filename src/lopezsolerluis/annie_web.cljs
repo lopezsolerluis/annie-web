@@ -15,8 +15,8 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
-(defonce pestaña-activa (atom "")) ;idem
-(defonce perfil-activo (atom ""))
+;(defonce pestaña-activa (atom "")) ;idem
+;(defonce perfil-activo (atom ""))
 (def etiqueta-activa (atom []))
 
 (def icono-espera (gdom/getElement "loader"))
@@ -70,9 +70,11 @@
       (let [perfil (crear-perfil fits-file)
             data-para-vis (crear-data-para-vis perfil)
             nombre (:nombre-archivo fits-file)]
-         (reset! pestaña-activa nombre)
-         (reset! perfil-activo nombre)
-         (swap! pestañas assoc-in [@pestaña-activa @perfil-activo]
+         ; (reset! pestaña-activa nombre)
+         ; (reset! perfil-activo nombre)
+         (swap! pestañas assoc :pestaña-activa nombre)
+         (swap! pestañas assoc-in [nombre] {:perfil-activo nombre})
+         (swap! pestañas assoc-in [nombre nombre]  ; pestaña perfil
                                   {:data-vis data-para-vis :calibración [] :etiquetas {}})))
   (encender-espera false))
 
@@ -95,11 +97,17 @@
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
 
+(defn get-perfil-activo []
+  (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
+        perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]
+    (get-in @pestañas [pestaña-activa-nombre perfil-activo-nombre])))
+
 (defn agregar-texto-etiqueta []
-  (when (calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo]))
-    (let [texto (str/split-lines (.-value etiqueta-texto))]
-      (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)))
-  (change-ventana ventana-elementos "none"))
+  (let [perfil-activo (get-perfil-activo)]
+    (when (calibrado? perfil-activo)
+      (let [texto (str/split-lines (.-value etiqueta-texto))]
+        (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)))
+    (change-ventana ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
   (change-ventana ventana-elementos "none"))
 (defn borrar-etiqueta []
@@ -126,7 +134,8 @@
       x))
 
 (defn abrir-ventana-calibración []
-  (let [ultimas-etiquetas (take-last 2 (get-in @pestañas [@pestaña-activa @perfil-activo :etiquetas]))]
+  (let [perfil-activo (get-perfil-activo)
+        ultimas-etiquetas (take-last 2 (:etiquetas perfil-activo))]
     (if-not (= 2 (count ultimas-etiquetas))
             (alert (app-tr @lang :debería-seleccionar-dos-líneas))
             (let [baricentros (map :x (vals ultimas-etiquetas))
@@ -137,8 +146,8 @@
               (set! (.-value x2-calibración-number) x2)))))
 
 (defn calcular-calibración [x1 x2 lambda1 lambda2]
-  (let [a (/ (- lambda2 lambda1) (- x2 x1)) ;(/ (- l2 l1) (- x2 x1))
-        b (/ (- (* lambda1 x2) (* lambda2 x1)) (- x2 x1))] ; (/ (- (* l1 x2) (* l2 x1)) (- x2 x1))))
+  (let [a (/ (- lambda2 lambda1) (- x2 x1))
+        b (/ (- (* lambda1 x2) (* lambda2 x1)) (- x2 x1))]
      [a b]))
 
 (defn calibrar-ok []
@@ -148,8 +157,10 @@
             (alert (app-tr @lang :deben-ingresarse-dos-lambdas))
             (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
                   x2 (js/parseFloat (.-value x2-calibración-number))
-                  params (calcular-calibración x1 x2 lambda1 lambda2)]
-              (swap! pestañas assoc-in [@pestaña-activa @perfil-activo :calibración] params)
+                  params (calcular-calibración x1 x2 lambda1 lambda2)
+                  pestaña-activa-nombre (:pestaña-activa @pestañas)
+                  perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]                            
+              (swap! pestañas assoc-in [pestaña-activa-nombre perfil-activo-nombre :calibración] params)
               (change-ventana ventana-calibración "none")))))
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
@@ -157,9 +168,10 @@
 (defonce is-initialized?
   (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
                   #(.click (gdom/getElement "fits")))
-      (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click"
-                  (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
-                                                  (str @pestaña-activa ".annie"))))
+      (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click" (fn [])
+                  ; (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
+                  ;                                 (str @pestaña-activa ".annie"))))
+                  )
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)
@@ -187,7 +199,6 @@
   (let [pos (conj etiqueta :pos)
         [inc-x inc-y] (get-in @pestañas pos)]
   (vector
-   ;^{:key id}
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
                               :onValueMouseOut  (fn [d] (if-not (or @button-cen-pressed?
                                                                 (= "block" (.. ventana-elementos -style -display)))
@@ -203,7 +214,6 @@
                                                                       texto)]]))}]}]
                                                         ; (for [i (range (count texto))]
                                                         ;   [:tspan {:x inc-x :y (+ inc-y (* i 18))} (get texto i)])
-     ;^{:key (str key "line")}
      [:> rvis/CustomSVGSeries {:data [{:x x :y y
                                 :customComponent (fn []
                                    (r/as-element [:g {:className "etiqueta cursor-normal"}
@@ -219,7 +229,7 @@
                    (recur (inc n)))))))
 
 (defn open-ventana-elementos [etiqueta]
-  (let [perfil-calibrado? (calibrado? (get-in @pestañas [@pestaña-activa @perfil-activo]))
+  (let [perfil-calibrado? (calibrado? (get-perfil-activo))
         texto-en-string (if perfil-calibrado?
                             (->> (get-in @pestañas (conj etiqueta :texto))
                                  (str/join "\n"))
@@ -230,15 +240,15 @@
     (if perfil-calibrado? (.select etiqueta-texto))))
 
 (defn colocar-etiqueta []
-  (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])
+  (let [perfil (get-perfil-activo)
         baricentro (mn/calcular-baricentro (obtener-data perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
-        nombre (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
-        ; texto [(.toFixed (:x baricentro) 1)]
+        nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
-        key [@pestaña-activa @perfil-activo :etiquetas nombre]]
-        ; (js/console.log (pr-str baricentro) (pr-str baricentro-c) (nearest-x nearest-xy-0))
+        pestaña-activa-nombre (:pestaña-activa @pestañas)
+        perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])
+        key [pestaña-activa-nombre perfil-activo-nombre :etiquetas nombre-etiqueta]]
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
@@ -283,23 +293,26 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
       [:div]]
-   (doall (for [[id perfil] (get @pestañas @pestaña-activa)]
-               ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
-                                                     :strokeWidth 1
-                                                     :onNearestX (fn [e]
-                                                            (reset! nearest-xy (js->clj e)))}]))
+   (let [pestaña-activa (get @pestañas (:pestaña-activa @pestañas))]
+      (doall (for [[id perfil] pestaña-activa]
+                  ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
+                                                        :strokeWidth 1
+                                                        :onNearestX (fn [e]
+                                                            (reset! nearest-xy (js->clj e)))}])))
    ; (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
    ;    (doall (for [[id {:keys [x y texto]}] (:etiquetas perfil)
    ;                 :let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]]
    ;              (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
-      (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
-          (mapcat (fn [[id {:keys [x y texto]}]]
-                    (let [xc (calcular-x-calibrado perfil x)
-                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil) texto))]
-                      ;(js/console.log (pr-str (into [] texto-a-mostrar)))
-                      (crear-etiqueta id xc y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id])))
-                  (:etiquetas perfil)))
+    (let [perfil-activo (get-perfil-activo)
+          pestaña-activa-nombre (:pestaña-activa @pestañas)
+          perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]
+       (mapcat (fn [[id {:keys [x y texto]}]]
+                  (let [xc (calcular-x-calibrado perfil-activo x)
+                        texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
+                    ;(js/console.log (pr-str (into [] texto-a-mostrar)))
+                    (crear-etiqueta id xc y texto-a-mostrar [pestaña-activa-nombre perfil-activo-nombre :etiquetas id])))
+                (:etiquetas perfil-activo)))
    )])
 
 (defn app-scaffold []
