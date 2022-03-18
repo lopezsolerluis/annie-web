@@ -201,7 +201,7 @@
   (vector
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
                               :onValueMouseOut  (fn [d] (when-not (or @button-cen-pressed?
-                                                                    (= "block" (.. ventana-elementos -style -display)))
+                                                                      (= "block" (.. ventana-elementos -style -display)))
                                                             (reset! etiqueta-activa [])))
                               :data [{:x x :y y
                                 :customComponent (fn [_ position-in-pixels]
@@ -275,10 +275,12 @@
   [:div.graph
   (into
   [:> rvis/FlexibleXYPlot
-   {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
-                                          :onMouseUp   (fn [e] (mouse-pressed e :up))
-                                          :onMouseMove (fn [e] (mouse-moved e))
-                                          :onClick     (fn [e] (when (seq @etiqueta-activa)
+   {:margin {:left 100 :right 50 :top 20} :onMouseDown  (fn [e] (mouse-pressed e :down))
+                                          :onMouseUp    (fn [e] (mouse-pressed e :up))
+                                          :onMouseMove  (fn [e] (mouse-moved e))
+                                          :onMouseLeave (fn [e] (reset! etiqueta-activa [])
+                                                                (reset! button-cen-pressed? false))
+                                          :onClick      (fn [e] (when (seq @etiqueta-activa)
                                                                    (open-ventana-elementos @etiqueta-activa)))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
