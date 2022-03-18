@@ -82,11 +82,11 @@
 (defn input-fits-file []
   [:input {:type "file" :id "fits"
            :on-change (fn [this]
-                        (if-not (= "" (-> this .-target .-value))
+                        (when-not (= "" (-> this .-target .-value))
                           (let [^js/File file (-> this .-target .-files (aget 0))]
                             (encender-espera true)
                             (fits/read-fits-file file procesar-archivo-fits)))
-                          (set! (-> this .-target .-value) ""))}])
+                        (set! (-> this .-target .-value) ""))}])
 
 (defn change-ventana [ventana state]  ; state es "block" o "none"
   (set! (.. ventana -style -display) state)
@@ -113,8 +113,8 @@
 (defn cancelar-texto-etiqueta []
   (change-ventana ventana-elementos "none"))
 (defn borrar-etiqueta []
-  (if (confirmar-operación (app-tr @lang :confirmar-borrar-etiqueta))
-      (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
+  (when (confirmar-operación (app-tr @lang :confirmar-borrar-etiqueta))
+    (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
   (change-ventana ventana-elementos "none"))
 
 (defn calibrar-data-vis [data a b]
@@ -200,13 +200,13 @@
         [inc-x inc-y] (get-in @pestañas pos)]
   (vector
     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
-                              :onValueMouseOut  (fn [d] (if-not (or @button-cen-pressed?
-                                                                (= "block" (.. ventana-elementos -style -display)))
-                                                          (reset! etiqueta-activa [])))
+                              :onValueMouseOut  (fn [d] (when-not (or @button-cen-pressed?
+                                                                    (= "block" (.. ventana-elementos -style -display)))
+                                                            (reset! etiqueta-activa [])))
                               :data [{:x x :y y
                                 :customComponent (fn [_ position-in-pixels]
-                                  (if (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
-                                    (swap! pestañas assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
+                                  (when (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
+                                     (swap! pestañas assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
                                   (r/as-element [:g {:className "etiqueta"}
                                                       [:text
                                                         (map-indexed (fn [i linea]
@@ -237,7 +237,7 @@
     (change-ventana ventana-elementos "block")
     (set! (.-value etiqueta-texto) texto-en-string)
     (set! (.-readOnly etiqueta-texto) (not perfil-calibrado?))
-    (if perfil-calibrado? (.select etiqueta-texto))))
+    (when perfil-calibrado? (.select etiqueta-texto))))
 
 (defn colocar-etiqueta []
   (let [perfil (get-perfil-activo)
@@ -252,17 +252,17 @@
      (open-ventana-elementos key)))
 
 (defn mouse-pressed [e dir]
-  (if-not (.-ctrlKey e)    ; Con la tecla "Control" se editan etiquetas
+  (when-not (.-ctrlKey e)    ; Con la tecla "Control" se editan etiquetas
     (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
       (case boton               ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
-        0 (do (if (= dir :up) (colocar-etiqueta))
+        0 (do (when (= dir :up) (colocar-etiqueta))
               (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
                 (swap! button-izq-pressed? not))
         1 (swap! button-cen-pressed? not)
         2 ))))
 
 (defn mouse-moved [e]
-  (if (or @button-izq-pressed? @button-cen-pressed?)
+  (when (or @button-izq-pressed? @button-cen-pressed?)
     (reset! pos-mouse-pixels {:x (.-clientX e) :y (.-clientY e)})))
 
 (def line-style {:fill "none" :strokeLinejoin "round" :strokeLinecap "round"})
@@ -278,7 +278,7 @@
    {:margin {:left 100 :right 50 :top 20} :onMouseDown (fn [e] (mouse-pressed e :down))
                                           :onMouseUp   (fn [e] (mouse-pressed e :up))
                                           :onMouseMove (fn [e] (mouse-moved e))
-                                          :onClick     (fn [e] (if (seq @etiqueta-activa)
+                                          :onClick     (fn [e] (when (seq @etiqueta-activa)
                                                                    (open-ventana-elementos @etiqueta-activa)))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]
