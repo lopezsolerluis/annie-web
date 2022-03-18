@@ -308,8 +308,7 @@
           pestaña-perfil-etiqueta-nombre (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas)]
        (mapcat (fn [[id {:keys [x y texto]}]]
                   (let [xc (calcular-x-calibrado perfil-activo x)
-                        texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
-                    ;(js/console.log (pr-str (into [] texto-a-mostrar)))
+                        texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]                    
                     (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo)))
    )])
