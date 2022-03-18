@@ -15,8 +15,6 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
-;(defonce pestaña-activa (atom "")) ;idem
-;(defonce perfil-activo (atom ""))
 (def etiqueta-activa (atom []))
 
 (def icono-espera (gdom/getElement "loader"))
@@ -97,10 +95,14 @@
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
 
-(defn get-perfil-activo []
+(defn get-pestaña-y-perfil-activos-nombre []
   (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
         perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]
-    (get-in @pestañas [pestaña-activa-nombre perfil-activo-nombre])))
+    [pestaña-activa-nombre perfil-activo-nombre]))
+
+(defn get-perfil-activo []
+  (let [key (get-pestaña-y-perfil-activos-nombre)]
+    (get-in @pestañas key)))
 
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
@@ -157,10 +159,8 @@
             (alert (app-tr @lang :deben-ingresarse-dos-lambdas))
             (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
                   x2 (js/parseFloat (.-value x2-calibración-number))
-                  params (calcular-calibración x1 x2 lambda1 lambda2)
-                  pestaña-activa-nombre (:pestaña-activa @pestañas)
-                  perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]                            
-              (swap! pestañas assoc-in [pestaña-activa-nombre perfil-activo-nombre :calibración] params)
+                  params (calcular-calibración x1 x2 lambda1 lambda2)]
+              (swap! pestañas assoc-in (conj (get-pestaña-y-perfil-activos-nombre) :calibración) params)
               (change-ventana ventana-calibración "none")))))
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
@@ -246,9 +246,7 @@
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
-        pestaña-activa-nombre (:pestaña-activa @pestañas)
-        perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])
-        key [pestaña-activa-nombre perfil-activo-nombre :etiquetas nombre-etiqueta]]
+        key (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas nombre-etiqueta)]
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
@@ -305,13 +303,12 @@
    ;              (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
     (let [perfil-activo (get-perfil-activo)
-          pestaña-activa-nombre (:pestaña-activa @pestañas)
-          perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]
+          pestaña-perfil-etiqueta-nombre (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas)]
        (mapcat (fn [[id {:keys [x y texto]}]]
                   (let [xc (calcular-x-calibrado perfil-activo x)
                         texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
                     ;(js/console.log (pr-str (into [] texto-a-mostrar)))
-                    (crear-etiqueta id xc y texto-a-mostrar [pestaña-activa-nombre perfil-activo-nombre :etiquetas id])))
+                    (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo)))
    )])
 
