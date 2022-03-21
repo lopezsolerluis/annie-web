@@ -32,6 +32,7 @@
 (def lambda2-calibración-number (gdom/getElement "lambda2-calibración-number"))
 (def calibración-ok (gdom/getElement "ok-calibración"))
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
+(def open-fits (gdom/getElement "open-fits"))
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
@@ -78,15 +79,6 @@
 
 (defn calibrado? [perfil]
   (seq (:calibración perfil)))
-
-(defn input-fits-file []
-  [:input {:type "file" :id "fits"
-           :on-change (fn [this]
-                        (when-not (= "" (-> this .-target .-value))
-                          (let [^js/File file (-> this .-target .-files (aget 0))]
-                            (encender-espera true)
-                            (fits/read-fits-file file procesar-archivo-fits)))
-                        (set! (-> this .-target .-value) ""))}])
 
 (defn change-ventana [ventana state]  ; state es "block" o "none"
   (set! (.. ventana -style -display) state)
@@ -166,8 +158,14 @@
   (change-ventana ventana-calibración "none"))
 
 (defonce is-initialized?
-  (do (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
-                  #(.click (gdom/getElement "fits")))
+  (do (gevents/listen open-fits "change" (fn [this]
+                          (when-not (= "" (-> this .-target .-value))
+                            (let [^js/File file (-> this .-target .-files (aget 0))]
+                              (encender-espera true)
+                              (fits/read-fits-file file procesar-archivo-fits)))
+                          (set! (-> this .-target .-value) "")))
+      (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
+                  #(.click open-fits))
       (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click" (fn [])
                   ; (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
                   ;                                 (str @pestaña-activa ".annie"))))
@@ -308,15 +306,13 @@
           pestaña-perfil-etiqueta-nombre (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas)]
        (mapcat (fn [[id {:keys [x y texto]}]]
                   (let [xc (calcular-x-calibrado perfil-activo x)
-                        texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]                    
+                        texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
                     (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo)))
    )])
 
 (defn app-scaffold []
-  [:div.todo
-   [input-fits-file]
-   [line-chart]])
+   [line-chart])
 
 (defn get-app-element []
   (gdom/getElement "app"))
