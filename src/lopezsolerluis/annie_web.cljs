@@ -325,7 +325,8 @@
  [:div
    (for [nombre (rest (keys @pestañas))]
      ^{:key (str "pestaña-" nombre)}
-     [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")}
+     [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
+               :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
          nombre])])
 
 (defn app-scaffold []
