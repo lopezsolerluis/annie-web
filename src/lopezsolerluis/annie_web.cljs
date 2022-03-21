@@ -65,21 +65,11 @@
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
-(defn crear-botones []
-  [:div
-    (for [nombre (rest (keys @pestañas))]
-      ^{:key (str "boton" nombre)}[:button {:id nombre} nombre])])
-
-
 (defn crear-pestaña [nombre data-para-vis]
-  ; (reset! pestaña-activa nombre)
-  ; (reset! perfil-activo nombre)
-  
-    (swap! pestañas assoc :pestaña-activa nombre)
-    (swap! pestañas assoc-in [nombre] {:perfil-activo nombre})
-    (swap! pestañas assoc-in [nombre nombre]  ; pestaña perfil
-                            {:data-vis data-para-vis :calibración [] :etiquetas {}})
-
+  (swap! pestañas assoc :pestaña-activa nombre)
+  (swap! pestañas assoc-in [nombre] {:perfil-activo nombre})
+  (swap! pestañas assoc-in [nombre nombre]  ; pestaña perfil
+                           {:data-vis data-para-vis :calibración [] :etiquetas {}})
   (encender-espera false))
 
 (defn procesar-archivo-fits [fits-file]
@@ -328,6 +318,11 @@
                 (:etiquetas perfil-activo)))
    )])
 
+(defn crear-botones []
+ [:div
+   (for [nombre (rest (keys @pestañas))]
+     ^{:key (str "boton" nombre)} [:button {:id nombre} nombre])])
+
 (defn app-scaffold []
    [line-chart])
 
@@ -335,10 +330,7 @@
   (gdom/getElement "app"))
 
 (defn mount [el]
-  ; (doall (for [nombre-perfil (rest (keys @pestañas))]
-  ;   (rdom/render [boton-pestaña nombre-perfil] tabs)))
   (rdom/render [crear-botones] tabs)
-  ;(rdom/render [boton-pestaña "Luis"] tabs)
   (rdom/render [app-scaffold] el))
 
 (defn mount-app-element []
