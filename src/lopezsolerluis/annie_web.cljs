@@ -100,6 +100,7 @@
   (let [perfil-activo (get-perfil-activo)]
     (when (calibrado? perfil-activo)
       (let [texto (str/split-lines (.-value etiqueta-texto))]
+        (js/console.log "Hola" (pr-str (conj @etiqueta-activa :texto)))
         (swap! pestañas assoc-in (conj @etiqueta-activa :texto) texto)))
     (change-ventana ventana-elementos "none")))
 (defn cancelar-texto-etiqueta []
@@ -232,6 +233,7 @@
                             (->> (get-in @pestañas (conj etiqueta :texto))
                                  (str/join "\n"))
                             (app-tr @lang :etiquetas-no-calibrado))]
+    (js/console.log (pr-str (conj etiqueta :texto)))
     (change-ventana ventana-elementos "block")
     (set! (.-value etiqueta-texto) texto-en-string)
     (set! (.-readOnly etiqueta-texto) (not perfil-calibrado?))
@@ -245,6 +247,7 @@
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
         key (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas nombre-etiqueta)]
+        (js/console.log (pr-str key))
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
@@ -256,7 +259,7 @@
         0 (do (when (= dir :up) (colocar-etiqueta))
               (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
                 (swap! button-izq-pressed? not))
-        1 (swap! button-cen-pressed? not)
+        1 (reset! button-cen-pressed? (if (= dir :down) true false)) ; Si uso <<swap! not>>, hay problemas al salir y entrar al gráfico...
         2 ))))
 
 (defn mouse-moved [e]
@@ -276,9 +279,10 @@
    {:margin {:left 100 :right 50 :top 20} :onMouseDown  (fn [e] (mouse-pressed e :down))
                                           :onMouseUp    (fn [e] (mouse-pressed e :up))
                                           :onMouseMove  (fn [e] (mouse-moved e))
-                                          :onMouseLeave (fn [e] (reset! etiqueta-activa [])
+                                          :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
                                                                 (reset! button-cen-pressed? false))
                                           :onClick      (fn [e] (when (seq @etiqueta-activa)
+                                                                    (js/console.log (pr-str @etiqueta-activa))
                                                                    (open-ventana-elementos @etiqueta-activa)))}
    [:> rvis/VerticalGridLines {:style axis-style}]
    [:> rvis/HorizontalGridLines {:style axis-style}]

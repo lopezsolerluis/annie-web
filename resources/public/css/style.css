@@ -108,7 +108,7 @@ input[type=file] {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    z-index: 10;
+    /* z-index: -1; */
 }
 
 #fondogris {
