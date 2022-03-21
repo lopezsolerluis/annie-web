@@ -321,7 +321,7 @@
 (defn crear-botones []
  [:div
    (for [nombre (rest (keys @pestañas))]
-     ^{:key (str "boton" nombre)} [:button {:id nombre} nombre])])
+     ^{:key (str "boton" nombre)} [:button {:id (str "pestaña-" nombre)} nombre])])
 
 (defn app-scaffold []
    [line-chart])
