@@ -9,7 +9,8 @@
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-file :as save :refer [download-object-as-json]]))
+   [lopezsolerluis.save-file :as save :refer [download-object-as-json]])
+  (:import [goog.dom TagName]))
 
 (enable-console-print!)
 
@@ -56,7 +57,7 @@
 (defn alert [mensaje]
   (js/alert mensaje))
 
-(defn crear-perfil [fits-file]
+(defn crear-datos-perfil-2d [fits-file]
   (let [data (:data fits-file)]
           ;(apply map + data))) ; Para sumar las columnas (tarda mucho más)
          (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'...¡casi hacker!
@@ -64,19 +65,30 @@
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
+(defn crear-botones []
+  [:div
+    (for [nombre (rest (keys @pestañas))]
+      ^{:key (str "boton" nombre)}[:button {:id nombre} nombre])])
+
+
+(defn crear-pestaña [nombre data-para-vis]
+  ; (reset! pestaña-activa nombre)
+  ; (reset! perfil-activo nombre)
+  
+    (swap! pestañas assoc :pestaña-activa nombre)
+    (swap! pestañas assoc-in [nombre] {:perfil-activo nombre})
+    (swap! pestañas assoc-in [nombre nombre]  ; pestaña perfil
+                            {:data-vis data-para-vis :calibración [] :etiquetas {}})
+
+  (encender-espera false))
+
 (defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
       (js/alert (app-tr @lang :fits-no-valido))
-      (let [perfil (crear-perfil fits-file)
-            data-para-vis (crear-data-para-vis perfil)
+      (let [perfil-2d (crear-datos-perfil-2d fits-file)
+            data-para-vis (crear-data-para-vis perfil-2d)
             nombre (:nombre-archivo fits-file)]
-         ; (reset! pestaña-activa nombre)
-         ; (reset! perfil-activo nombre)
-         (swap! pestañas assoc :pestaña-activa nombre)
-         (swap! pestañas assoc-in [nombre] {:perfil-activo nombre})
-         (swap! pestañas assoc-in [nombre nombre]  ; pestaña perfil
-                                  {:data-vis data-para-vis :calibración [] :etiquetas {}})))
-  (encender-espera false))
+        (crear-pestaña nombre data-para-vis))))
 
 (defn calibrado? [perfil]
   (seq (:calibración perfil)))
@@ -323,6 +335,10 @@
   (gdom/getElement "app"))
 
 (defn mount [el]
+  ; (doall (for [nombre-perfil (rest (keys @pestañas))]
+  ;   (rdom/render [boton-pestaña nombre-perfil] tabs)))
+  (rdom/render [crear-botones] tabs)
+  ;(rdom/render [boton-pestaña "Luis"] tabs)
   (rdom/render [app-scaffold] el))
 
 (defn mount-app-element []
