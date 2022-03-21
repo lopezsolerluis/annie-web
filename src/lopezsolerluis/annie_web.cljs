@@ -170,7 +170,7 @@
                           (set! (-> this .-target .-value) "")))
       (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
                   #(.click open-fits))
-      (gevents/listen (gdom/getElement "grabar-pestaña-annie-como") "click" (fn [])
+      (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click" (fn [])
                   ; (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
                   ;                                 (str @pestaña-activa ".annie"))))
                   )

@@ -21,6 +21,10 @@ ul, ol {
   display:block;
 }
 
+#listamenu li a.disabled {
+  color: #EEEEEE;
+}
+
 #listamenu li a:hover {
   background-color:#6FACC6;
 }
