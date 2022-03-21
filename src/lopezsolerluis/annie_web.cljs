@@ -318,10 +318,15 @@
                 (:etiquetas perfil-activo)))
    )])
 
+(defn pestaña-activa? [nombre]
+  (= nombre (:pestaña-activa @pestañas)))
+
 (defn crear-botones []
  [:div
    (for [nombre (rest (keys @pestañas))]
-     ^{:key (str "boton" nombre)} [:button {:id (str "pestaña-" nombre)} nombre])])
+     ^{:key (str "pestaña-" nombre)}
+     [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")}
+         nombre])])
 
 (defn app-scaffold []
    [line-chart])
