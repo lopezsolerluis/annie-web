@@ -33,6 +33,7 @@
 (def calibración-ok (gdom/getElement "ok-calibración"))
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
+(def tabs (gdom/getElement "tabs"))
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
