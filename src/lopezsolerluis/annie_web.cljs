@@ -71,8 +71,8 @@
 
 (defn crear-pestaña [nombre data-para-vis]
   (swap! pestañas assoc :pestaña-activa nombre)
-  (swap! pestañas assoc-in [nombre] {:perfil-activo nombre})
-  (swap! pestañas assoc-in [nombre nombre]  ; pestaña perfil
+  (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
+  (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
                            {:data-vis data-para-vis :calibración [] :etiquetas {}})
   (encender-espera false))
 
@@ -94,13 +94,13 @@
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
 
-(defn get-pestaña-y-perfil-activos-nombre []
+(defn get-perfil-key []
   (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
-        perfil-activo-nombre (get-in @pestañas [pestaña-activa-nombre :perfil-activo])]
-    [pestaña-activa-nombre perfil-activo-nombre]))
+        perfil-activo-nombre (get-in @pestañas [:pestañas pestaña-activa-nombre :perfil-activo])]
+    [:pestañas pestaña-activa-nombre :perfiles perfil-activo-nombre]))
 
 (defn get-perfil-activo []
-  (let [key (get-pestaña-y-perfil-activos-nombre)]
+  (let [key (get-perfil-key)]
     (get-in @pestañas key)))
 
 (defn agregar-texto-etiqueta []
@@ -160,7 +160,7 @@
             (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
                   x2 (js/parseFloat (.-value x2-calibración-number))
                   params (calcular-calibración x1 x2 lambda1 lambda2)]
-              (swap! pestañas assoc-in (conj (get-pestaña-y-perfil-activos-nombre) :calibración) params)
+              (swap! pestañas assoc-in (conj (get-perfil-key) :calibración) params)
               (change-ventana ventana-calibración "none")))))
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
@@ -253,7 +253,7 @@
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
-        key (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas nombre-etiqueta)]
+        key (conj (get-perfil-key) :etiquetas nombre-etiqueta)]
         (js/console.log (pr-str key))
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
@@ -305,8 +305,8 @@
    [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                        :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
       [:div]]
-   (let [pestaña-activa (get @pestañas (:pestaña-activa @pestañas))]
-      (doall (for [[id perfil] pestaña-activa]
+   (let [perfiles-pestaña-activa (get-in @pestañas [:pestañas (:pestaña-activa @pestañas) :perfiles])]
+      (doall (for [[id perfil] perfiles-pestaña-activa]
                   ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
                                                         :strokeWidth 1
                                                         :onNearestX (fn [e]
@@ -317,7 +317,7 @@
    ;              (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
     (let [perfil-activo (get-perfil-activo)
-          pestaña-perfil-etiqueta-nombre (conj (get-pestaña-y-perfil-activos-nombre) :etiquetas)]
+          pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
        (mapcat (fn [[id {:keys [x y texto]}]]
                   (let [xc (calcular-x-calibrado perfil-activo x)
                         texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
@@ -330,7 +330,7 @@
 
 (defn crear-botones []
  [:div
-   (doall (for [nombre (rest (keys @pestañas))]
+   (doall (for [nombre (keys (:pestañas @pestañas))]
             ^{:key (str "pestaña-" nombre)}
             [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
                       :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
