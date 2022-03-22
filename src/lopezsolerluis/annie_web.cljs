@@ -199,7 +199,7 @@
 (defn calcular-xy-etiqueta [position-in-pixels]
   (let [[x y] [(.-x position-in-pixels) (.-y position-in-pixels)]]
      [(- (:x @pos-mouse-pixels) x 110)
-      (- (:y @pos-mouse-pixels) y 55)]))
+      (- (:y @pos-mouse-pixels) y 95)]))
 
 (defn crear-etiqueta [id x y texto etiqueta]
   (let [pos (conj etiqueta :pos)
@@ -217,7 +217,7 @@
                                                       [:text
                                                         (map-indexed (fn [i linea]
                                                                         ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
-                                                                      texto)]]))}]}]                                                    
+                                                                      texto)]]))}]}]
      [:> rvis/CustomSVGSeries {:data [{:x x :y y
                                 :customComponent (fn []
                                    (r/as-element [:g {:className "etiqueta cursor-normal"}
