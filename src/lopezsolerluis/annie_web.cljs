@@ -217,9 +217,7 @@
                                                       [:text
                                                         (map-indexed (fn [i linea]
                                                                         ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
-                                                                      texto)]]))}]}]
-                                                        ; (for [i (range (count texto))]
-                                                        ;   [:tspan {:x inc-x :y (+ inc-y (* i 18))} (get texto i)])
+                                                                      texto)]]))}]}]                                                    
      [:> rvis/CustomSVGSeries {:data [{:x x :y y
                                 :customComponent (fn []
                                    (r/as-element [:g {:className "etiqueta cursor-normal"}
@@ -311,10 +309,6 @@
                                                         :strokeWidth 1
                                                         :onNearestX (fn [e]
                                                             (reset! nearest-xy (js->clj e)))}])))
-   ; (let [perfil (get-in @pestañas [@pestaña-activa @perfil-activo])]
-   ;    (doall (for [[id {:keys [x y texto]}] (:etiquetas perfil)
-   ;                 :let [texto-a-mostrar (if (:calibrado? perfil) texto [(.toFixed x 1)])]]
-   ;              (crear-etiqueta id x y texto-a-mostrar [@pestaña-activa @perfil-activo :etiquetas id]))))
    ]
     (let [perfil-activo (get-perfil-activo)
           pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
