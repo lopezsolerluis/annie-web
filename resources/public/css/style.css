@@ -3,9 +3,10 @@
   padding: 0;
 }
 
-/* body {
+ body {
   height: 100vh;
-} */
+  background-color: #EEFFEE;
+}
 
 
 input[type=file] {
@@ -16,7 +17,7 @@ input[type=file] {
 #app {
   /* position: absolute; */
   /* height: 80vh; */
-  background-color: #EEFFEE;
+  /* background-color: #EEFFEE; */
   /* z-index: -1; */
   /* clear: both; */
   -ms-flex: 1 1 auto;
@@ -30,6 +31,7 @@ input[type=file] {
   -webkit-flex-direction: column;
   flex-direction: column;
    /* z-index: 10; */
+   /* width: 1500px; */
 }
 
 #todo {
@@ -46,7 +48,7 @@ input[type=file] {
     align-items: stretch;
 }
 
-.graph {
+#graph {
   /* background-color: #eafaf1; */
    /* height: 100%; */
    /* height: 90%; */
@@ -61,6 +63,7 @@ input[type=file] {
     -ms-user-select: none;
     user-select: none;
     /* z-index: -1; */
+    /* width: 1500px; */
 }
 
 #fondogris {

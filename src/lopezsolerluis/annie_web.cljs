@@ -18,6 +18,7 @@
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
 (def etiqueta-activa (atom []))
 
+(def app (gdom/getElement "app"))
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
 (def fondo-transparente (gdom/getElement "fondoblanco"))
@@ -275,11 +276,17 @@
                  :text {:stroke "none"
                  :fill "#333"}})
 
-(defn line-chart []
-  [:div.graph
+(def width (atom nil))
+(def height (atom nil))
+
+(defn line-chart []  
+  (let [width  (or @width (.-offsetWidth app))
+        height (or @height (.-offsetHeight app))]
+  [:div#graph
   (into
-  [:> rvis/FlexibleXYPlot
-   {:margin {:left 100 :right 50 :top 20} :onMouseDown  (fn [e] (mouse-pressed e :down))
+  [:> rvis/XYPlot
+   {:margin {:left 100 :right 50 :top 20} :width width :height height
+                                          :onMouseDown  (fn [e] (mouse-pressed e :down))
                                           :onMouseUp    (fn [e] (mouse-pressed e :up))
                                           :onMouseMove  (fn [e] (mouse-moved e))
                                           :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
@@ -316,7 +323,7 @@
                         texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
                     (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo)))
-   )])
+   )]))
 
 (defn pestaña-activa? [nombre]
   (= nombre (:pestaña-activa @pestañas)))
@@ -332,16 +339,16 @@
 (defn app-scaffold []
    [line-chart])
 
-(defn get-app-element []
-  (gdom/getElement "app"))
-
-(defn mount [el]
-  (rdom/render [crear-botones] tabs)
-  (rdom/render [app-scaffold] el))
+; (defn get-app-element []
+;   (gdom/getElement "app"))
 
 (defn mount-app-element []
-  (when-let [el (get-app-element)]
-    (mount el)))
+  (rdom/render [crear-botones] tabs)
+  (rdom/render [app-scaffold] app))
+
+; (defn mount-app-element []
+;   (when-let [el (get-app-element)]
+;     (mount el)))
 
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app
