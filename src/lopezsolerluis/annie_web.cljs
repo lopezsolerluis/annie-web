@@ -19,6 +19,9 @@
 (def etiqueta-activa (atom []))
 
 (def app (gdom/getElement "app"))
+(def plot-width (atom nil))
+(def plot-height (atom nil))
+
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
 (def fondo-transparente (gdom/getElement "fondoblanco"))
@@ -141,8 +144,8 @@
                   x1 (apply min baricentros)
                   x2 (apply max baricentros)]
               (change-ventana ventana-calibración "block")
-              (set! (.-value x1-calibración-number) x1)
-              (set! (.-value x2-calibración-number) x2)))))
+              (set! (.-value x1-calibración-number) (.toFixed x1 2))
+              (set! (.-value x2-calibración-number) (.toFixed x2 2))))))
 
 (defn calcular-calibración [x1 x2 lambda1 lambda2]
   (let [a (/ (- lambda2 lambda1) (- x2 x1))
@@ -276,12 +279,9 @@
                  :text {:stroke "none"
                  :fill "#333"}})
 
-(def width (atom nil))
-(def height (atom nil))
-
-(defn line-chart []  
-  (let [width  (or @width (.-offsetWidth app))
-        height (or @height (.-offsetHeight app))]
+(defn line-chart []
+  (let [width  (or @plot-width (.-offsetWidth app))
+        height (or @plot-height (.-offsetHeight app))]
   [:div#graph
   (into
   [:> rvis/XYPlot
@@ -336,19 +336,9 @@
                       :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
                       nombre]))])
 
-(defn app-scaffold []
-   [line-chart])
-
-; (defn get-app-element []
-;   (gdom/getElement "app"))
-
 (defn mount-app-element []
   (rdom/render [crear-botones] tabs)
-  (rdom/render [app-scaffold] app))
-
-; (defn mount-app-element []
-;   (when-let [el (get-app-element)]
-;     (mount el)))
+  (rdom/render [line-chart] app))
 
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app

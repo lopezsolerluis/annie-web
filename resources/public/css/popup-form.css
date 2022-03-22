@@ -70,11 +70,11 @@
 }
 
 .calibración-container {
-  width: 350px;
+  width: 330px;
 }
 
 .calibración-container input[type=number] {
-  width: 7em;
+  width: 6em;
 }
 
 .dos-elementos {
