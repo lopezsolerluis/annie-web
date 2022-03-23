@@ -8,7 +8,7 @@
    [clojure.string :as str]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
-   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia luis]]
+   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia]]
    [lopezsolerluis.metodos-numericos :as mn]
    [lopezsolerluis.save-file :as save :refer [download-object-as-json]]))
 
@@ -52,7 +52,7 @@
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración]]
+    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros]]
       (doseq [key-2 (-> translations :es key-1 keys)]
         (let [el (gdom/getElement (name key-2))]
           (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))

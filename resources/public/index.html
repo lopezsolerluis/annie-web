@@ -83,6 +83,7 @@
       <div id="fondoblanco"></div>
 
 
+
       <!-- Para ingresar los elementos -->
       <div class="form-popup" id="ventana-elementos">
         <div class="form-container">
@@ -132,6 +133,22 @@
 
           <button type="button" id="ok-calibración" class="btn">Ok</button>
           <button type="button" id="cancel-calibración" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para elegir un espectro de referencia -->
+      <div class="form-popup" id="ventana-espectros">
+        <div class="form-container espectros-container">
+          <h3 id="espectros-título">Espectros de referencia</h3>
+
+          <label for="espectros-lista" id="espectros-label">Ingrese una clase espectral:</label>
+          <input list"espectros-de-referencia" id="input-espectros" name="espectros-lista"></input>
+          <datalist id="espectros-de-referencia">
+          </datalist>
+
+          <button type="button" id="ok-espectros" class="btn">Ok</button>
+          <button type="button" id="cancel-espectros" class="btn cancel">Cancelar</button>
           <div style="clear:both;"></div>
         </div>
       </div>

@@ -42,6 +42,10 @@
         :ventana-calibración {:ok-calibración "Ok"
                               :cancel-calibración "Cancel"
                               :calibración-título "Calibration"}
+        :ventana-espectros {:espectros-título "Reference spectra"
+                            :espectros-label "Enter a spectrum class:"
+                            :ok-espectros "Ok"
+                            :cancel-espectros "Cancel"}
         :confirmar-borrar-etiqueta "Do you really want to delete this label?"
         :etiquetas-no-calibrado "Labels can't be renamed until\nthe profile has been calibrated."
         :debería-seleccionar-dos-líneas "Al least two lines should be selected."
@@ -89,6 +93,10 @@
         :ventana-calibración {:ok-calibración "Ok"
                               :cancel-calibración "Cancelar"
                               :calibración-título "Calibración"}
+        :ventana-espectros {:espectros-título "Espectros de referencia"
+                            :espectros-label "Ingrese una clase espectral:"
+                            :ok-espectros "Ok"
+                            :cancel-espectros "Cancelar"}
         :confirmar-borrar-etiqueta "¿Realmente desea borrar esta etiqueta?"
         :etiquetas-no-calibrado "Las etiquetas no pueden renombrarse\nhasta tanto se calibre el perfil."
         :extensión-no-fits "El archivo carece de extensión .FITS"
