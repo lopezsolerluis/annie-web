@@ -8,9 +8,9 @@
    [clojure.string :as str]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
+   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia luis]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-file :as save :refer [download-object-as-json]])
-  (:import [goog.dom TagName]))
+   [lopezsolerluis.save-file :as save :refer [download-object-as-json]]))
 
 (enable-console-print!)
 
