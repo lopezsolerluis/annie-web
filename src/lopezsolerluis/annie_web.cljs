@@ -10,7 +10,8 @@
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-file :as save :refer [download-object-as-json]]))
+   [lopezsolerluis.save-file :as save :refer [download-object-as-json]])
+  (:import [goog.dom TagName]))
 
 (enable-console-print!)
 
@@ -39,6 +40,18 @@
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
 (def tabs (gdom/getElement "tabs"))
+(def espectros-ventana (gdom/getElement "ventana-espectros"))
+(def input-espectros (gdom/getElement "input-espectros"))
+(def datalist-de-espectros (gdom/getElement "datalist-de-espectros"))
+
+(defn crear-lista-de-espectros []
+  (let [clases (sort (map name (keys espectros-referencia)))]
+    (doseq [clase clases]
+      (let [option (.createElement js/document "option")]
+        (set! (.-value option) clase)
+        (.appendChild datalist-de-espectros option)))))
+
+(crear-lista-de-espectros)
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
