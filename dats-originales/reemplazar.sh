@@ -8,7 +8,8 @@ for file in *.dat; do
 filename=${file%.*};
 printf '    :%s [\n' $filename >> espectros.cljs;
 while read -r x y rest ; do
-    if (( $(echo "$x >= $lambdaMin" | bc -l) )) && (( $(echo "$x <= $lambdaMax" | bc -l) ))
+    xint=${x%.*};
+    if [[ $xint -ge $lambdaMin && $xint -le $lambdaMax ]]
     then
         printf '       {:x %s :y %s}\n' $x $y >> espectros.cljs
     fi
