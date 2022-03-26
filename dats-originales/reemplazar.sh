@@ -7,10 +7,11 @@ printf '(def espectros-dat {\n' > espectros.cljs;
 for file in *.dat; do
 filename=${file%.*};
 printf '    :%s [\n' $filename >> espectros.cljs;
-while read -r x y rest ; do
-    xint=${x%.*};
-    if [[ $xint -ge $lambdaMin && $xint -le $lambdaMax ]]
+while read line ; do
+    x=$( echo $line | cut -c 1-4 )  # Supongo que todos terminan con un solo decimal
+    if [[ $x -ge $lambdaMin && $x -le $lambdaMax ]]
     then
+        y=$( echo $line | cut -c 8-15 )
         printf '       {:x %s :y %s}\n' $x $y >> espectros.cljs
     fi
 done < $file
