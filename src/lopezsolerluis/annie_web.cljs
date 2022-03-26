@@ -8,6 +8,7 @@
    [clojure.string :as str]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
+   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia]]
    [lopezsolerluis.metodos-numericos :as mn]
    [lopezsolerluis.save-file :as save :refer [download-object-as-json]])
   (:import [goog.dom TagName]))
@@ -39,6 +40,18 @@
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
 (def tabs (gdom/getElement "tabs"))
+(def espectros-ventana (gdom/getElement "ventana-espectros"))
+(def input-espectros (gdom/getElement "input-espectros"))
+(def datalist-de-espectros (gdom/getElement "datalist-de-espectros"))
+
+(defn crear-lista-de-espectros []
+  (let [clases (sort (map name (keys espectros-referencia)))]
+    (doseq [clase clases]
+      (let [option (.createElement js/document "option")]
+        (set! (.-value option) clase)
+        (.appendChild datalist-de-espectros option)))))
+
+(crear-lista-de-espectros)
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
@@ -52,7 +65,7 @@
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración]]
+    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros]]
       (doseq [key-2 (-> translations :es key-1 keys)]
         (let [el (gdom/getElement (name key-2))]
           (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
