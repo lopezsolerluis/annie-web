@@ -84,12 +84,14 @@
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
-(defn crear-pestaña [nombre data-para-vis]
-  (swap! pestañas assoc :pestaña-activa nombre)
-  (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
-  (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                           {:data-vis data-para-vis :calibración [] :etiquetas {}})
-  (encender-espera false))
+(defn crear-pestaña
+  ([nombre data-para-vis] (crear-pestaña nombre data-para-vis []))
+  ([nombre data-para-vis calibración]
+      (swap! pestañas assoc :pestaña-activa nombre)
+      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
+      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
+                            {:data-vis data-para-vis :calibración calibración :etiquetas {}})
+      (encender-espera false)))
 
 (defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
@@ -187,7 +189,7 @@
      (if-not (espectros-referencia-nombres clase)
         (alert (app-tr @lang :la-clase-es-desconocida))
         (do
-          (crear-pestaña clase ((keyword clase) espectros-referencia))
+          (crear-pestaña clase ((keyword clase) espectros-referencia) [1 0])
           (change-ventana ventana-espectros "none")))))
 (defn espectros-cancel []
   (change-ventana ventana-espectros "none"))
