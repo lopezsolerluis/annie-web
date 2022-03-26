@@ -8,7 +8,7 @@
    [clojure.string :as str]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
-   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia]]
+   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
    [lopezsolerluis.save-file :as save :refer [download-object-as-json]])
   (:import [goog.dom TagName]))
@@ -40,12 +40,14 @@
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
 (def tabs (gdom/getElement "tabs"))
-(def espectros-ventana (gdom/getElement "ventana-espectros"))
+(def ventana-espectros (gdom/getElement "ventana-espectros"))
 (def input-espectros (gdom/getElement "input-espectros"))
 (def datalist-de-espectros (gdom/getElement "datalist-de-espectros"))
+(def espectros-boton-ok (gdom/getElement "ok-espectros"))
+(def espectros-boton-cancel (gdom/getElement "cancel-espectros"))
 
 (defn crear-lista-de-espectros []
-  (let [clases (sort (map name (keys espectros-referencia)))]
+  (let [clases (sort espectros-referencia-nombres)]
     (doseq [clase clases]
       (let [option (.createElement js/document "option")]
         (set! (.-value option) clase)
@@ -178,6 +180,19 @@
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
 
+(defn abrir-ventana-espectros-dat []
+  (change-ventana ventana-espectros "block"))
+(defn espectros-ok []
+  (let [clase (.-value input-espectros)]
+     (if-not (espectros-referencia-nombres clase)
+        (alert (app-tr @lang :la-clase-es-desconocida))
+        (do
+          (crear-pestaña clase ((keyword clase) espectros-referencia))
+          (change-ventana ventana-espectros "none")))))
+(defn espectros-cancel []
+  (change-ventana ventana-espectros "none"))
+
+
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this]
                           (when-not (= "" (-> this .-target .-value))
@@ -187,6 +202,9 @@
                           (set! (-> this .-target .-value) "")))
       (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
                   #(.click open-fits))
+      (gevents/listen (gdom/getElement "crear-perfil-desde-dat") "click" abrir-ventana-espectros-dat)
+      (gevents/listen espectros-boton-ok "click" espectros-ok)
+      (gevents/listen espectros-boton-cancel "click" espectros-cancel)
       (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click" (fn [])
                   ; (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
                   ;                                 (str @pestaña-activa ".annie"))))
