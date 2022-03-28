@@ -10,8 +10,7 @@
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]])
-  (:import [goog.dom TagName]))
+   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]]))  
 
 (enable-console-print!)
 (set! *print-level* nil)
