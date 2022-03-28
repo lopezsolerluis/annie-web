@@ -76,6 +76,16 @@
 (defn alert [mensaje]
   (js/alert mensaje))
 
+(defn elegir-nombre [nombres-usados nombre-posible con-numero-siempre?]
+   (let [nombres-set (set nombres-usados)]
+      (if-not (or con-numero-siempre? (nombres-set nombre-posible))
+          nombre-posible
+          (loop [n 1]
+            (let [nombre ((if con-numero-siempre? keyword identity) (str nombre-posible "-" n))] ; Los pefiles pueden ser strings; las etiquetas las prefierto keywords...
+              (if-not (nombres-set nombre)
+                      nombre
+                      (recur (inc n))))))))
+
 (defn crear-datos-perfil-2d [fits-file]
   (let [data (:data fits-file)]
           ;(apply map + data))) ; Para sumar las columnas (tarda mucho más)
@@ -85,13 +95,14 @@
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
 (defn crear-pestaña
-  ([nombre data-para-vis] (crear-pestaña nombre data-para-vis []))
-  ([nombre data-para-vis calibración]
-      (swap! pestañas assoc :pestaña-activa nombre)
-      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
-      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                            {:data-vis data-para-vis :calibración calibración :etiquetas {}})
-      (encender-espera false)))
+  ([nombre-posible data-para-vis] (crear-pestaña nombre-posible data-para-vis []))
+  ([nombre-posible data-para-vis calibración]
+      (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
+        (swap! pestañas assoc :pestaña-activa nombre)
+        (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
+        (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
+                              {:data-vis data-para-vis :calibración calibración :etiquetas {}})
+        (encender-espera false))))
 
 (defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
@@ -256,14 +267,6 @@
                                                    [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
                                                                :stroke "black" :fill "none"}]]))}]}])))
 
-(defn elegir-nombre [nombres-usados sufijo]
-   (let [nombres-set (set nombres-usados)]
-      (loop [n 1]
-         (let [nombre (keyword (str sufijo n))]
-           (if-not (nombres-set nombre)
-                   (keyword nombre)
-                   (recur (inc n)))))))
-
 (defn open-ventana-elementos [etiqueta]
   (let [perfil-calibrado? (calibrado? (get-perfil-activo))
         texto-en-string (if perfil-calibrado?
@@ -281,7 +284,7 @@
         baricentro (mn/calcular-baricentro (obtener-data perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
-        nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta-")
+        nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta" true)
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
         key (conj (get-perfil-key) :etiquetas nombre-etiqueta)]
         (js/console.log (pr-str key))
