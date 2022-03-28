@@ -54,6 +54,7 @@
         :extensión-no-fits "File does not have .FITS extension"
         :fits-no-simple "FITS file is not SIMPLE"
         :fits-no-valido "FITS file does not seem to be valid"
+        :annie-no-válido "ANNIE file does not seem to be valid"
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -104,8 +105,9 @@
         :extensión-no-fits "El archivo carece de extensión .FITS"
         :debería-seleccionar-dos-líneas "Debería seleccionar al menos dos líneas."
         :deben-ingresarse-dos-lambdas "Deben ingresarse valores para ambas longitudes de onda."
-        :fits-no-simple "El archivo Fits no es SIMPLE"
-        :fits-no-valido "El archivo Fits no parece ser válido"
+        :fits-no-simple "El archivo FITS no es SIMPLE"
+        :fits-no-valido "El archivo FITS no parece ser válido"
+        :annie-no-válido "El archivo ANNIE no parece ser válido"
    }
   })
 
