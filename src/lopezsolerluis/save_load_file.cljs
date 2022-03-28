@@ -1,4 +1,6 @@
-(ns lopezsolerluis.save-load-file)
+(ns lopezsolerluis.save-load-file
+   (:require
+     [clojure.edn]))
 
 ;; Tomado de http://marianoguerra.org/es/posts/download-frontend-generated-data-to-a-file-with-clojurescript.html
 (defn to-json [v] (.stringify js/JSON v))
@@ -28,5 +30,5 @@
     (set! (.-onload js-file-reader)
       (fn [evt]
         (let [contenido (-> evt .-target .-result)]
-              (callback contenido)))) ; verificar que el contenido sea un mapa válido!
+              (callback (clojure.edn/read-string contenido))))) ; verificar que el contenido sea un mapa válido! Al menos, parece que clojure.edn/read-string comprueba que no haya código malicioso
     (.readAsText js-file-reader file)))

@@ -32,7 +32,7 @@
                                                       (let [valor (js/Math.pow y potencia)]
                                                          [(+ suma-p (* x valor))
                                                           (+ suma-i valor)]))
-                                                    [0 0] perfil-acotado)
+                                                   [0 0] perfil-acotado)
         baricentro-x (/ suma-ponderada suma-intensidades)
         primer-punto (first perfil-acotado)
         baricentro-y (dissoc
@@ -43,7 +43,7 @@
                                         acc)))
                                 (assoc primer-punto :min-delta-x (js/Math.abs (- baricentro-x (:x primer-punto))))
                                 (rest perfil-acotado))
-                          :min-delta-x :x)
+                        :min-delta-x :x)
         baricentro-xy (assoc baricentro-y :x baricentro-x)]
     baricentro-xy))
 

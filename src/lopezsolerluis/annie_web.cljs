@@ -68,10 +68,10 @@
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros]]
-      (doseq [key-2 (-> translations :es key-1 keys)]
-        (let [el (gdom/getElement (name key-2))]
-          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
+   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros]]
+     (doseq [key-2 (-> translations :es key-1 keys)]
+       (let [el (gdom/getElement (name key-2))]
+         (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
 ;; end of translation functions
 
 (defn alert [mensaje]
@@ -95,7 +95,7 @@
 (defn crear-datos-perfil-2d [fits-file]
   (let [data (:data fits-file)]
           ;(apply map + data))) ; Para sumar las columnas (tarda mucho más)
-         (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'...¡casi hacker!
+       (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'...¡casi hacker!
 
 (defn normalizar-perfil-2d
   "Converts a vector of values ([x1 x2 x3...]) in the interval [0,1]"
@@ -110,12 +110,12 @@
 (defn crear-pestaña
   ([nombre-posible data-para-vis] (crear-pestaña nombre-posible data-para-vis []))
   ([nombre-posible data-para-vis calibración]
-      (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
-        (swap! pestañas assoc :pestaña-activa nombre)
-        (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
-        (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                              {:data-vis data-para-vis :calibración calibración :etiquetas {}})
-        (encender-espera false))))
+   (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
+     (swap! pestañas assoc :pestaña-activa nombre)
+     (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
+     (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
+                           {:data-vis data-para-vis :calibración calibración :etiquetas {}})
+     (encender-espera false))))
 
 (defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
@@ -126,14 +126,16 @@
             nombre (:nombre-archivo fits-file)]
         (crear-pestaña nombre data-para-vis))))
 
-(defn procesar-pestaña-annie [pestaña-annie-as-string]
+(defn procesar-pestaña-annie [pestaña-annie-as-string]  
   (let [nombre-posible (first (keys pestaña-annie-as-string))
         nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)
         pestaña-original (first (vals pestaña-annie-as-string))
         pestaña (if (= nombre nombre-posible)
                     pestaña-original
                     (clojure.walk/postwalk-replace {nombre-posible nombre} pestaña-original))]
-    (swap! pestañas assoc-in [:pestañas nombre] pestaña)))
+    (swap! pestañas assoc-in [:pestañas nombre] pestaña)
+    (swap! pestañas assoc :pestaña-activa nombre)
+    (encender-espera false)))
 
 (defn calibrado? [perfil]
   (seq (:calibración perfil)))
@@ -205,13 +207,13 @@
 (defn calibrar-ok []
   (let [lambda1 (js/parseFloat (.-value lambda1-calibración-number))
         lambda2 (js/parseFloat (.-value lambda2-calibración-number))]
-        (if (or (js/isNaN lambda1) (js/isNaN lambda2))
-            (alert (app-tr @lang :deben-ingresarse-dos-lambdas))
-            (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
-                  x2 (js/parseFloat (.-value x2-calibración-number))
-                  params (calcular-calibración x1 x2 lambda1 lambda2)]
-              (swap! pestañas assoc-in (conj (get-perfil-key) :calibración) params)
-              (change-ventana ventana-calibración "none")))))
+       (if (or (js/isNaN lambda1) (js/isNaN lambda2))
+           (alert (app-tr @lang :deben-ingresarse-dos-lambdas))
+           (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
+                 x2 (js/parseFloat (.-value x2-calibración-number))
+                 params (calcular-calibración x1 x2 lambda1 lambda2)]
+             (swap! pestañas assoc-in (conj (get-perfil-key) :calibración) params)
+             (change-ventana ventana-calibración "none")))))
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
 
@@ -274,25 +276,25 @@
 (defn crear-etiqueta [id x y texto etiqueta]
   (let [pos (conj etiqueta :pos)
         [inc-x inc-y] (get-in @pestañas pos)]
-  (vector
-    [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
-                              :onValueMouseOut  (fn [d] (when-not (or @button-cen-pressed?
-                                                                      (= "block" (.. ventana-elementos -style -display)))
-                                                            (reset! etiqueta-activa [])))
-                              :data [{:x x :y y
-                                :customComponent (fn [_ position-in-pixels]
-                                  (when (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
-                                     (swap! pestañas assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
-                                  (r/as-element [:g {:className "etiqueta"}
-                                                      [:text
-                                                        (map-indexed (fn [i linea]
-                                                                        ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
-                                                                      texto)]]))}]}]
+   (vector
+     [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
+                               :onValueMouseOut  (fn [d] (when-not (or @button-cen-pressed?
+                                                                       (= "block" (.. ventana-elementos -style -display)))
+                                                             (reset! etiqueta-activa [])))
+                               :data [{:x x :y y
+                                       :customComponent (fn [_ position-in-pixels]
+                                                         (when (and @button-cen-pressed? (= @etiqueta-activa etiqueta))
+                                                            (swap! pestañas assoc-in pos (calcular-xy-etiqueta position-in-pixels)))
+                                                         (r/as-element [:g {:className "etiqueta"}
+                                                                           [:text
+                                                                             (map-indexed (fn [i linea]
+                                                                                             ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
+                                                                                          texto)]]))}]}]
      [:> rvis/CustomSVGSeries {:data [{:x x :y y
-                                :customComponent (fn []
-                                   (r/as-element [:g {:className "etiqueta cursor-normal"}
-                                                   [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                               :stroke "black" :fill "none"}]]))}]}])))
+                                       :customComponent (fn []
+                                                         (r/as-element [:g {:className "etiqueta cursor-normal"}
+                                                                         [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                                                     :stroke "black" :fill "none"}]]))}]}])))
 
 (defn open-ventana-elementos [etiqueta]
   (let [perfil-calibrado? (calibrado? (get-perfil-activo))
@@ -314,7 +316,7 @@
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta" true)
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
         key (conj (get-perfil-key) :etiquetas nombre-etiqueta)]
-        (js/console.log (pr-str key))
+       (js/console.log (pr-str key))
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
@@ -325,9 +327,9 @@
       (case boton               ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
         0 (do (when (= dir :up) (colocar-etiqueta))
               (reset! nearest-xy-0 (if (= dir :down) @nearest-xy {}))
-                (swap! button-izq-pressed? not))
+              (swap! button-izq-pressed? not))
         1 (reset! button-cen-pressed? (if (= dir :down) true false)) ; Si uso <<swap! not>>, hay problemas al salir y entrar al gráfico...
-        2 ))))
+        2))))
 
 (defn mouse-moved [e]
   (when (or @button-izq-pressed? @button-cen-pressed?)
@@ -337,49 +339,49 @@
 (def axis-style {:line {:stroke "#333"}
                  :ticks {:stroke "#999"}
                  :text {:stroke "none"
-                 :fill "#333"}})
+                        :fill "#333"}})
 
 (defn line-chart []
   (let [width  (or @plot-width (.-offsetWidth app))
         height (or @plot-height (.-offsetHeight app))]
-  [:div#graph
-  (into
-  [:> rvis/XYPlot
-   {:margin {:left 100 :right 50 :top 20} :width width :height height
-                                          :onMouseDown  (fn [e] (mouse-pressed e :down))
-                                          :onMouseUp    (fn [e] (mouse-pressed e :up))
-                                          :onMouseMove  (fn [e] (mouse-moved e))
-                                          :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
-                                                                (reset! button-cen-pressed? false))
-                                          :onClick      (fn [e] (when (seq @etiqueta-activa)
-                                                                    (js/console.log (pr-str @etiqueta-activa))
-                                                                   (open-ventana-elementos @etiqueta-activa)))}
-   [:> rvis/VerticalGridLines {:style axis-style}]
-   [:> rvis/HorizontalGridLines {:style axis-style}]
-   [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
-   [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
+   [:div#graph
+    (into
+     [:> rvis/XYPlot
+      {:margin {:left 100 :right 50 :top 20} :width width :height height
+                                             :onMouseDown  (fn [e] (mouse-pressed e :down))
+                                             :onMouseUp    (fn [e] (mouse-pressed e :up))
+                                             :onMouseMove  (fn [e] (mouse-moved e))
+                                             :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
+                                                               (reset! button-cen-pressed? false))
+                                             :onClick      (fn [e] (when (seq @etiqueta-activa)
+                                                                       (js/console.log (pr-str @etiqueta-activa))
+                                                                      (open-ventana-elementos @etiqueta-activa)))}
+      [:> rvis/VerticalGridLines {:style axis-style}]
+      [:> rvis/HorizontalGridLines {:style axis-style}]
+      [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
+      [:> rvis/YAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
 
-   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed" :strokeDasharray  "10,10"
-                       :style {:line {:background "black" :opacity 1 :strokeDasharray "10,10" }}}
-      [:div]]
-   [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
-                       :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
-      [:div]]
-   (let [perfiles-pestaña-activa (get-in @pestañas [:pestañas (:pestaña-activa @pestañas) :perfiles])]
-      (doall (for [[id perfil] perfiles-pestaña-activa]
-                  ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
-                                                        :strokeWidth 1
-                                                        :onNearestX (fn [e]
-                                                            (reset! nearest-xy (js->clj e)))}])))
-   ]
-    (let [perfil-activo (get-perfil-activo)
-          pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
-       (mapcat (fn [[id {:keys [x y texto]}]]
-                  (let [xc (calcular-x-calibrado perfil-activo x)
-                        texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
-                    (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
-                (:etiquetas perfil-activo)))
-   )]))
+      [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy) :y 0}] :strokeStyle "dashed" :strokeDasharray  "10,10"
+                          :style {:line {:background "black" :opacity 1 :strokeDasharray "10,10"}}}
+         [:div]]
+      [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
+                          :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
+         [:div]]
+      (let [perfiles-pestaña-activa (get-in @pestañas [:pestañas (:pestaña-activa @pestañas) :perfiles])]
+         (doall (for [[id perfil] perfiles-pestaña-activa]
+                     ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
+                                                           :strokeWidth 1
+                                                           :onNearestX (fn [e]
+                                                                        (reset! nearest-xy (js->clj e)))}])))]
+
+     (let [perfil-activo (get-perfil-activo)
+           pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
+        (mapcat (fn [[id {:keys [x y texto]}]]
+                   (let [xc (calcular-x-calibrado perfil-activo x)
+                         texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
+                     (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
+                (:etiquetas perfil-activo))))]))
+
 
 (defn pestaña-activa? [nombre]
   (= nombre (:pestaña-activa @pestañas)))
@@ -390,7 +392,7 @@
             ^{:key (str "pestaña-" nombre)}
             [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
                       :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
-                      nombre]))])
+                     nombre]))])
 
 (defn mount-app-element []
   (rdom/render [crear-botones] tabs)
@@ -402,8 +404,7 @@
 
 ;; specify reload hook with ^:after-load metadata
 (defn ^:after-load on-reload []
-  (mount-app-element)
+  (mount-app-element))
   ;; optionally touch your app-state to force rerendering depending on
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
-)

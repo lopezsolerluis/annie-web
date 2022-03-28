@@ -5,13 +5,13 @@
 
 (defn array->string
   ([array]
-    (->> array
-      (map char)
-      (apply str)))
+   (->> array
+     (map char)
+     (apply str)))
   ([array start end]
-    (-> array
-      (.slice start end)
-      (array->string))))
+   (-> array
+     (.slice start end)
+     (array->string))))
 
 (defn read-value-in-header [linea]
   (let [value (str/trim linea)] ;; ver en standard si va trim o trimr
@@ -43,7 +43,7 @@
                         (let [key (keyword pre-key)
                               value (read-value-in-header (subs linea 9 30))]
                           (swap! cabecera assoc key value)))))))
-            (assoc @cabecera :bloques-header (inc @length-header))))))
+          (assoc @cabecera :bloques-header (inc @length-header))))))
 
 (def funciones-bytes {8 dv/get-uint8 16 dv/get-int16 32 dv/get-int32 64 dv/get-big-int64 -32 dv/get-float32 -64 dv/get-float64})
 
