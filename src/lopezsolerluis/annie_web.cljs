@@ -185,6 +185,7 @@
                   x1 (apply min baricentros)
                   x2 (apply max baricentros)]
               (change-ventana ventana-calibración "block")
+              (.select lambda1-calibración-number)
               (set! (.-value x1-calibración-number) (.toFixed x1 2))
               (set! (.-value x2-calibración-number) (.toFixed x2 2))))))
 
@@ -202,7 +203,8 @@
   (change-ventana ventana-calibración "none"))
 
 (defn abrir-ventana-espectros-dat []
-  (change-ventana ventana-espectros "block"))
+  (change-ventana ventana-espectros "block")
+  (.focus input-espectros))
 (defn espectros-ok []
   (let [clase (.-value input-espectros)]
      (if-not (espectros-referencia-nombres clase)
