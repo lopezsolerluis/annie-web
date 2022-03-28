@@ -144,6 +144,9 @@
   (let [key (get-perfil-key)]
     (get-in @pestañas key)))
 
+(defn get-pestaña-activa []
+  (get-in @pestañas [:pestañas (:pestaña-activa @pestañas)]))
+
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
     (when (calibrado? perfil-activo)
