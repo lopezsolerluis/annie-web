@@ -2,11 +2,11 @@
    (:require
      [clojure.edn]))
 
-(defn write-pestaña [nombre pestaña export-name]
+(defn write-pestaña [nombre pestaña]
   (let [data-blob (js/Blob. #js [(pr-str {nombre pestaña})] #js {:type "application/text"})
              link (.createElement js/document "a")]
     (set! (.-href link) (.createObjectURL js/URL data-blob))
-    (.setAttribute link "download" export-name)
+    (.setAttribute link "download" (str nombre ".annie"))
     (.appendChild (.-body js/document) link)
     (.click link)
     (.removeChild (.-body js/document) link)))

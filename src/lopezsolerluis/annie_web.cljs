@@ -251,7 +251,7 @@
       (gevents/listen espectros-boton-cancel "click" espectros-cancel)
       (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click"
                   (fn [] (let [nombre-pestaña (:pestaña-activa @pestañas)]
-                           (write-pestaña nombre-pestaña (get-pestaña-activa) (str nombre-pestaña ".annie")))))
+                           (write-pestaña nombre-pestaña (get-pestaña-activa)))))
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)
