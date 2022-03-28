@@ -46,3 +46,13 @@
                           :min-delta-x :x)
         baricentro-xy (assoc baricentro-y :x baricentro-x)]
     baricentro-xy))
+
+(defn calcular-extremos
+  "Calcula el valor mínimo y máximo de un vector en una sola pasada. El resultado es un mapa {:min :max}"
+  [datos]
+  (let [primero (first datos)]
+    (reduce (fn [{mini :min maxi :max} el]
+              {:min (min mini el)
+               :max (max maxi el)})
+            {:min primero :max primero}
+            (rest datos))))

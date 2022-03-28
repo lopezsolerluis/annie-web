@@ -86,10 +86,22 @@
                       nombre
                       (recur (inc n))))))))
 
+(defn calcular-calibración [x1 x2 lambda1 lambda2]
+  (let [a (/ (- lambda2 lambda1) (- x2 x1))
+        b (/ (- (* lambda1 x2) (* lambda2 x1)) (- x2 x1))]
+     [a b]))
+
 (defn crear-datos-perfil-2d [fits-file]
   (let [data (:data fits-file)]
           ;(apply map + data))) ; Para sumar las columnas (tarda mucho más)
          (map #(reduce + %) data)))  ; Suma sobre las filas, porque el archivo "fits" lo creé 'traspuesto'...¡casi hacker!
+
+(defn normalizar-perfil-2d
+  "Converts a vector of values ([x1 x2 x3...]) in the interval [0,1]"
+  [perfil-2d]
+  (let [{mínimo :min máximo :max} (mn/calcular-extremos perfil-2d)
+        [a b] (calcular-calibración mínimo máximo 0 1)] ;el algoritmo para cacular la calibración es el mismo: una función lineal
+    (map (fn [n] (+ (* a n) b)) perfil-2d)))
 
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
@@ -108,7 +120,8 @@
   (if (= fits-file :fits-no-simple)
       (js/alert (app-tr @lang :fits-no-valido))
       (let [perfil-2d (crear-datos-perfil-2d fits-file)
-            data-para-vis (crear-data-para-vis perfil-2d)
+            perfil-2d-normalizado (normalizar-perfil-2d perfil-2d)
+            data-para-vis (crear-data-para-vis perfil-2d-normalizado)
             nombre (:nombre-archivo fits-file)]
         (crear-pestaña nombre data-para-vis))))
 
@@ -174,11 +187,6 @@
               (change-ventana ventana-calibración "block")
               (set! (.-value x1-calibración-number) (.toFixed x1 2))
               (set! (.-value x2-calibración-number) (.toFixed x2 2))))))
-
-(defn calcular-calibración [x1 x2 lambda1 lambda2]
-  (let [a (/ (- lambda2 lambda1) (- x2 x1))
-        b (/ (- (* lambda1 x2) (* lambda2 x1)) (- x2 x1))]
-     [a b]))
 
 (defn calibrar-ok []
   (let [lambda1 (js/parseFloat (.-value lambda1-calibración-number))
