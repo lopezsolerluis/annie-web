@@ -58,14 +58,15 @@
         eje-y (:NAXIS2 cabecera)
         bzero (get cabecera :BZERO 0)
         bscale (get cabecera :BSCALE 1)
-        scale (/ bscale eje-y)  ;; Para dividir ahora mismo cada elemento, y así evitarlo al calcular el promedio por columna
+        ;scale (/ bscale eje-y)  ;; Para dividir ahora mismo cada elemento, y así evitarlo al calcular el promedio por columna
+                                 ;; ahora no estoy tan seguro...
         view (js.DataView. contenido length-header)
         funcion (get funciones-bytes bitpix)
         step (/ (js/Math.abs bitpix) 8)]
      (for [x (range eje-x)]                                        ;  Intercambiamos ejes para que luego sumemos sobre filas
         (for [y (range eje-y)]                                     ;  en lugar de columnas
           (let [value (funcion view (* step (+ x (* y eje-x))))]
-            (+ bzero (* scale value)))))))
+            (+ bzero (* bscale value)))))))
 
 (defn nombre [file]
   ((clojure.string/split (.-name file) ".") 0))
