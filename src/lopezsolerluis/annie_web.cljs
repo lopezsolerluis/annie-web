@@ -10,7 +10,7 @@
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-file :as save :refer [download-object-as-json]])
+   [lopezsolerluis.save-file :as save :refer [download-object-as-json write-pestaña]])
   (:import [goog.dom TagName]))
 
 (enable-console-print!)
@@ -230,10 +230,9 @@
       (gevents/listen (gdom/getElement "crear-perfil-desde-dat") "click" abrir-ventana-espectros-dat)
       (gevents/listen espectros-boton-ok "click" espectros-ok)
       (gevents/listen espectros-boton-cancel "click" espectros-cancel)
-      (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click" (fn [])
-                  ; (fn [] (download-object-as-json (clj->js (get-in pestañas [@pestaña-activa @perfil-activo]))
-                  ;                                 (str @pestaña-activa ".annie"))))
-                  )
+      (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click"
+                  (fn [] (let [nombre-pestaña (:pestaña-activa @pestañas)]
+                           (write-pestaña nombre-pestaña (get-pestaña-activa) (str nombre-pestaña ".annie")))))
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)
