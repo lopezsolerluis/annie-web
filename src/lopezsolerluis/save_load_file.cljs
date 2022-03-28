@@ -1,4 +1,4 @@
-(ns lopezsolerluis.save-file)
+(ns lopezsolerluis.save-load-file)
 
 ;; Tomado de http://marianoguerra.org/es/posts/download-frontend-generated-data-to-a-file-with-clojurescript.html
 (defn to-json [v] (.stringify js/JSON v))
@@ -22,3 +22,6 @@
     (.click link)
     (.removeChild (.-body js/document) link)))
 ;; You call it:  (write-pestaña nombre pestaña "pestaña.annie")
+
+(defn read-pestaña []
+  )

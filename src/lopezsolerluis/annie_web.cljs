@@ -10,7 +10,7 @@
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-file :as save :refer [download-object-as-json write-pestaña]])
+   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]])
   (:import [goog.dom TagName]))
 
 (enable-console-print!)
@@ -39,6 +39,7 @@
 (def calibración-ok (gdom/getElement "ok-calibración"))
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
+(def open-annie (gdom/getElement "open-annie"))
 (def tabs (gdom/getElement "tabs"))
 (def ventana-espectros (gdom/getElement "ventana-espectros"))
 (def input-espectros (gdom/getElement "input-espectros"))
@@ -218,15 +219,20 @@
 (defn espectros-cancel []
   (change-ventana ventana-espectros "none"))
 
+(defn abrir-archivo [this tipo]
+  (when-not (= "" (-> this .-target .-value))
+    (let [^js/File file (-> this .-target .-files (aget 0))]
+      (encender-espera true)
+      (case tipo
+        :fits (fits/read-fits-file file procesar-archivo-fits)
+        :annie (read-pestaña file procesar-pestaña-annie))))
+  (set! (-> this .-target .-value) ""))
+
 (defonce is-initialized?
-  (do (gevents/listen open-fits "change" (fn [this]
-                          (when-not (= "" (-> this .-target .-value))
-                            (let [^js/File file (-> this .-target .-files (aget 0))]
-                              (encender-espera true)
-                              (fits/read-fits-file file procesar-archivo-fits)))
-                          (set! (-> this .-target .-value) "")))
-      (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click"
-                  #(.click open-fits))
+  (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
+      (gevents/listen open-annie "change" (fn [this] (abrir-archivo this :annie)))
+      (gevents/listen (gdom/getElement "crear-perfil-desde-fits") "click" #(.click open-fits))
+      (gevents/listen (gdom/getElement "abrir-pestaña-annie") "click" #(.click open-annie))
       (gevents/listen (gdom/getElement "crear-perfil-desde-dat") "click" abrir-ventana-espectros-dat)
       (gevents/listen espectros-boton-ok "click" espectros-ok)
       (gevents/listen espectros-boton-cancel "click" espectros-cancel)
