@@ -14,6 +14,7 @@
   (:import [goog.dom TagName]))
 
 (enable-console-print!)
+(set! *print-level* nil)
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
