@@ -126,6 +126,15 @@
             nombre (:nombre-archivo fits-file)]
         (crear-pestaña nombre data-para-vis))))
 
+(defn procesar-pestaña-annie [pestaña-annie-as-string]
+  (let [nombre-posible (first (keys pestaña-annie-as-string))
+        nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)
+        pestaña-original (first (vals pestaña-annie-as-string))
+        pestaña (if (= nombre nombre-posible)
+                    pestaña-original
+                    (clojure.walk/postwalk-replace {nombre-posible nombre} pestaña-original))]
+    (swap! pestañas assoc-in [:pestañas nombre] pestaña)))
+
 (defn calibrado? [perfil]
   (seq (:calibración perfil)))
 

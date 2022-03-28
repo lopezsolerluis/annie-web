@@ -23,5 +23,10 @@
     (.removeChild (.-body js/document) link)))
 ;; You call it:  (write-pestaña nombre pestaña "pestaña.annie")
 
-(defn read-pestaña []
-  )
+(defn read-pestaña [file callback]
+  (let [js-file-reader (js/FileReader.)]
+    (set! (.-onload js-file-reader)
+      (fn [evt]
+        (let [contenido (-> evt .-target .-result)]
+              (callback contenido)))) ; verificar que el contenido sea un mapa válido!
+    (.readAsText js-file-reader file)))
