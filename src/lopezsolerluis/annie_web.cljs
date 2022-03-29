@@ -10,7 +10,7 @@
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]]))  
+   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]]))
 
 (enable-console-print!)
 (set! *print-level* nil)
@@ -396,17 +396,17 @@
                       :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
                      nombre]))])
 
-(defn mount-app-element []
+(defn mount-elements []
   (rdom/render [crear-botones] tabs)
   (rdom/render [line-chart] app))
 
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app
-(mount-app-element)
+(mount-elements)
 
 ;; specify reload hook with ^:after-load metadata
 (defn ^:after-load on-reload []
-  (mount-app-element))
+  (mount-elements))
   ;; optionally touch your app-state to force rerendering depending on
   ;; your application
   ;; (swap! app-state update-in [:__figwheel_counter] inc)
