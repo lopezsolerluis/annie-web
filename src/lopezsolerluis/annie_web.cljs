@@ -17,12 +17,12 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
+(defonce portapapeles (atom []))
 (def etiqueta-activa (atom []))
 
 (def app (gdom/getElement "app"))
 (def plot-width (atom nil))
 (def plot-height (atom nil))
-(def portapapeles (atom {}))
 
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
@@ -48,6 +48,7 @@
 (def espectros-boton-ok (gdom/getElement "ok-espectros"))
 (def espectros-boton-cancel (gdom/getElement "cancel-espectros"))
 (def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
+(def pegar-perfil-menu (gdom/getElement "pegar-perfil"))
 
 (defn crear-lista-de-espectros []
   (let [clases (sort espectros-referencia-nombres)]
@@ -168,7 +169,18 @@
         perfil-activo-nombre (last (get-perfil-key))]
     (if-not (calibrado? perfil-activo)
             (alert (app-tr @lang :perfil-no-calibrado-no-puede-copiarse))
-            (reset! portapapeles {perfil-activo-nombre perfil-activo}))))
+            (reset! portapapeles [perfil-activo-nombre perfil-activo]))))
+
+(defn pegar-perfil []
+  (let [perfil-activo (get-perfil-activo)]
+    (if-not (calibrado? perfil-activo)
+            (alert (app-tr @lang :perfil-no-calibrado-no-admite-pegado))
+            (if (empty? @portapapeles)
+                (alert (app-tr @lang :portapapeles-vacío))
+                (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
+                      nombre-copiado (first @portapapeles)
+                      perfil-pegado (second @portapapeles)]
+                  (swap! pestañas assoc-in [:pestañas pestaña-activa-nombre :perfiles nombre-copiado] perfil-pegado))))))
 
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
@@ -268,6 +280,7 @@
       (gevents/listen calibración-ok "click" calibrar-ok)
       (gevents/listen calibración-cancel "click" calibrar-cancel)
       (gevents/listen copiar-perfil-menu "click" copiar-perfil)
+      (gevents/listen pegar-perfil-menu "click" pegar-perfil)
       true))
 
 (def nearest-xy (atom {}))

@@ -56,6 +56,8 @@
         :fits-no-valido "FITS file does not seem to be valid"
         :annie-no-válido "ANNIE file does not seem to be valid"
         :perfil-no-calibrado-no-puede-copiarse "An uncalibrated profile can't be copied to the clipboard."
+        :perfil-no-calibrado-no-admite-pegado "An uncalibrated profile can't accept a pasted profile."
+        :portapapeles-vacío "The clipboard is empty."
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -110,6 +112,8 @@
         :fits-no-valido "El archivo FITS no parece ser válido"
         :annie-no-válido "El archivo ANNIE no parece ser válido"
         :perfil-no-calibrado-no-puede-copiarse "Un perfil no calibrado no puede copiarse al portapapeles."
+        :perfil-no-calibrado-no-admite-pegado "No puede pegarse un perfil en una pestaña no calibrada."
+        :portapapeles-vacío "El portapapeles está vacío."
    }
   })
 
