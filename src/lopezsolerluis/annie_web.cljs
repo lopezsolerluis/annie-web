@@ -19,7 +19,7 @@
 (defonce pestañas (atom {}))  ; ¿defonce o def..?
 (def etiqueta-activa (atom []))
 
-(def app (gdom/getElement "app"))
+(def gráfico (gdom/getElement "gráfico"))
 (def plot-width (atom nil))
 (def plot-height (atom nil))
 
@@ -344,8 +344,8 @@
                         :fill "#333"}})
 
 (defn line-chart []
-  (let [width  (or @plot-width (.-offsetWidth app))
-        height (or @plot-height (.-offsetHeight app))]
+  (let [width  (or @plot-width (.-offsetWidth gráfico))
+        height (or @plot-height (.-offsetHeight gráfico))]
    [:div#graph
     (into
      [:> rvis/XYPlot
@@ -398,7 +398,7 @@
 
 (defn mount-elements []
   (rdom/render [crear-botones] tabs)
-  (rdom/render [line-chart] app))
+  (rdom/render [line-chart] gráfico))
 
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app
