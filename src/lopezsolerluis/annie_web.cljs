@@ -169,7 +169,9 @@
         perfil-activo-nombre (last (get-perfil-key))]
     (if-not (calibrado? perfil-activo)
             (alert (app-tr @lang :perfil-no-calibrado-no-puede-copiarse))
-            (reset! portapapeles [perfil-activo-nombre perfil-activo]))))
+            (do
+              (reset! portapapeles [perfil-activo-nombre perfil-activo])
+              (alert (app-tr @lang :perfil-copiado))))))
 
 (defn pegar-perfil []
   (let [perfil-activo (get-perfil-activo)]

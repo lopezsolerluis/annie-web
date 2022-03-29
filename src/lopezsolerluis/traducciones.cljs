@@ -58,6 +58,7 @@
         :perfil-no-calibrado-no-puede-copiarse "An uncalibrated profile can't be copied to the clipboard."
         :perfil-no-calibrado-no-admite-pegado "An uncalibrated profile can't accept a pasted profile."
         :portapapeles-vacío "The clipboard is empty."
+        :perfil-copiado "The profile has been copied to the clipboard."
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -114,6 +115,7 @@
         :perfil-no-calibrado-no-puede-copiarse "Un perfil no calibrado no puede copiarse al portapapeles."
         :perfil-no-calibrado-no-admite-pegado "No puede pegarse un perfil en una pestaña no calibrada."
         :portapapeles-vacío "El portapapeles está vacío."
+        :perfil-copiado "El perfil ha sido copiado al portapapeles."
    }
   })
 
