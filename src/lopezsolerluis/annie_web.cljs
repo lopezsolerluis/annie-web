@@ -179,8 +179,10 @@
                 (alert (app-tr @lang :portapapeles-vacío))
                 (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
                       nombre-copiado (first @portapapeles)
+                      nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-key))))
+                      nombre (elegir-nombre  nombres-en-pestaña nombre-copiado false)
                       perfil-pegado (second @portapapeles)]
-                  (swap! pestañas assoc-in [:pestañas pestaña-activa-nombre :perfiles nombre-copiado] perfil-pegado))))))
+                  (swap! pestañas assoc-in [:pestañas pestaña-activa-nombre :perfiles nombre] perfil-pegado))))))
 
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
