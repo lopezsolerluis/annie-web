@@ -370,11 +370,15 @@
 
 (defn line-chart []
   (let [width  (or @plot-width (.-offsetWidth app))
-        height (or @plot-height (.-offsetHeight app))]
+        height (or @plot-height (.-offsetHeight app))
+        perfil-activo (get-perfil-activo)
+        x-min (calcular-x-calibrado perfil-activo (:x (first (:data-vis perfil-activo))))
+        x-max (calcular-x-calibrado perfil-activo (:x (last  (:data-vis perfil-activo))))]
    [:div#graph
     (into
      [:> rvis/XYPlot
       {:margin {:left 100 :right 50 :top 20} :width width :height height
+       :xDomain [x-min x-max]
                                              :onMouseDown  (fn [e] (mouse-pressed e :down))
                                              :onMouseUp    (fn [e] (mouse-pressed e :up))
                                              :onMouseMove  (fn [e] (mouse-moved e))
@@ -401,8 +405,7 @@
                                                            :onNearestX (fn [e]
                                                                         (reset! nearest-xy (js->clj e)))}])))]
 
-     (let [perfil-activo (get-perfil-activo)
-           pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
+     (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
         (mapcat (fn [[id {:keys [x y texto]}]]
                    (let [xc (calcular-x-calibrado perfil-activo x)
                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
