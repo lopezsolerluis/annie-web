@@ -198,6 +198,9 @@
     (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
   (change-ventana ventana-elementos "none"))
 
+(defn filtrar-dominio [data x-min x-max]
+  (filter (fn [punto] (<= x-min (:x punto) x-max)) data))
+
 (defn calibrar-data-vis [data a b]
   (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) data))
 (defn obtener-data [perfil]
@@ -377,16 +380,15 @@
    [:div#graph
     (into
      [:> rvis/XYPlot
-      {:margin {:left 100 :right 50 :top 20} :width width :height height
-       :xDomain [x-min x-max]
-                                             :onMouseDown  (fn [e] (mouse-pressed e :down))
-                                             :onMouseUp    (fn [e] (mouse-pressed e :up))
-                                             :onMouseMove  (fn [e] (mouse-moved e))
-                                             :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
-                                                               (reset! button-cen-pressed? false))
-                                             :onClick      (fn [e] (when (seq @etiqueta-activa)
-                                                                       (js/console.log (pr-str @etiqueta-activa))
-                                                                      (open-ventana-elementos @etiqueta-activa)))}
+      {:margin {:left 100 :right 50 :top 20}
+       :width width :height height :onMouseDown  (fn [e] (mouse-pressed e :down))
+                                   :onMouseUp    (fn [e] (mouse-pressed e :up))
+                                   :onMouseMove  (fn [e] (mouse-moved e))
+                                   :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
+                                                   (reset! button-cen-pressed? false))
+                                   :onClick      (fn [e] (when (seq @etiqueta-activa)
+                                                            (js/console.log (pr-str @etiqueta-activa))
+                                                            (open-ventana-elementos @etiqueta-activa)))}
       [:> rvis/VerticalGridLines {:style axis-style}]
       [:> rvis/HorizontalGridLines {:style axis-style}]
       [:> rvis/XAxis {:tickSizeInner 0 :tickSizeOuter 6 :style axis-style}]
@@ -400,7 +402,7 @@
          [:div]]
       (let [perfiles-pestaña-activa (get-in @pestañas [:pestañas (:pestaña-activa @pestañas) :perfiles])]
          (doall (for [[id perfil] perfiles-pestaña-activa]
-                     ^{:key (str id)} [:> rvis/LineSeries {:data (obtener-data perfil) :style {:fill "none"}
+                     ^{:key (str id)} [:> rvis/LineSeries {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
                                                            :strokeWidth 1
                                                            :onNearestX (fn [e]
                                                                         (reset! nearest-xy (js->clj e)))}])))]
