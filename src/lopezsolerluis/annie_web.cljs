@@ -117,8 +117,7 @@
      (swap! pestañas assoc :pestaña-activa nombre)
      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                           {:data-vis data-para-vis :calibración calibración :etiquetas {}})
-     (encender-espera false))))
+                           {:data-vis data-para-vis :calibración calibración :etiquetas {}}))))
 
 (defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
@@ -127,7 +126,8 @@
             perfil-2d-normalizado (normalizar-perfil-2d perfil-2d)
             data-para-vis (crear-data-para-vis perfil-2d-normalizado)
             nombre (:nombre-archivo fits-file)]
-        (crear-pestaña nombre data-para-vis))))
+        (crear-pestaña nombre data-para-vis)))
+  (encender-espera false))
 
 (defn procesar-pestaña-annie [pestaña-annie-as-string]
   (if-not (map? pestaña-annie-as-string) ; ¿Ser más estricto a la hora de verificar si es una pestaña válida?
@@ -158,8 +158,7 @@
     [:pestañas pestaña-activa-nombre :perfiles perfil-activo-nombre]))
 
 (defn get-perfil-activo []
-  (let [key (get-perfil-key)]
-    (get-in @pestañas key)))
+  (get-in @pestañas (get-perfil-key)))
 
 (defn get-pestaña-activa []
   (get-in @pestañas [:pestañas (:pestaña-activa @pestañas)]))
