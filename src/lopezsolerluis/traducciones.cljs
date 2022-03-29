@@ -55,6 +55,7 @@
         :fits-no-simple "FITS file is not SIMPLE"
         :fits-no-valido "FITS file does not seem to be valid"
         :annie-no-válido "ANNIE file does not seem to be valid"
+        :perfil-no-calibrado-no-puede-copiarse "An uncalibrated profile can't be copied to the clipboard."
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -108,6 +109,7 @@
         :fits-no-simple "El archivo FITS no es SIMPLE"
         :fits-no-valido "El archivo FITS no parece ser válido"
         :annie-no-válido "El archivo ANNIE no parece ser válido"
+        :perfil-no-calibrado-no-puede-copiarse "Un perfil no calibrado no puede copiarse al portapapeles."
    }
   })
 

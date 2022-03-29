@@ -22,6 +22,7 @@
 (def app (gdom/getElement "app"))
 (def plot-width (atom nil))
 (def plot-height (atom nil))
+(def portapapeles (atom {}))
 
 (def icono-espera (gdom/getElement "loader"))
 (def fondo-gris (gdom/getElement "fondogris"))
@@ -46,6 +47,7 @@
 (def datalist-de-espectros (gdom/getElement "datalist-de-espectros"))
 (def espectros-boton-ok (gdom/getElement "ok-espectros"))
 (def espectros-boton-cancel (gdom/getElement "cancel-espectros"))
+(def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
 
 (defn crear-lista-de-espectros []
   (let [clases (sort espectros-referencia-nombres)]
@@ -161,6 +163,13 @@
 (defn get-pestaña-activa []
   (get-in @pestañas [:pestañas (:pestaña-activa @pestañas)]))
 
+(defn copiar-perfil []
+  (let [perfil-activo (get-perfil-activo)
+        perfil-activo-nombre (last (get-perfil-key))]
+    (if-not (calibrado? perfil-activo)
+            (alert (app-tr @lang :perfil-no-calibrado-no-puede-copiarse))
+            (reset! portapapeles {perfil-activo-nombre perfil-activo}))))
+
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
     (when (calibrado? perfil-activo)
@@ -258,6 +267,7 @@
       (gevents/listen (gdom/getElement "auto-calibracion") "click" abrir-ventana-calibración)
       (gevents/listen calibración-ok "click" calibrar-ok)
       (gevents/listen calibración-cancel "click" calibrar-cancel)
+      (gevents/listen copiar-perfil-menu "click" copiar-perfil)
       true))
 
 (def nearest-xy (atom {}))
