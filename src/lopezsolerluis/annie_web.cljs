@@ -41,7 +41,7 @@
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
 (def open-annie (gdom/getElement "open-annie"))
-(def menu-principal (gdom/getElement "menu-principal"))
+(def menu-principal (gdom/getElement "menuprincipal"))
 (def tabs (gdom/getElement "tabs"))
 (def ventana-espectros (gdom/getElement "ventana-espectros"))
 (def input-espectros (gdom/getElement "input-espectros"))
@@ -51,6 +51,8 @@
 (def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
 (def pegar-perfil-menu (gdom/getElement "pegar-perfil"))
 
+(set! (.. app -style -height)
+      (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
 
 (defn crear-lista-de-espectros []
   (let [clases (sort espectros-referencia-nombres)]
@@ -377,7 +379,7 @@
         perfil-activo (get-perfil-activo)
         x-min (calcular-x-calibrado perfil-activo (:x (first (:data-vis perfil-activo))))
         x-max (calcular-x-calibrado perfil-activo (:x (last  (:data-vis perfil-activo))))]
-   [:div#graph
+   [:div#graph ;{:style {:heigth (.. app -style -height)}}
     (into
      [:> rvis/XYPlot
       {:margin {:left 100 :right 50 :top 20}
