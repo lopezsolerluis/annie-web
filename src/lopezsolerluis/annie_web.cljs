@@ -51,6 +51,7 @@
 (def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
 (def pegar-perfil-menu (gdom/getElement "pegar-perfil"))
 
+;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (set! (.. app -style -height)
       (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
 
@@ -353,7 +354,7 @@
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
 
-(defn mouse-pressed [e dir]
+(defn mouse-pressed-within-plot [e dir]
   (when-not (.-ctrlKey e)    ; Con la tecla "Control" se editan etiquetas
     (let [boton (.-button e)]   ; 0: izq, 1: centro, 2: derecho
       (case boton               ; el boton derecho me abre una ventana contextual (supongo que se puede quitar, pero...)
@@ -383,8 +384,8 @@
     (into
      [:> rvis/XYPlot
       {:margin {:left 100 :right 50 :top 20}
-       :width width :height height :onMouseDown  (fn [e] (mouse-pressed e :down))
-                                   :onMouseUp    (fn [e] (mouse-pressed e :up))
+       :width width :height height :onMouseDown  (fn [e] (mouse-pressed-within-plot e :down))
+                                   :onMouseUp    (fn [e] (mouse-pressed-within-plot e :up))
                                    :onMouseMove  (fn [e] (mouse-moved e))
                                    :onMouseLeave (fn [e] ;;(reset! etiqueta-activa [])
                                                    (reset! button-cen-pressed? false))
