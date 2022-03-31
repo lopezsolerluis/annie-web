@@ -50,6 +50,7 @@
 (def espectros-boton-cancel (gdom/getElement "cancel-espectros"))
 (def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
 (def pegar-perfil-menu (gdom/getElement "pegar-perfil"))
+(def popup-forms (array-seq (gdom/getElementsByClass "form-popup")))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (set! (.. app -style -height)
@@ -272,6 +273,8 @@
         :annie (read-pestaña file procesar-pestaña-annie))))
   (set! (-> this .-target .-value) ""))
 
+(def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
+
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
       (gevents/listen open-annie "change" (fn [this] (abrir-archivo this :annie)))
@@ -291,6 +294,17 @@
       (gevents/listen calibración-cancel "click" calibrar-cancel)
       (gevents/listen copiar-perfil-menu "click" copiar-perfil)
       (gevents/listen pegar-perfil-menu "click" pegar-perfil)
+      (doseq [popup popup-forms]
+        (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
+                                                                 :offset {:x (- (.-offsetLeft popup) (.-clientX e))
+                                                                          :y (- (.-offsetTop popup) (.-clientY e))}})))
+        (gevents/listen popup "mouseup" (fn [] (swap! mouse assoc :isDown false)))
+        (gevents/listen popup "mouseleave" (fn [] (swap! mouse assoc :isDown false)))
+        (gevents/listen popup "mousemove" (fn [e] (.preventDefault e)
+                                                  (if (:isDown @mouse)
+                                                      (let [m-pos {:x (.-clientX e) :y (.-clientY e)}]
+                                                         (set! (.. popup -style -left) (str (+ (:x m-pos) (:x (:offset @mouse))) "px"))
+                                                         (set! (.. popup -style -top)  (str (+ (:y m-pos) (:y (:offset @mouse))) "px")))))))
       true))
 
 (def nearest-xy (atom {}))
