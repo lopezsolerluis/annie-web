@@ -35,3 +35,13 @@
 #tabs button.active {
   background-color: #ccc;
 }
+
+#tabs .boton-vacio {
+  color: #f9f9f9;
+  background-color: inherit;
+  cursor: default;
+}
+#tabs .boton-vacio:hover {
+  color: #f9f9f9;
+  background-color: inherit;
+}

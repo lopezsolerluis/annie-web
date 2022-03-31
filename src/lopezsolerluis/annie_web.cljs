@@ -41,6 +41,7 @@
 (def calibración-cancel (gdom/getElement "cancel-calibración"))
 (def open-fits (gdom/getElement "open-fits"))
 (def open-annie (gdom/getElement "open-annie"))
+(def menu-principal (gdom/getElement "menu-principal"))
 (def tabs (gdom/getElement "tabs"))
 (def ventana-espectros (gdom/getElement "ventana-espectros"))
 (def input-espectros (gdom/getElement "input-espectros"))
@@ -49,6 +50,7 @@
 (def espectros-boton-cancel (gdom/getElement "cancel-espectros"))
 (def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
 (def pegar-perfil-menu (gdom/getElement "pegar-perfil"))
+
 
 (defn crear-lista-de-espectros []
   (let [clases (sort espectros-referencia-nombres)]
@@ -417,11 +419,13 @@
 
 (defn crear-botones []
  [:div
-   (doall (for [nombre (keys (:pestañas @pestañas))]
-            ^{:key (str "pestaña-" nombre)}
-            [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
-                      :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
-                     nombre]))])
+   (if-not (seq @pestañas)
+      [:button {:className "boton-vacio"} "Vacío"]
+      (doall (for [nombre (keys (:pestañas @pestañas))]
+               ^{:key (str "pestaña-" nombre)}
+               [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
+                         :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
+                        nombre])))])
 
 (defn mount-elements []
   (rdom/render [crear-botones] tabs)
