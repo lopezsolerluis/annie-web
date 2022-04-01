@@ -53,9 +53,13 @@
   width: auto;
 }
 
+.herramientas-container select {
+  margin-bottom: .5em;
+}
+
 fieldset {
   margin: .5em 0;
-  width: 10em;
+  /* width: 11em; */
   padding: .5em;
   display: -ms-flex;
   display: -webkit-flex;
@@ -68,10 +72,15 @@ fieldset {
   align-items: center;
 }
 
+fieldset legend {
+  font-weight: bold;
+}
+
 .form-container .boton {
   padding: 0.5em 1em;
   font-weight: bold;
   margin: .4em;
+  font-size: 1em;
 }
 
 .form-container .uni {
