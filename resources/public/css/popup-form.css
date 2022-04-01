@@ -1,6 +1,6 @@
 /* The popup form - hidden by default */
 .form-popup {
-  /* display: none; */
+  display: none;
   position: fixed;
   top: calc( 50% - 150px );
   left: calc( 50% - 150px );
@@ -51,10 +51,7 @@
 
 .herramientas-container {
   width: auto;
-}
-
-.herramientas-container select {
-  margin-bottom: .5em;
+  padding: 0 10px;
 }
 
 fieldset {

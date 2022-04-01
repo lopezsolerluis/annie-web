@@ -1,8 +1,8 @@
 #menuprincipal {
   padding: 0% 0%;
-  background-color: #9FC8D9;
+  background-color: #AFD8E9;
   font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;  
+  font-weight: bold;
 }
 
 ul, ol {
@@ -49,4 +49,17 @@ ul, ol {
 #listamenu li ul li ul {
   right:-140px;
   top:0px;
+}
+
+#perfil-activo-menu {
+  float: right;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+#boton-zoom {
+  padding: 0px 12px;
+  margin: 0 .5em;
+  font-size: 1.7em;
+  background-color: #9FC8D9;
 }
