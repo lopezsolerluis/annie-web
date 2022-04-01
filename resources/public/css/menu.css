@@ -63,10 +63,10 @@ ul, ol {
   /* align-self: stretch; */
   text-align: center;
   font-size: 1.7em;
-  background-color: #9FC8D9;
+  background-color: #7FBCD6;
   cursor: pointer;
 }
 .activo {
-  color: red;  
+  color: red;
   text-decoration: line-through 5px;
 }
