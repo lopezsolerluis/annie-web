@@ -53,7 +53,7 @@ ul, ol {
 
 #perfil-activo-menu {
   float: right;
-  display: flex;
+  display: none;  /* hay que cambiarlo a flex por código */
   align-items: center;
   height: 100%;
 }

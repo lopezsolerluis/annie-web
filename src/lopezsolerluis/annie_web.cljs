@@ -51,10 +51,23 @@
 (def copiar-perfil-menu (gdom/getElement "copiar-perfil"))
 (def pegar-perfil-menu (gdom/getElement "pegar-perfil"))
 (def popup-forms (array-seq (gdom/getElementsByClass "form-popup")))
+(def menu-perfil-activo (gdom/getElement "perfil-activo-menu"))
+(def perfil-activo-select (gdom/getElement "perfil-activo-select"))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (set! (.. app -style -height)
       (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
+
+(defn get-perfil-key []
+  (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
+        perfil-activo-nombre (get-in @pestañas [:pestañas pestaña-activa-nombre :perfil-activo])]
+    [:pestañas pestaña-activa-nombre :perfiles perfil-activo-nombre]))
+
+(defn get-perfil-activo []
+  (get-in @pestañas (get-perfil-key)))
+
+(defn get-pestaña-activa []
+  (get-in @pestañas [:pestañas (:pestaña-activa @pestañas)]))
 
 (defn crear-lista-de-espectros []
   (let [clases (sort espectros-referencia-nombres)]
@@ -64,6 +77,21 @@
         (.appendChild datalist-de-espectros option)))))
 
 (crear-lista-de-espectros)
+
+(defn crear-lista-de-perfiles []
+  (let [pestaña-activa (get-pestaña-activa)
+        perfiles-nombres (keys (:perfiles pestaña-activa))
+        perfil-activo-nombre (:perfil-activo pestaña-activa)]
+    (gdom/removeChildren perfil-activo-select)
+    (doseq [nombre perfiles-nombres]
+      (let [option (.createElement js/document "option")]
+        (set! (.-value option) nombre)
+        (set! (.-innerHTML option) nombre)
+        (.appendChild perfil-activo-select option)))))
+
+(defn actualizar-menu-perfil-activo []
+  (crear-lista-de-perfiles)
+  (set! (.. menu-perfil-activo -style -display) (if (seq @pestañas) "flex" "none")))
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
@@ -133,6 +161,7 @@
             data-para-vis (crear-data-para-vis perfil-2d-normalizado)
             nombre (:nombre-archivo fits-file)]
         (crear-pestaña nombre data-para-vis)))
+  (actualizar-menu-perfil-activo)
   (encender-espera false))
 
 (defn procesar-pestaña-annie [pestaña-annie-as-string]
@@ -146,6 +175,7 @@
                             (clojure.walk/postwalk-replace {nombre-posible nombre} pestaña-original))]
             (swap! pestañas assoc :pestaña-activa nombre)
             (swap! pestañas assoc-in [:pestañas nombre] pestaña)))
+  (actualizar-menu-perfil-activo)
   (encender-espera false))
 
 (defn calibrado? [perfil]
@@ -157,17 +187,6 @@
 
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
-
-(defn get-perfil-key []
-  (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
-        perfil-activo-nombre (get-in @pestañas [:pestañas pestaña-activa-nombre :perfil-activo])]
-    [:pestañas pestaña-activa-nombre :perfiles perfil-activo-nombre]))
-
-(defn get-perfil-activo []
-  (get-in @pestañas (get-perfil-key)))
-
-(defn get-pestaña-activa []
-  (get-in @pestañas [:pestañas (:pestaña-activa @pestañas)]))
 
 (defn copiar-perfil []
   (let [perfil-activo (get-perfil-activo)
@@ -260,6 +279,7 @@
         (alert (app-tr @lang :la-clase-es-desconocida))
         (do
           (crear-pestaña clase ((keyword clase) espectros-referencia) [1 0])
+          (actualizar-menu-perfil-activo)
           (change-ventana ventana-espectros "none")))))
 (defn espectros-cancel []
   (change-ventana ventana-espectros "none"))
@@ -429,7 +449,6 @@
                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
                      (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo))))]))
-
 
 (defn pestaña-activa? [nombre]
   (= nombre (:pestaña-activa @pestañas)))
