@@ -299,8 +299,8 @@
       (set! (.. ventana-zoom-etc -style -display) "block")))
 
 (defn do-optizoom []
-   (reset! plot-height 10)
-   (reset! plot-width 10)
+   (reset! plot-height 10) ; No estoy seguro de si esto es necesario;
+   (reset! plot-width 10)  ; ni siquiera si es útil
    (reset! plot-width  (.-offsetWidth app))
    (reset! plot-height (.-offsetHeight app)))
 
