@@ -298,7 +298,7 @@
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
                                                                           :y (- (.-offsetTop popup) (.-clientY e))}})))
-        (gevents/listen popup "mouseup" (fn [] (swap! mouse assoc :isDown false)))
+        (gevents/listen popup "mouseup"    (fn [] (swap! mouse assoc :isDown false)))
         (gevents/listen popup "mouseleave" (fn [] (swap! mouse assoc :isDown false)))
         (gevents/listen popup "mousemove" (fn [e] (.preventDefault e)
                                                   (if (:isDown @mouse)
