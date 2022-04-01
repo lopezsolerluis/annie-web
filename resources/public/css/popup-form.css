@@ -9,7 +9,7 @@
   border: 3px solid #f1f1f1;
   border-radius: 10px;
   z-index: 10000;
-  box-shadow: -.1em 0 1em .4em rgba(100,100,100,.9);
+  box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
   background-color: white;
 }
 
@@ -67,6 +67,14 @@ fieldset {
   -ms-align-items: center;
   -webkit-align-items: center;
   align-items: center;
+}
+
+.x {
+  float: right;
+  font-size: 1.5em;
+  margin-top: .2em;
+  margin-right: .2em;
+  cursor: pointer;
 }
 
 fieldset legend {

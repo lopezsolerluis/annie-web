@@ -55,7 +55,8 @@
 (def popup-forms (array-seq (gdom/getElementsByClass "form-popup")))
 (def menu-perfil-activo (gdom/getElement "perfil-activo-menu"))
 (def perfil-activo-select (gdom/getElement "perfil-activo-select"))
-
+(def boton-zoom-etc (gdom/getElement "boton-zoom-etc"))
+(def ventana-zoom-etc (gdom/getElement "ventana-herramientas"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (set! (.. app -style -height)
       (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
@@ -292,6 +293,11 @@
 (defn cambiar-perfil-activo [nombre]
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre))
 
+(defn change-ventana-zoom-etc []
+  (if (= (.. ventana-zoom-etc -style -display) "none")
+      (set! (.. ventana-zoom-etc -style -display) "block")
+      (set! (.. ventana-zoom-etc -style -display) "none")))          
+
 (def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
 
 (defonce is-initialized?
@@ -314,6 +320,8 @@
       (gevents/listen copiar-perfil-menu "click" copiar-perfil)
       (gevents/listen pegar-perfil-menu "click" pegar-perfil)
       (gevents/listen perfil-activo-select "change" (fn [e] (cambiar-perfil-activo (.. e -target -value))))
+      (gevents/listen boton-zoom-etc "click" change-ventana-zoom-etc)
+      (gevents/listen (gdom/getElement "cerrar-ventana-zoom-etc") "click" change-ventana-zoom-etc)
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))

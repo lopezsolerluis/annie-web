@@ -57,9 +57,16 @@ ul, ol {
   align-items: center;
   height: 100%;
 }
-#boton-zoom {
-  padding: 0px 12px;
+#boton-zoom-etc {
+  padding: 2px .7em;
   margin: 0 .5em;
+  /* align-self: stretch; */
+  text-align: center;
   font-size: 1.7em;
   background-color: #9FC8D9;
+  cursor: pointer;
+}
+.activo {
+  color: red;  
+  text-decoration: line-through 5px;
 }
