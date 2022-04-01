@@ -3,6 +3,7 @@
    [goog.dom :as gdom]
    [goog.events :as gevents]
    [reagent.core :as r :refer [atom]]
+   [reagent.ratom :as ratom]
    [reagent.dom :as rdom]
    [cljsjs.react-vis :as rvis]
    [clojure.string :as str]
@@ -16,7 +17,8 @@
 (set! *print-level* nil)
 
 ;; define your app data so that it doesn't get over-written on reload
-(defonce pestañas (atom {}))  ; ¿defonce o def..?
+(defonce pestañas (r/atom {:pestaña-activa nil :pestañas nil}))  ; ¿defonce o def..?
+(defonce pestaña-activa (r/cursor pestañas [:pestaña-activa]))
 (defonce portapapeles (atom []))
 (def etiqueta-activa (atom []))
 
@@ -161,7 +163,6 @@
             data-para-vis (crear-data-para-vis perfil-2d-normalizado)
             nombre (:nombre-archivo fits-file)]
         (crear-pestaña nombre data-para-vis)))
-  (actualizar-menu-perfil-activo)
   (encender-espera false))
 
 (defn procesar-pestaña-annie [pestaña-annie-as-string]
@@ -175,7 +176,6 @@
                             (clojure.walk/postwalk-replace {nombre-posible nombre} pestaña-original))]
             (swap! pestañas assoc :pestaña-activa nombre)
             (swap! pestañas assoc-in [:pestañas nombre] pestaña)))
-  (actualizar-menu-perfil-activo)
   (encender-espera false))
 
 (defn calibrado? [perfil]
@@ -279,7 +279,6 @@
         (alert (app-tr @lang :la-clase-es-desconocida))
         (do
           (crear-pestaña clase ((keyword clase) espectros-referencia) [1 0])
-          (actualizar-menu-perfil-activo)
           (change-ventana ventana-espectros "none")))))
 (defn espectros-cancel []
   (change-ventana ventana-espectros "none"))
@@ -462,6 +461,10 @@
                [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
                          :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
                         nombre])))])
+
+(ratom/run!
+  (if @pestaña-activa
+      (actualizar-menu-perfil-activo)))
 
 (defn mount-elements []
   (rdom/render [crear-botones] tabs)
