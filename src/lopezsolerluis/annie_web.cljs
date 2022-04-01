@@ -296,7 +296,13 @@
 (defn change-ventana-zoom-etc []
   (if (= (.. ventana-zoom-etc -style -display) "block")
       (set! (.. ventana-zoom-etc -style -display) "none")
-      (set! (.. ventana-zoom-etc -style -display) "block")))          
+      (set! (.. ventana-zoom-etc -style -display) "block")))
+
+(defn do-optizoom []
+   (reset! plot-height 10)
+   (reset! plot-width 10)
+   (reset! plot-width  (.-offsetWidth app))
+   (reset! plot-height (.-offsetHeight app)))
 
 (def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
 
@@ -322,6 +328,11 @@
       (gevents/listen perfil-activo-select "change" (fn [e] (cambiar-perfil-activo (.. e -target -value))))
       (gevents/listen boton-zoom-etc "click" change-ventana-zoom-etc)
       (gevents/listen (gdom/getElement "cerrar-ventana-zoom-etc") "click" change-ventana-zoom-etc)
+      (gevents/listen (gdom/getElement "optizoom") "click" do-optizoom)
+      (gevents/listen (gdom/getElement "zoom-x-menos") "click" (fn [] (swap! plot-width * 0.9)))
+      (gevents/listen (gdom/getElement "zoom-x-más") "click" (fn [] (swap! plot-width * 1.1)))
+      (gevents/listen (gdom/getElement "zoom-y-menos") "click" (fn [] (swap! plot-height * 0.9)))
+      (gevents/listen (gdom/getElement "zoom-y-más") "click" (fn [] (swap! plot-height * 1.1)))
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
@@ -417,8 +428,8 @@
                         :fill "#333"}})
 
 (defn line-chart []
-  (let [width  (or @plot-width (.-offsetWidth app))
-        height (or @plot-height (.-offsetHeight app))
+  (let [width (or @plot-width 0)
+        height (or @plot-height 0)
         perfil-activo (get-perfil-activo)
         x-min (calcular-x-calibrado perfil-activo (:x (first (:data-vis perfil-activo))))
         x-max (calcular-x-calibrado perfil-activo (:x (last  (:data-vis perfil-activo))))]
@@ -463,7 +474,7 @@
 
 (defn crear-botones []
  [:div
-   (if-not (seq @pestañas)
+   (if-not @pestaña-activa
       [:button {:className "boton-vacio"} "Vacío"]
       (doall (for [nombre (keys (:pestañas @pestañas))]
                ^{:key (str "pestaña-" nombre)}
@@ -485,6 +496,7 @@
 ;; conditionally start your application based on the presence of an "app" element
 ;; this is particularly helpful for testing this ns without launching the app
 (mount-elements)
+(do-optizoom)
 
 ;; specify reload hook with ^:after-load metadata
 (defn ^:after-load on-reload []
