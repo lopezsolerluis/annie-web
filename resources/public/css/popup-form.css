@@ -54,8 +54,12 @@
   padding: 0 10px;
 }
 
+.herramientas-container h3 {
+  padding: .5em 0;
+}
+
 fieldset {
-  margin: .5em 0;
+  margin-bottom: .5em;
   /* width: 11em; */
   padding: .5em;
   display: -ms-flex;

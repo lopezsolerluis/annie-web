@@ -294,9 +294,9 @@
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre))
 
 (defn change-ventana-zoom-etc []
-  (if (= (.. ventana-zoom-etc -style -display) "none")
-      (set! (.. ventana-zoom-etc -style -display) "block")
-      (set! (.. ventana-zoom-etc -style -display) "none")))          
+  (if (= (.. ventana-zoom-etc -style -display) "block")
+      (set! (.. ventana-zoom-etc -style -display) "none")
+      (set! (.. ventana-zoom-etc -style -display) "block")))          
 
 (def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
 
