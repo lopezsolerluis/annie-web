@@ -89,11 +89,8 @@
       (let [option (.createElement js/document "option")]
         (set! (.-value option) nombre)
         (set! (.-innerHTML option) nombre)
-        (.appendChild perfil-activo-select option)))))
-
-(defn actualizar-menu-perfil-activo []
-  (crear-lista-de-perfiles)
-  (set! (.. menu-perfil-activo -style -display) (if (seq @pestañas) "flex" "none")))
+        (.appendChild perfil-activo-select option)))
+    (set! (.-value perfil-activo-select) perfil-activo-nombre)))
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
@@ -292,6 +289,9 @@
         :annie (read-pestaña file procesar-pestaña-annie))))
   (set! (-> this .-target .-value) ""))
 
+(defn cambiar-perfil-activo [nombre]
+  (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre))
+
 (def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
 
 (defonce is-initialized?
@@ -313,6 +313,7 @@
       (gevents/listen calibración-cancel "click" calibrar-cancel)
       (gevents/listen copiar-perfil-menu "click" copiar-perfil)
       (gevents/listen pegar-perfil-menu "click" pegar-perfil)
+      (gevents/listen perfil-activo-select "change" (fn [e] (cambiar-perfil-activo (.. e -target -value))))
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
@@ -464,7 +465,10 @@
 
 (ratom/run!
   (if @pestaña-activa
-      (actualizar-menu-perfil-activo)))
+      (do
+        (crear-lista-de-perfiles)
+        (set! (.. menu-perfil-activo -style -display) "flex"))
+      (set! (.. menu-perfil-activo -style -display) "none")))
 
 (defn mount-elements []
   (rdom/render [crear-botones] tabs)
