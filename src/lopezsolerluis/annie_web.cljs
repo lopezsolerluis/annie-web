@@ -420,9 +420,11 @@
 
 (defn colocar-etiqueta []
   (let [perfil (get-perfil-activo)
+        inc-y (:inc-y perfil)
         baricentro (mn/calcular-baricentro (obtener-data perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
+        baricentro-no-calibrado (update baricentro-no-calibrado :y #(- % inc-y))
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta" true)
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
         key (conj (get-perfil-activo-key) :etiquetas nombre-etiqueta)]
@@ -484,11 +486,12 @@
                                                            :strokeWidth 1
                                                            :onNearestX (fn [e]
                                                                         (reset! nearest-xy (js->clj e)))}])))]
-     (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)]
+     (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
+           inc-y (:inc-y (get-perfil-activo))]
         (mapcat (fn [[id {:keys [x y texto]}]]
                    (let [xc (calcular-x-calibrado perfil-activo x)
                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
-                     (crear-etiqueta id xc y texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
+                     (crear-etiqueta id xc (+ y inc-y) texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo))))]))
 
 (defn pestaña-activa? [nombre]
