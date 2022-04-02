@@ -61,13 +61,13 @@
 (set! (.. app -style -height)
       (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
 
-(defn get-perfil-key []
+(defn get-perfil-activo-key []
   (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
         perfil-activo-nombre (get-in @pestañas [:pestañas pestaña-activa-nombre :perfil-activo])]
     [:pestañas pestaña-activa-nombre :perfiles perfil-activo-nombre]))
 
 (defn get-perfil-activo []
-  (get-in @pestañas (get-perfil-key)))
+  (get-in @pestañas (get-perfil-activo-key)))
 
 (defn get-pestaña-activa []
   (get-in @pestañas [:pestañas (:pestaña-activa @pestañas)]))
@@ -188,7 +188,7 @@
 
 (defn copiar-perfil []
   (let [perfil-activo (get-perfil-activo)
-        perfil-activo-nombre (last (get-perfil-key))]
+        perfil-activo-nombre (last (get-perfil-activo-key))]
     (if-not (calibrado? perfil-activo)
             (alert (app-tr @lang :perfil-no-calibrado-no-puede-copiarse))
             (do
@@ -203,7 +203,7 @@
                 (alert (app-tr @lang :portapapeles-vacío))
                 (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
                       nombre-copiado (first @portapapeles)
-                      nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-key))))
+                      nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
                       nombre (elegir-nombre  nombres-en-pestaña nombre-copiado false)
                       perfil-pegado (second @portapapeles)]
                   (swap! pestañas assoc-in [:pestañas pestaña-activa-nombre :perfiles nombre] perfil-pegado))))))
@@ -242,6 +242,24 @@
         (/ (- x b) a))
       x))
 
+(defn modificar-data-vis
+  "La coordenada es :x o :y. Si la función lleva parámetros,
+  sería bueno crearla con (partial + 10), por ejemplo.
+  Aunque quizá sea más seguro algo como #(- % 10)"
+  [data-vis coord funcion]
+    (map (fn [punto] (update punto coord funcion)) data-vis))
+
+(defn desplazar-perfil-y [perfil-key inc]
+  (let [data-vis-key (conj perfil-key :data-vis)
+        data-vis (get-in @pestañas data-vis-key)
+        data-vis-nuevo (modificar-data-vis data-vis :y (partial + inc))]
+    (swap! pestañas assoc-in data-vis-key data-vis-nuevo)))
+
+(defn subir-perfil-activo []
+  (desplazar-perfil-y (get-perfil-activo-key) 0.05))
+(defn bajar-perfil-activo []
+  (desplazar-perfil-y (get-perfil-activo-key) -0.05))
+
 (defn abrir-ventana-calibración []
   (let [perfil-activo (get-perfil-activo)
         ultimas-etiquetas (take-last 2 (:etiquetas perfil-activo))]
@@ -263,7 +281,7 @@
            (let [x1 (js/parseFloat (.-value x1-calibración-number)) ; verificar que son válidos (?)
                  x2 (js/parseFloat (.-value x2-calibración-number))
                  params (calcular-calibración x1 x2 lambda1 lambda2)]
-             (swap! pestañas assoc-in (conj (get-perfil-key) :calibración) params)
+             (swap! pestañas assoc-in (conj (get-perfil-activo-key) :calibración) params)
              (change-ventana ventana-calibración "none")))))
 (defn calibrar-cancel []
   (change-ventana ventana-calibración "none"))
@@ -333,6 +351,8 @@
       (gevents/listen (gdom/getElement "zoom-x-más") "click" (fn [] (swap! plot-width * 1.1)))
       (gevents/listen (gdom/getElement "zoom-y-menos") "click" (fn [] (swap! plot-height * 0.9)))
       (gevents/listen (gdom/getElement "zoom-y-más") "click" (fn [] (swap! plot-height * 1.1)))
+      (gevents/listen (gdom/getElement "desplazar-y-abajo") "click" bajar-perfil-activo)
+      (gevents/listen (gdom/getElement "desplazar-y-arriba") "click" subir-perfil-activo)
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
@@ -402,7 +422,7 @@
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta" true)
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
-        key (conj (get-perfil-key) :etiquetas nombre-etiqueta)]
+        key (conj (get-perfil-activo-key) :etiquetas nombre-etiqueta)]
      (swap! pestañas assoc-in key etiqueta)
      (reset! etiqueta-activa key)
      (open-ventana-elementos key)))
@@ -462,7 +482,7 @@
                                                            :onNearestX (fn [e]
                                                                         (reset! nearest-xy (js->clj e)))}])))]
 
-     (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-key) :etiquetas)]
+     (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)]
         (mapcat (fn [[id {:keys [x y texto]}]]
                    (let [xc (calcular-x-calibrado perfil-activo x)
                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
