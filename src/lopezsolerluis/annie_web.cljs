@@ -148,10 +148,10 @@
   ([nombre-posible data-para-vis] (crear-pestaña nombre-posible data-para-vis []))
   ([nombre-posible data-para-vis calibración]
    (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
-     (swap! pestañas assoc :pestaña-activa nombre)
      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                           {:data-vis data-para-vis :calibración calibración :etiquetas {}}))))
+                           {:data-vis data-para-vis :calibración calibración :inc-y 0 :etiquetas {}})
+     (swap! pestañas assoc :pestaña-activa nombre))))
 
 (defn procesar-archivo-fits [fits-file]
   (if (= fits-file :fits-no-simple)
@@ -172,8 +172,8 @@
                 pestaña (if (= nombre nombre-posible)
                             pestaña-original
                             (clojure.walk/postwalk-replace {nombre-posible nombre} pestaña-original))]
-            (swap! pestañas assoc :pestaña-activa nombre)
-            (swap! pestañas assoc-in [:pestañas nombre] pestaña)))
+            (swap! pestañas assoc-in [:pestañas nombre] pestaña)
+            (swap! pestañas assoc :pestaña-activa nombre)))
   (encender-espera false))
 
 (defn calibrado? [perfil]
@@ -228,8 +228,9 @@
   (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) data))
 (defn obtener-data [perfil]
   (if (calibrado? perfil)
-      (let [[a b] (:calibración perfil)]
-        (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y y}) (:data-vis perfil)))
+      (let [[a b] (:calibración perfil)
+            inc-y (:inc-y perfil)]
+        (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y (+ y inc-y)}) (:data-vis perfil)))
       (:data-vis perfil)))
 (defn calcular-x-calibrado [perfil x]
   (if (calibrado? perfil)
@@ -256,9 +257,11 @@
     (swap! pestañas assoc-in data-vis-key data-vis-nuevo)))
 
 (defn subir-perfil-activo []
-  (desplazar-perfil-y (get-perfil-activo-key) 0.05))
+  (swap! pestañas update-in (conj (get-perfil-activo-key) :inc-y) #(+ % 0.05)))
+  ;(desplazar-perfil-y (get-perfil-activo-key) 0.05))
 (defn bajar-perfil-activo []
-  (desplazar-perfil-y (get-perfil-activo-key) -0.05))
+  (swap! pestañas update-in (conj (get-perfil-activo-key) :inc-y) #(- % 0.05)))
+  ;(desplazar-perfil-y (get-perfil-activo-key) -0.05))
 
 (defn abrir-ventana-calibración []
   (let [perfil-activo (get-perfil-activo)
@@ -481,7 +484,6 @@
                                                            :strokeWidth 1
                                                            :onNearestX (fn [e]
                                                                         (reset! nearest-xy (js->clj e)))}])))]
-
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)]
         (mapcat (fn [[id {:keys [x y texto]}]]
                    (let [xc (calcular-x-calibrado perfil-activo x)
