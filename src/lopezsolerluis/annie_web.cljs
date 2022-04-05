@@ -187,20 +187,22 @@
   (js/window.confirm texto))
 
 (defn copiar-perfil []
-  (let [perfil-activo (get-perfil-activo)
-        perfil-activo-nombre (last (get-perfil-activo-key))]
-    (if-not (calibrado? perfil-activo)
-            (alert (app-tr @lang :perfil-no-calibrado-no-puede-copiarse))
-            (do
-              (reset! portapapeles [perfil-activo-nombre perfil-activo])
-              (alert (app-tr @lang :perfil-copiado))))))
+  (let [perfil-activo (get-perfil-activo)]
+    (if-not perfil-activo
+            (alert (app-tr @lang :no-hay-perfil-que-copiar))
+            (let [perfil-activo-nombre (last (get-perfil-activo-key))]
+              (if-not (calibrado? perfil-activo)
+                      (alert (app-tr @lang :perfil-no-calibrado-no-puede-copiarse))
+                      (do
+                        (reset! portapapeles [perfil-activo-nombre perfil-activo])
+                        (alert (app-tr @lang :perfil-copiado))))))))
 
 (defn pegar-perfil []
-  (let [perfil-activo (get-perfil-activo)]
-    (if-not (calibrado? perfil-activo)
-            (alert (app-tr @lang :perfil-no-calibrado-no-admite-pegado))
-            (if (empty? @portapapeles)
-                (alert (app-tr @lang :portapapeles-vacío))
+  (if (empty? @portapapeles)
+      (alert (app-tr @lang :portapapeles-vacío))
+      (let [perfil-activo (get-perfil-activo)]
+        (if-not (calibrado? perfil-activo)
+                (alert (app-tr @lang :perfil-no-calibrado-no-admite-pegado))
                 (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
                       nombre-copiado (first @portapapeles)
                       nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
@@ -266,17 +268,19 @@
   (swap! pestañas assoc-in (conj (get-perfil-activo-key) :inc-y) 0))
 
 (defn abrir-ventana-calibración []
-  (let [perfil-activo (get-perfil-activo)
-        ultimas-etiquetas (take-last 2 (:etiquetas perfil-activo))]
-    (if-not (= 2 (count ultimas-etiquetas))
-            (alert (app-tr @lang :debería-seleccionar-dos-líneas))
-            (let [baricentros (map :x (vals ultimas-etiquetas))
-                  x1 (apply min baricentros)
-                  x2 (apply max baricentros)]
-              (change-ventana ventana-calibración "block")
-              (.select lambda1-calibración-number)
-              (set! (.-value x1-calibración-number) (.toFixed x1 2))
-              (set! (.-value x2-calibración-number) (.toFixed x2 2))))))
+  (let [perfil-activo (get-perfil-activo)]
+    (if-not perfil-activo
+        (alert (app-tr @lang :no-hay-perfil-para-calibrar))
+        (let [ultimas-etiquetas (take-last 2 (:etiquetas perfil-activo))]
+          (if-not (= 2 (count ultimas-etiquetas))
+                  (alert (app-tr @lang :debería-seleccionar-dos-líneas))
+                  (let [baricentros (map :x (vals ultimas-etiquetas))
+                        x1 (apply min baricentros)
+                        x2 (apply max baricentros)]
+                    (change-ventana ventana-calibración "block")
+                    (.select lambda1-calibración-number)
+                    (set! (.-value x1-calibración-number) (.toFixed x1 2))
+                    (set! (.-value x2-calibración-number) (.toFixed x2 2))))))))
 
 (defn calibrar-ok []
   (let [lambda1 (js/parseFloat (.-value lambda1-calibración-number))

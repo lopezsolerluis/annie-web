@@ -22,7 +22,7 @@ ul, ol {
 }
 
 #listamenu li a.disabled {
-  /* color: #EEEEEE; */
+  color: #EEEEEE;
 }
 
 #listamenu li a:hover {
