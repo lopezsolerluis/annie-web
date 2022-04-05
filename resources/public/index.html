@@ -74,8 +74,17 @@
           </li>
         </ul>
 
+        <div class="menu-2">
+        <select name="language" id="language">
+          <option value="es">🇪🇸 Castellano</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+        </div>
+
+<!-- <div style="clear:both;"></div> -->
+
         <div id="perfil-activo-menu">
-          <label for="perfiles-lista" id="perfiles-label">Perfil activo:&nbsp; </label>
+          <label for="perfiles-lista" id="perfiles-label">Perfil activo:</label>
           <select id="perfil-activo-select" name="perfiles-lista">
           </select>
           <button type="button" id="boton-zoom-etc">🔍</button>
@@ -188,10 +197,10 @@
               <button type="button" id="zoom-y-más" class="boton uni">+</button>
          </fieldset>
 
-         <h3>Perfil activo:</h3>
+         <h3 id="perfil-activo">Perfil activo:</h3>
 
          <fieldset>
-         <legend>&nbsp;Desplazar&nbsp;</legend>
+         <legend id="desplazar">&nbsp;Desplazar&nbsp;</legend>
          <span>
            <button type="button" id="desplazar-y-abajo" class="boton uni">🠗</button>
            <button type="button" id="desplazar-y-reset" class="boton uni">Reset</button>

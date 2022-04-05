@@ -57,6 +57,7 @@
 (def perfil-activo-select (gdom/getElement "perfil-activo-select"))
 (def boton-zoom-etc (gdom/getElement "boton-zoom-etc"))
 (def ventana-zoom-etc (gdom/getElement "ventana-herramientas"))
+(def language-selector (gdom/getElement "language"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (set! (.. app -style -height)
       (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
@@ -105,10 +106,18 @@
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros]]
+   (gdom/setTextContent (gdom/getElement "perfiles-label") (str (app-tr lang :ventana-zoom-etc/perfil-activo) ":"))
+   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc]]
      (doseq [key-2 (-> translations :es key-1 keys)]
-       (let [el (gdom/getElement (name key-2))]
+       (let [el (gdom/getElement (name key-2))]          
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
+
+(set! (.-value language-selector) (getLanguage))
+(defn update-language [evt]
+  (reset! lang (.. evt -target -value))
+  (traducir))
+
+(traducir)
 ;; end of translation functions
 
 (defn alert [mensaje]
@@ -370,6 +379,7 @@
       (gevents/listen (gdom/getElement "desplazar-y-abajo") "click" bajar-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-reset") "click" reset-y-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-arriba") "click" subir-perfil-activo)
+      (gevents/listen language-selector "change" update-language)
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))

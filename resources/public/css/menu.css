@@ -57,6 +57,22 @@ ul, ol {
   align-items: center;
   height: 100%;
 }
+
+#perfiles-label {
+  margin-right: .3em;
+}
+
+.menu-2 {
+    margin: 0 .1em;
+    align-items: center;
+    height: 100%;
+    float: right;
+    display: flex;
+}
+#language {
+  text-align: center;
+}
+
 #boton-zoom-etc {
   padding: 2px .7em;
   margin: 0 .5em;
