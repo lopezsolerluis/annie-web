@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AnNIE Web</title>
+  <meta name="description" content="Versión web del AnNIE">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+  <link href="css/menu.css" rel="stylesheet" type="text/css">
+  <link href="css/pestañas.css" rel="stylesheet" type="text/css">
+  <link href="css/popup-form.css" rel="stylesheet" type="text/css">
+  <link href="css/radial-chart.css" rel="stylesheet" type="text/css">
+  <link href="css/plot.css" rel="stylesheet" type="text/css">
+  <link href="css/treemap.css" rel="stylesheet" type="text/css">
+  <link href="css/legends.css" rel="stylesheet" type="text/css">
+  <link rel="icon" href="https://clojurescript.org/images/cljs-logo-icon-32.png">
+</head>
+<body>
+
+  <div id="todo">
+
+    <div id="menuprincipal">
+      <ul id="listamenu">
+        <li><a href="#" id="archivo">Archivo</a>
+          <ul>
+            <li><a href="#" id="crear-perfil-desde-fits">Crear perfil desde imagen FITS...</a></li>
+            <li><a href="#" id="crear-perfil-desde-dat">Crear perfil desde archivo DAT...</a></li>
+            <li><a href="#" id="abrir-pestaña-annie">Abrir pestaña ANNIE...</a></li>
+            <li><a href="#" id="grabar-pestaña-annie">Grabar pestaña ANNIE</a></li>
+            <!-- <li><a href="#" id="grabar-pestaña-annie-como" class="disabled">Grabar pestaña ANNIE como...</a></li> -->
+            <li><a href="#" id="exportar-pdf" class="disabled">Exportar pestaña ANNIE como PDF...</a></li>
+            <li><a href="#" id="cerrar-pestaña" class="disabled">Cerrar pestaña</a></li>
+            <!-- <li><a href="#" id="salir">Salir</a></li> -->
+          </ul>
+        </li>
+        <li><a href="#" id="edicion">Edición</a>
+          <ul>
+            <li><a href="#" id="copiar-perfil">Copiar perfil</a></li>
+            <li><a href="#" id="pegar-perfil">Pegar perfil</a></li>
+            <li><a href="#" id="cambiar-nombre" class="disabled">Cambiar nombre...</a></li>
+            <li><a href="#" id="cambiar-color" class="disabled">Cambiar color...</a></li>
+            <li><a href="#" id="cambiar-diseño-linea" class="disabled">Cambiar diseño de línea...</a></li>
+            <li><a href="#" id="borrar-perfil" class="disabled">Borrar perfil...</a></li>
+            <li><a href="#" id="borrar-etiquetas" class="disabled">Borrar etiquetas...</a></li>
+          </ul>
+        </li>
+        <li><a href="#" id="calibracion">Calibración</a>
+          <ul>
+            <li><a href="#" id="auto-calibracion">Auto-calibración...</a></li>
+          </ul>
+        </li>
+        <li><a href="#" id="aritmetica">Aritmética</a>
+          <ul>
+            <li><a href="#" id="para-un-perfil">Para 1 perfil</a>
+              <ul>
+                <li><a href="#" id="normalizacion" class="disabled">Normalización</a></li>
+                <li><a href="#" id="sumar-uno" class="disabled">Sumar...</a></li>
+                <li><a href="#" id="multiplicar-uno" class="disabled">Multiplicar...</a></li>
+              </ul>
+            </li>
+            <li><a href="#" id="para-dos-perfiles">Para 2 perfiles</a>
+              <ul>
+                <li><a href="#" id="sumar-dos" class="disabled">Sumar...</a></li>
+                <li><a href="#" id="restar-dos" class="disabled">Restar...</a></li>
+                <li><a href="#" id="multiplicar-dos" class="disabled">Multiplicar...</a></li>
+                <li><a href="#" id="dividir-dos" class="disabled">Dividir...</a></li>
+              </ul>
+            </li>
+          </ul></li>
+          <li><a href="#" id="ayuda">Ayuda</a>
+            <ul>
+              <li><a href="#" id="creditos" class="disabled">Créditos</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="menu-2">
+        <select name="language" id="language">
+          <option value="es">🇪🇸 Castellano</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+        </div>
+
+<!-- <div style="clear:both;"></div> -->
+
+        <div id="perfil-activo-menu">
+          <label for="perfiles-lista" id="perfiles-label">Perfil activo:</label>
+          <select id="perfil-activo-select" name="perfiles-lista">
+          </select>
+          <button type="button" id="boton-zoom-etc">🔍</button>
+       </div>
+
+        <div style="clear:both;"></div>
+      </div>
+
+      <!-- Acá van los botones de las pestañas -->
+      <div id="tabs"></div>
+      <div style="clear:both;"></div>
+
+      <!-- Acá dentro va lo que el gráfico, etc. -->
+      <div id="app"></div>
+
+      <div style="clear:both;"></div>
+
+
+      <!-- Para impedir interacción con lo de "abajo" (o sea, para que la ventana de abajo sea "modal") -->
+      <div id="fondoblanco"></div>
+
+      <!-- Para ingresar los elementos -->
+      <div class="form-popup" id="ventana-elementos">
+        <div class="form-container">
+          <!-- <h1>Login</h1> -->
+          <label for="elementos-texto" id="etiqueta-label">Elementos:</label>
+          <textarea id="etiqueta-texto" name="elementos-texto" cols="10" rows="5"></textarea>
+
+
+          <button type="button" id="ok-etiqueta" class="btn">Ok</button>
+          <button type="button" id="cancel-etiqueta" class="btn cancel">Cancelar</button>
+          <button type="button" id="delete-etiqueta" class="btn delete">Borrar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para calibrar un perfil -->
+      <div class="form-popup" id="ventana-calibración">
+        <div class="form-container calibración-container">
+          <h3 id="calibración-título">Calibración</h3>
+
+          <div class="dos-elementos">
+            <span>
+              <label for="x1-calibración" id="x1-calibración-label">x<sub>1</sub>:</label>
+              <input type="number" id="x1-calibración-number" name="x1-calibración" required step=.01>
+              <!-- <span class="validity"></span> -->
+            </span>
+            <span class="arrow">➠</span>
+            <span>
+              <label for="lambda1-calibración" id="lambda1-calibración-label">λ<sub>1</sub>:</label>
+              <input type="number" id="lambda1-calibración-number" name="lambda1-calibración" required step=.001>
+              <!-- <span class="validity"></span> -->
+            </span>
+          </div>
+          <div class="dos-elementos">
+            <span>
+              <label for="x2-calibración" id="x2-calibración-label">x<sub>2</sub>:</label>
+              <input type="number" id="x2-calibración-number" name="x2-calibración" required step=.01>
+              <!-- <span class="validity"></span> -->
+            </span>
+            <span class="arrow">➠</span>
+            <span>
+              <label for="lambda2-calibración" id="lambda2-calibración-label">λ<sub>2</sub>:</label>
+              <input type="number" id="lambda2-calibración-number" name="lambda2-calibración" required step=.001>
+              <!-- <span class="validity"></span> -->
+            </span>
+          </div>
+
+          <button type="button" id="ok-calibración" class="btn">Ok</button>
+          <button type="button" id="cancel-calibración" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para elegir un espectro de referencia -->
+      <div class="form-popup" id="ventana-espectros">
+        <div class="form-container espectros-container">
+          <h3 id="espectros-título">Espectros de referencia</h3>
+
+          <label for="espectros-lista" id="espectros-label">Ingrese una clase espectral:</label>
+          <input list="datalist-de-espectros" id="input-espectros" name="espectros-lista"></input>
+          <datalist id="datalist-de-espectros">
+          </datalist>
+
+          <button type="button" id="ok-espectros" class="btn">Ok</button>
+          <button type="button" id="cancel-espectros" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Herramientas varias -->
+      <div class="form-popup" id="ventana-herramientas">
+        <div class="form-container herramientas-container">
+
+          <div id="cerrar-ventana-zoom-etc" class="x">🞭</div>
+          <div style="clear:both;"></div>
+
+          <fieldset>
+          <legend>&nbsp;Zoom&nbsp;</legend>
+          <button type="button" id="optizoom" class="boton">Opti-Zoom</button>
+          <br>
+          <span>
+            <button type="button" id="zoom-x-menos" class="boton uni">-</button>
+            X
+            <button type="button" id="zoom-x-más" class="boton uni">+</button>
+            <br>
+            <span>
+              <button type="button" id="zoom-y-menos" class="boton uni">-</button>
+              Y
+              <button type="button" id="zoom-y-más" class="boton uni">+</button>
+         </fieldset>
+
+         <h3 id="perfil-activo">Perfil activo:</h3>
+
+         <fieldset>
+         <legend id="desplazar">&nbsp;Desplazar&nbsp;</legend>
+         <span>
+           <button type="button" id="desplazar-y-abajo" class="boton uni">🠗</button>
+           <button type="button" id="desplazar-y-reset" class="boton uni">Reset</button>
+           <button type="button" id="desplazar-y-arriba" class="boton uni">🠕</button>
+         </span>
+        </fieldset>
+
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para abrir un archivo fits -->
+      <input type="file" id="open-fits"></input>
+      <!-- Para abrir un archivo annie -->
+      <input type="file" id="open-annie"></input>
+
+      <div id="fondogris"></div>
+      <div id="loader"></div> <!-- Para el iconito de espera... -->
+
+
+    </div> <!-- end of todo div -->
+
+    <script src="cljs-out/dev-main.js" type="text/javascript"></script>
+  </body>
+  </html>

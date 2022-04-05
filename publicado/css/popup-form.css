@@ -1,0 +1,182 @@
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  top: calc( 50% - 150px );
+  left: calc( 50% - 150px );
+  /* margin-left: -150px; */
+  /* margin-top: -150px; */
+  border: 3px solid #f1f1f1;
+  border-radius: 10px;
+  z-index: 10000;
+  box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
+  background-color: white;
+}
+
+/* Add styles to the form container */
+.form-container {
+  width: 300px;
+  padding: 10px;
+}
+
+/* Full-width input fields */
+.form-container textarea {
+  width: 90%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 30%;
+  margin-bottom:4px;
+  opacity: 0.8;
+  float: right;
+  margin-left: 5px;
+  font-weight: bold;
+}
+
+.herramientas-container {
+  width: auto;
+  padding: 0 10px;
+}
+
+.herramientas-container h3 {
+  padding: .5em 0;
+}
+
+fieldset {
+  margin-bottom: .5em;
+  /* width: 11em; */
+  padding: .5em;
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -ms-align-items: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.x {
+  float: right;
+  font-size: 1.5em;
+  margin-top: .2em;
+  margin-right: .2em;
+  cursor: pointer;
+}
+
+fieldset legend {
+  font-weight: bold;
+}
+
+.form-container .boton {
+  padding: 0.5em 1em;
+  font-weight: bold;
+  margin: .4em;
+  font-size: 1em;
+}
+
+.form-container .uni {
+  padding: .5em 1.5em;
+  margin: .3em;
+}
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: gray;
+}
+/* Add a red background color to the cancel button */
+
+.form-container .delete {
+  background-color: red;
+  float: left;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+
+.form-container label {
+  font-weight: bold;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.form-container h1, h2, h3, h4, h5, h6 {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.calibración-container {
+  width: 330px;
+}
+
+.calibración-container input[type=number] {
+  width: 6em;
+}
+
+.espectros-container h3 {
+  margin-bottom: 25px;
+}
+
+#input-espectros {
+  margin-bottom: 25px;
+  margin-top: 5px;
+}
+
+.dos-elementos {
+  margin: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+input[type=number]:invalid+span:after {
+  content: '✖';
+  color: red;
+  padding-left: 5px;
+}
+
+input[type=number]:valid+span:after {
+  content: '✓';
+  color: green;
+  padding-left: 5px;
+}
+
+.arrow {
+  font-size: 200%;
+}
+
+
+#fondoblanco {
+  display: none;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  z-index: 9999;
+}

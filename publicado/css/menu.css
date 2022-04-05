@@ -1,0 +1,90 @@
+#menuprincipal {
+  padding: 0% 0%;
+  background-color: #AFD8E9;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+ul, ol {
+  list-style:none;
+}
+
+#listamenu > li {
+  float:left;
+}
+
+#listamenu li a {
+  text-decoration:none;
+  background-color: #9FC8D9;
+  color: #222222;
+  padding:10px 12px;
+  display:block;
+}
+
+#listamenu li a.disabled {
+  color: #EEEEEE;
+}
+
+#listamenu li a:hover {
+  background-color:#6FACC6;
+}
+
+#listamenu li ul {
+  display:none;
+  position:absolute;
+  min-width:140px;
+  z-index: 1000;
+  background-color: #9FC8D9;
+  box-shadow: 3px 3px 5px rgba(100,100,100,0.7);
+}
+
+#listamenu li:hover > ul {
+  display:block;
+}
+
+#listamenu li ul li {
+  position:relative;
+}
+
+#listamenu li ul li ul {
+  right:-140px;
+  top:0px;
+}
+
+#perfil-activo-menu {
+  float: right;
+  display: none;  /* hay que cambiarlo a flex por código */
+  align-items: center;
+  height: 100%;
+}
+
+#perfiles-label {
+  margin-right: .3em;
+}
+
+.menu-2 {
+    margin: 0 .1em;
+    align-items: center;
+    height: 100%;
+    float: right;
+    display: flex;
+}
+#language {
+  text-align: center;
+}
+
+#boton-zoom-etc {
+  padding: 2px .7em;
+  margin: 0 .5em;
+  /* align-self: stretch; */
+  text-align: center;
+  font-size: 1.7em;
+  background-color: #7FBCD6;
+  cursor: pointer;
+  border-radius: 8px;
+  border-style: outset;
+}
+.activo {
+  color: red;
+  text-decoration: line-through 5px;
+}

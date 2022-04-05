@@ -13,7 +13,6 @@
    [lopezsolerluis.metodos-numericos :as mn]
    [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]]))
 
-(enable-console-print!)
 (set! *print-level* nil)
 
 ;; define your app data so that it doesn't get over-written on reload
@@ -58,6 +57,7 @@
 (def boton-zoom-etc (gdom/getElement "boton-zoom-etc"))
 (def ventana-zoom-etc (gdom/getElement "ventana-herramientas"))
 (def language-selector (gdom/getElement "language"))
+
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (set! (.. app -style -height)
       (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
