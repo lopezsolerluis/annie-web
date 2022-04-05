@@ -22,7 +22,7 @@ ul, ol {
 }
 
 #listamenu li a.disabled {
-  color: #EEEEEE;
+  /* color: #EEEEEE; */
 }
 
 #listamenu li a:hover {
@@ -65,6 +65,8 @@ ul, ol {
   font-size: 1.7em;
   background-color: #7FBCD6;
   cursor: pointer;
+  border-radius: 8px;
+  border-style: outset;
 }
 .activo {
   color: red;

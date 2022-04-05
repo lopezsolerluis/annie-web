@@ -311,13 +311,22 @@
         :annie (read-pestaña file procesar-pestaña-annie))))
   (set! (-> this .-target .-value) ""))
 
+(defn grabar-pestaña-annie []
+  (if-not @pestaña-activa
+    (alert (app-tr @lang :no-pestaña-activa-para-grabar))
+    (write-pestaña @pestaña-activa (get-pestaña-activa))))
+
 (defn cambiar-perfil-activo [nombre]
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre))
 
 (defn change-ventana-zoom-etc []
   (if (= (.. ventana-zoom-etc -style -display) "block")
-      (set! (.. ventana-zoom-etc -style -display) "none")
-      (set! (.. ventana-zoom-etc -style -display) "block")))
+      (do
+        (set! (.. ventana-zoom-etc -style -display) "none")
+        (set! (.. boton-zoom-etc -style -borderStyle) "outset"))
+      (do
+        (set! (.. ventana-zoom-etc -style -display) "block")
+        (set! (.. boton-zoom-etc -style -borderStyle) "inset"))))
 
 (defn do-optizoom []
    (reset! plot-height 10) ; No estoy seguro de si esto es necesario;
@@ -335,9 +344,7 @@
       (gevents/listen (gdom/getElement "crear-perfil-desde-dat") "click" abrir-ventana-espectros-dat)
       (gevents/listen espectros-boton-ok "click" espectros-ok)
       (gevents/listen espectros-boton-cancel "click" espectros-cancel)
-      (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click"
-                  (fn [] (let [nombre-pestaña (:pestaña-activa @pestañas)]
-                           (write-pestaña nombre-pestaña (get-pestaña-activa)))))
+      (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click" grabar-pestaña-annie)
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)
