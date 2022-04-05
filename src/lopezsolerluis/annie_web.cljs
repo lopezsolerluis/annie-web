@@ -109,7 +109,7 @@
    (gdom/setTextContent (gdom/getElement "perfiles-label") (str (app-tr lang :ventana-zoom-etc/perfil-activo) ":"))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc]]
      (doseq [key-2 (-> translations :es key-1 keys)]
-       (let [el (gdom/getElement (name key-2))]          
+       (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
 
 (set! (.-value language-selector) (getLanguage))
