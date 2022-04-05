@@ -262,6 +262,8 @@
 (defn bajar-perfil-activo []
   (swap! pestañas update-in (conj (get-perfil-activo-key) :inc-y) #(- % 0.05)))
   ;(desplazar-perfil-y (get-perfil-activo-key) -0.05))
+(defn reset-y-perfil-activo []
+  (swap! pestañas assoc-in (conj (get-perfil-activo-key) :inc-y) 0))
 
 (defn abrir-ventana-calibración []
   (let [perfil-activo (get-perfil-activo)
@@ -362,6 +364,7 @@
       (gevents/listen (gdom/getElement "zoom-y-menos") "click" (fn [] (swap! plot-height * 0.9)))
       (gevents/listen (gdom/getElement "zoom-y-más") "click" (fn [] (swap! plot-height * 1.1)))
       (gevents/listen (gdom/getElement "desplazar-y-abajo") "click" bajar-perfil-activo)
+      (gevents/listen (gdom/getElement "desplazar-y-reset") "click" reset-y-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-arriba") "click" subir-perfil-activo)
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
