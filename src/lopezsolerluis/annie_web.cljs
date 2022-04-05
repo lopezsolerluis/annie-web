@@ -9,7 +9,7 @@
    [clojure.string :as str]
    [lopezsolerluis.traducciones :as trad :refer [app-tr translations]]
    [lopezsolerluis.fits :as fits]
-   [lopezsolerluis.espectros-dat :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
+   [lopezsolerluis.espectros-sec-ppal :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
    [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]]))
 
