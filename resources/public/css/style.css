@@ -121,7 +121,7 @@ input[type=file] {
   margin-top: 20vh;
   margin-left: 30vw;
   width: 40vw;
-  max-height: 50vh;
+  max-height: 60vh;
   overflow-y: auto;
   font-size: 110%;
   -webkit-animation-name: animatetop;
@@ -134,13 +134,13 @@ input[type=file] {
   z-index: 10000;
 }
 @-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0}
+    from {top:-30vh; opacity:0}
     to {top:0; opacity:1}
 }
 @keyframes animatetop {
-    from {top:-300px; opacity:0}
+    from {top:-30vh; opacity:0}
     to {top:0; opacity:1}
-}  
+}
 #help-window ul {
   padding-left: 1em;
   list-style-image: url('estrellita.png');
@@ -157,6 +157,11 @@ input[type=file] {
   height: 2em;
   vertical-align: middle;
 }
+#help-window img.mini {
+  width: 1.5em;
+  height: auto;
+}
+
 .close-btn-help {
     float: right;
     color: gray;
