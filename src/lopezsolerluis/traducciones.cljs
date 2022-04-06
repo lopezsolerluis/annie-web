@@ -35,6 +35,7 @@
                 :multiplicar-dos "Multiply..."
                 :dividir-dos "Divide..."
             :ayuda "Help"
+              :controles "Controls and tips"
               :creditos "Credits"}
         :ventana-etiqueta {:ok-etiqueta "Ok"
                            :cancel-etiqueta "Cancel"
@@ -55,6 +56,11 @@
                       :help-consejo "Tip:"
                       :help-controles "Controls:"
                       :help-consejo-grabar "To save a tab with a name of your choice, configure your browser to ask for the place to download files. 😉"}
+        :credits-window {:credits-version "Version √2 - 2022 - Luis G. López"
+                         :credits-agradecimientos "Acknowledgments:"
+                         :credits-uno "To A.J. Pickles et al. (1998), for their magnificents reference spectra."
+                         :credits-dos "To Diego Guberman, for his generous and precises suggestions."
+                         :credits-nota-uno "[1] In order to get this application into the smallest possible size, the spectra were limited to the classes OBAFGKM, and in the 3800Å - 7500Å range."}
         :la-clase-es-desconocida "This is not an available reference spectral class"
         :confirmar-borrar-etiqueta "Do you really want to delete this label?"
         :etiquetas-no-calibrado "Labels can't be renamed until\nthe profile has been calibrated."
@@ -100,6 +106,7 @@
                 :multiplicar-dos "Multiplicar..."
                 :dividir-dos "Dividir..."
             :ayuda "Ayuda"
+              :controles "Controles y consejos"
               :creditos "Créditos"
             }
         :ventana-etiqueta {:ok-etiqueta "Ok"
@@ -117,10 +124,15 @@
                            :desplazar "Desplazar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas: "
-                      :help-mover-etiquetas "Para mover las etiquetas: "                      
+                      :help-mover-etiquetas "Para mover las etiquetas: "
                       :help-consejo "Consejo:"
                       :help-controles "Controles:"
                       :help-consejo-grabar "Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉"}
+        :credits-window {:credits-version "Versión √2 - 2022 - Luis G. López"
+                         :credits-agradecimientos "Agradecimientos:"
+                         :credits-uno "a A.J. Pickles et al. (1998), por sus magníficos espectros de referencia."
+                         :credits-dos "a Diego Guberman, por sus generosas y precisas sugerencias."
+                         :credits-nota-uno "[1] A fin de mantener la presente aplicación dentro del menor tamaño posible, los espectros originales se limitaron a las clases OBAFGKM, y sólo presentan datos en el intervalo 3800Å - 7500Å."}
         :la-clase-es-desconocida "No se encuentra entre las clases espectrales de referencia."
         :confirmar-borrar-etiqueta "¿Realmente desea borrar esta etiqueta?"
         :etiquetas-no-calibrado "Las etiquetas no pueden renombrarse\nhasta tanto se calibre el perfil."

@@ -57,6 +57,7 @@
 (def boton-zoom-etc (gdom/getElement "boton-zoom-etc"))
 (def ventana-zoom-etc (gdom/getElement "ventana-herramientas"))
 (def help-window (gdom/getElement "help-window"))
+(def credits-window (gdom/getElement "credits-window"))
 (def language-selector (gdom/getElement "language"))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
@@ -108,7 +109,7 @@
   ([] (traducir @lang))
   ([lang]
    (gdom/setTextContent (gdom/getElement "perfiles-label") (str (app-tr lang :ventana-zoom-etc/perfil-activo) ":"))
-   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc :help-window]]
+   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
@@ -386,6 +387,8 @@
       (gevents/listen language-selector "change" update-language)
       (gevents/listen (gdom/getElement "controles") "click" (fn [] (change-ventana help-window "block" fondo-gris)))
       (gevents/listen (gdom/getElement "help-window-cerrar") "click" (fn [] (change-ventana help-window "none" fondo-gris)))
+      (gevents/listen (gdom/getElement "creditos") "click" (fn [] (change-ventana credits-window "block" fondo-gris)))
+      (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))

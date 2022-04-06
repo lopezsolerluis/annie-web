@@ -115,6 +115,11 @@ input[type=file] {
 
 #help-window {
   display: none;
+}
+#credits-window {
+  display: none;
+}
+.window-help-modal {
   position: absolute;
   border-radius: 1rem;
   padding: 20px;
@@ -141,25 +146,31 @@ input[type=file] {
     from {top:-30vh; opacity:0}
     to {top:0; opacity:1}
 }
-#help-window ul {
+.window-help-modal ul {
   padding-left: 1em;
   list-style-image: url('estrellita.png');
   margin-top: .8em;
 }
 
-#help-window li {
+.window-help-modal li {
   margin-top: .2em;
 }
-#help-window h4 {
+.window-help-modal h4 {
   margin-top: 1.4em;
 }
-#help-window img {
+.window-help-modal h4.derecha {
+  float: right;
+}
+.window-help-modal img {
   height: 2em;
   vertical-align: middle;
 }
-#help-window img.mini {
+.window-help-modal img.mini {
   width: 1.5em;
   height: auto;
+}
+.sub {
+  margin-top: 4em;
 }
 
 .close-btn-help {
