@@ -130,18 +130,21 @@ input[type=file] {
   animation-duration: 0.4s;
   background: lightgreen;
   color: darkcyan;
+  box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
 }
 
 #help-window ul {
   padding-left: 1em;
   list-style-image: url('estrellita.png');
-  margin-top: 1.4em;
+  margin-top: .8em;
 }
 
 #help-window li {
-  margin-top: .4em;
+  margin-top: .2em;
 }
-
+#help-window h4 {
+  margin-top: 1.4em;
+}
 #help-window img {
   height: 2em;
   vertical-align: middle;
@@ -151,7 +154,7 @@ input[type=file] {
     /* color: lightgray; */
     font-size: 24px;
     font-weight: bold;
-    cursor: pointer;
+    cursor: pointer;    
 }
 .close-btn-help:hover {
     color: cyan;
