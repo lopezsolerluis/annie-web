@@ -112,3 +112,57 @@ input[type=file] {
 .cursor-normal {
   cursor: default;
 }
+
+#help-window {
+  /* display: none; */
+  position: absolute;
+  border-radius: 1rem;
+  padding: 20px;
+  margin-top: 20vh;
+  margin-left: 30vw;
+  width: 40vw;
+  max-height: 50vh;
+  overflow-y: auto;
+  font-size: 140%;
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  background: lightgreen;
+  color: darkcyan;
+}
+
+#help-window ul {
+  padding-left: 1em;
+  list-style-image: url('estrellita.png');
+  margin-top: 1.4em;
+}
+
+#help-window li {
+  margin-top: .4em;
+}
+
+#help-window img {
+  height: 2em;
+  vertical-align: middle;
+}
+.close-btn-help {
+    float: right;
+    /* color: lightgray; */
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close-btn-help:hover {
+    color: cyan;
+}
+
+.tecla {
+    border: 1px solid #aaa;
+    border-radius: 0.2em;
+    box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);
+    background-color: #d9d9d9;
+    background-image: linear-gradient(to bottom,#ddd,#d9d9d9,#ddd);
+    color: #000;
+    padding: 0.1em 0.3em;
+}

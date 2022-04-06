@@ -109,6 +109,7 @@
 
       <!-- Para impedir interacción con lo de "abajo" (o sea, para que la ventana de abajo sea "modal") -->
       <div id="fondoblanco"></div>
+      <div id="fondogris"></div>
 
       <!-- Para ingresar los elementos -->
       <div class="form-popup" id="ventana-elementos">
@@ -216,12 +217,21 @@
         </div>
       </div>
 
+      <div id="help-window">
+        <span class="close-btn-help">🞭</span>
+        <ul>
+          <li>Para determinar el baricentro de una línea: <img src="boton-izquierdo.png"> + desplazar</li>
+          <li>Para cambiar el texto de las etiquetas: <span class="tecla">Ctrl</span> + <img src="boton-izquierdo.png"></li>
+          <li>Para mover las etiquetas: <img src="boton-central.png"> + desplazar</li>
+
+        </ul>
+      </div>
       <!-- Para abrir un archivo fits -->
       <input type="file" id="open-fits"></input>
       <!-- Para abrir un archivo annie -->
       <input type="file" id="open-annie"></input>
 
-      <div id="fondogris"></div>
+
       <div id="loader"></div> <!-- Para el iconito de espera... -->
 
 
