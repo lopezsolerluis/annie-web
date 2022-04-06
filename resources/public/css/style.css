@@ -114,7 +114,7 @@ input[type=file] {
 }
 
 #help-window {
-  /* display: none; */
+  display: none;
   position: absolute;
   border-radius: 1rem;
   padding: 20px;
@@ -123,12 +123,12 @@ input[type=file] {
   width: 40vw;
   max-height: 50vh;
   overflow-y: auto;
-  font-size: 140%;
+  font-size: 110%;
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
-  background: lightgreen;
+  background: #ddeedd;
   color: darkcyan;
   box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
 }
@@ -151,13 +151,13 @@ input[type=file] {
 }
 .close-btn-help {
     float: right;
-    /* color: lightgray; */
+    color: gray;
     font-size: 24px;
     font-weight: bold;
-    cursor: pointer;    
+    cursor: pointer;
 }
 .close-btn-help:hover {
-    color: cyan;
+    color: inherit;
 }
 
 .tecla {

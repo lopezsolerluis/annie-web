@@ -56,6 +56,7 @@
 (def perfil-activo-select (gdom/getElement "perfil-activo-select"))
 (def boton-zoom-etc (gdom/getElement "boton-zoom-etc"))
 (def ventana-zoom-etc (gdom/getElement "ventana-herramientas"))
+(def help-window (gdom/getElement "help-window"))
 (def language-selector (gdom/getElement "language"))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
@@ -188,9 +189,12 @@
 (defn calibrado? [perfil]
   (seq (:calibración perfil)))
 
-(defn change-ventana [ventana state]  ; state es "block" o "none"
-  (set! (.. ventana -style -display) state)
-  (set! (.. fondo-transparente -style -display) state))
+(defn change-ventana
+  ([ventana state]  ; state es "block" o "none"
+    (change-ventana ventana state fondo-transparente]))
+  ([ventana state fondo] ; fondo-transparente o fondo-gris (u otro...)
+    (set! (.. ventana -style -display) state)
+    (set! (.. fondo -style -display) state)))
 
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
@@ -380,6 +384,8 @@
       (gevents/listen (gdom/getElement "desplazar-y-reset") "click" reset-y-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-arriba") "click" subir-perfil-activo)
       (gevents/listen language-selector "change" update-language)
+      (gevents/listen (gdom/getElement "controles") "click" (fn [] (change-ventana help-window "block" fondo-gris)))
+      (gevents/listen (gdom/getElement "help-window-cerrar") "click" (fn [] (change-ventana help-window "none" fondo-gris)))
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
