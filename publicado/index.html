@@ -73,6 +73,7 @@
           </ul></li>
           <li><a href="#" id="ayuda">Ayuda</a>
             <ul>
+              <li><a href="#" id="controles">Controles y consejos</a></li>
               <li><a href="#" id="creditos" class="disabled">Créditos</a></li>
             </ul>
           </li>
@@ -109,6 +110,7 @@
 
       <!-- Para impedir interacción con lo de "abajo" (o sea, para que la ventana de abajo sea "modal") -->
       <div id="fondoblanco"></div>
+      <div id="fondogris"></div>
 
       <!-- Para ingresar los elementos -->
       <div class="form-popup" id="ventana-elementos">
@@ -216,12 +218,29 @@
         </div>
       </div>
 
+      <div id="help-window">
+
+        <span id="help-window-cerrar" class="close-btn-help">🞭</span>
+        <h4 id="help-controles">Controles:</h4>
+        <div style="clear:both;"></div>
+        <ul>
+          <li><span id="help-baricentro">Para determinar el baricentro de una línea: </span> <img src="boton-izquierdo.png"> + <img class="mini" src="left-right-arrow.png"></li>
+          <li><span id="help-texto-etiquetas">Para cambiar el texto de las etiquetas: </span> <span class="tecla">Ctrl</span> + <img src="boton-izquierdo.png"></li>
+          <li><span id="help-mover-etiquetas">Para mover las etiquetas: </span> <img src="boton-central.png"> + <img class="mini" src="4-flecha.png"></li>
+        </ul>
+        <h4 id="help-consejo">Consejo:</h4>
+        <ul>
+          <li id="help-consejo-grabar">Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉</li>
+        </ul>
+      </div>
+
+
       <!-- Para abrir un archivo fits -->
       <input type="file" id="open-fits"></input>
       <!-- Para abrir un archivo annie -->
       <input type="file" id="open-annie"></input>
 
-      <div id="fondogris"></div>
+
       <div id="loader"></div> <!-- Para el iconito de espera... -->
 
 
