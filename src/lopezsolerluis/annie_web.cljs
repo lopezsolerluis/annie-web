@@ -108,7 +108,7 @@
   ([] (traducir @lang))
   ([lang]
    (gdom/setTextContent (gdom/getElement "perfiles-label") (str (app-tr lang :ventana-zoom-etc/perfil-activo) ":"))
-   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc]]
+   (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc :help-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
@@ -191,7 +191,7 @@
 
 (defn change-ventana
   ([ventana state]  ; state es "block" o "none"
-    (change-ventana ventana state fondo-transparente]))
+    (change-ventana ventana state fondo-transparente))
   ([ventana state fondo] ; fondo-transparente o fondo-gris (u otro...)
     (set! (.. ventana -style -display) state)
     (set! (.. fondo -style -display) state)))

@@ -49,6 +49,14 @@
                             :cancel-espectros "Cancel"}
         :ventana-zoom-etc {:perfil-activo "Active profile"
                            :desplazar "Move"}
+        :help-window {:help-baricentro-uno "To obtain the barycenter of a line: "
+                      :help-baricentro-dos " + move"
+                      :help-texto-etiquetas "To change the text of the labels: "
+                      :help-mover-etiquetas-uno "To move the labels: "
+                      :help-mover-etiquetas-dos " + move"
+                      :help-consejo "Tip:"
+                      :help-controles "Controls:"
+                      :help-consejo-grabar "To save a tab with a name of your choice, configure your browser to ask for the place to download files. 😉"}
         :la-clase-es-desconocida "This is not an available reference spectral class"
         :confirmar-borrar-etiqueta "Do you really want to delete this label?"
         :etiquetas-no-calibrado "Labels can't be renamed until\nthe profile has been calibrated."
@@ -109,6 +117,14 @@
                             :cancel-espectros "Cancelar"}
         :ventana-zoom-etc {:perfil-activo "Perfil activo"
                            :desplazar "Desplazar"}
+        :help-window {:help-baricentro-uno "Para determinar el baricentro de una línea: "
+                      :help-baricentro-dos " + desplazar"
+                      :help-texto-etiquetas "Para cambiar el texto de las etiquetas: "
+                      :help-mover-etiquetas-uno "Para mover las etiquetas: "
+                      :help-mover-etiquetas-dos " + desplazar"
+                      :help-consejo "Consejo:"
+                      :help-controles "Controles:"
+                      :help-consejo-grabar "Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉"}
         :la-clase-es-desconocida "No se encuentra entre las clases espectrales de referencia."
         :confirmar-borrar-etiqueta "¿Realmente desea borrar esta etiqueta?"
         :etiquetas-no-calibrado "Las etiquetas no pueden renombrarse\nhasta tanto se calibre el perfil."

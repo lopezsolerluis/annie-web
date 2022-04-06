@@ -131,8 +131,16 @@ input[type=file] {
   background: #ddeedd;
   color: darkcyan;
   box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
+  z-index: 10000;
 }
-
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}  
 #help-window ul {
   padding-left: 1em;
   list-style-image: url('estrellita.png');
