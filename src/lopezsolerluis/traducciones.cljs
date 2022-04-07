@@ -51,7 +51,7 @@
         :ventana-zoom-etc {:perfil-activo "Active profile"
                            :desplazar "Move"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
-                      :help-texto-etiquetas "To change the text of the labels: "
+                      :help-texto-etiquetas "To change the text of the labels or delete them: "
                       :help-mover-etiquetas "To move the labels: "
                       :help-consejo "Tip:"
                       :help-controles "Controls:"
@@ -123,7 +123,7 @@
         :ventana-zoom-etc {:perfil-activo "Perfil activo"
                            :desplazar "Desplazar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
-                      :help-texto-etiquetas "Para cambiar el texto de las etiquetas: "
+                      :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "
                       :help-consejo "Consejo:"
                       :help-controles "Controles:"
