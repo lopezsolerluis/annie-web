@@ -117,7 +117,7 @@ input[type=file] {
   display: none;
 }
 #credits-window {
-  /* display: none; */
+  display: none;
 }
 .window-help-modal {
   position: absolute;
@@ -139,11 +139,11 @@ input[type=file] {
   z-index: 10000;
 }
 @-webkit-keyframes animatetop {
-    from {top:-30vh; opacity:0}
+    from {top:-50vh; opacity:0}
     to {top:0; opacity:1}
 }
 @keyframes animatetop {
-    from {top:-30vh; opacity:0}
+    from {top:-50vh; opacity:0}
     to {top:0; opacity:1}
 }
 .window-help-modal ul {
@@ -155,7 +155,7 @@ input[type=file] {
 .window-help-modal li {
   margin-top: .2em;
 }
-.window-help-modal h4 {
+.window-help-modal h4:not(:first-of-type){
   margin-top: 1.4em;
 }
 .window-help-modal h4.derecha {
@@ -183,7 +183,7 @@ input[type=file] {
 .close-btn-help:hover {
     /* color: inherit; */
   /* box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);   */
-  text-shadow: 0px 0px 12px lightgray;
+  text-shadow: 0px 0px 14px darkcyan;
 }
 
 .tecla {
@@ -195,10 +195,7 @@ input[type=file] {
     color: #000;
     padding: 0.1em 0.3em;
 }
-.math {
-  font-family:  serif;
-}
-h4.math {
-  font-size: 150%;
-  font-weight: bold;
+i.math {
+  font-family: freeserif, "times new roman", serif;
+  font-size: 140%;
 }

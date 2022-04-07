@@ -56,7 +56,7 @@
                       :help-consejo "Tip:"
                       :help-controles "Controls:"
                       :help-consejo-grabar "To save a tab with a name of your choice, configure your browser to ask for the place to download files. 😉"}
-        :credits-window {:credits-version "Version √2 - 2022 - Luis G. López"
+        :credits-window {:credits-version "Version"
                          :credits-agradecimientos "Acknowledgments:"
                          :credits-uno "To A.J. Pickles et al. (1998), for their magnificents reference spectra."
                          :credits-dos "To Diego Guberman, for his generous and precises suggestions."
@@ -128,7 +128,7 @@
                       :help-consejo "Consejo:"
                       :help-controles "Controles:"
                       :help-consejo-grabar "Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉"}
-        :credits-window {:credits-version "Versión √2 - 2022 - Luis G. López"
+        :credits-window {:credits-version "Versión"
                          :credits-agradecimientos "Agradecimientos:"
                          :credits-uno "a A.J. Pickles et al. (1998), por sus magníficos espectros de referencia."
                          :credits-dos "a Diego Guberman, por sus generosas y precisas sugerencias."
