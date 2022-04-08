@@ -489,6 +489,7 @@
   (let [width (or @plot-width 0)
         height (or @plot-height 0)
         perfil-activo (get-perfil-activo)
+        perfiles-pestaña-activa (:perfiles (get-pestaña-activa))
         x-min (calcular-x-calibrado perfil-activo (:x (first (:data-vis perfil-activo))))
         x-max (calcular-x-calibrado perfil-activo (:x (last  (:data-vis perfil-activo))))]
    [:div#graph ;{:style {:heigth (.. app -style -height)}}
@@ -513,12 +514,12 @@
       [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
-      (let [perfiles-pestaña-activa (get-in @pestañas [:pestañas (:pestaña-activa @pestañas) :perfiles])]
-         (doall (for [[id perfil] perfiles-pestaña-activa]
-                     ^{:key (str id)} [:> rvis/LineSeries {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
-                                                           :strokeWidth 1
-                                                           :onNearestX (fn [e]
-                                                                        (reset! nearest-xy (js->clj e)))}])))]
+      [:> rvis/DiscreteColorLegend {:style {:position "absolute" :left 120 :top 10}
+                                    :items (mapv (fn [name] {:title name}) (keys perfiles-pestaña-activa))}]
+      (doall (for [[id perfil] perfiles-pestaña-activa]
+               ^{:key (str id)} [:> rvis/LineSeries {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
+                                                     :strokeWidth 1
+                                                     :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}]))]
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
            inc-y (:inc-y (get-perfil-activo))]
         (mapcat (fn [[id {:keys [x y texto]}]]
