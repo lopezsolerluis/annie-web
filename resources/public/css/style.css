@@ -133,7 +133,7 @@ input[type=file] {
   -webkit-animation-duration: 0.4s;
   animation-name: animatetop;
   animation-duration: 0.4s;
-  background: #ddeedd;
+  background: #e0f0e0;
   color: darkcyan;
   box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
   z-index: 10000;
