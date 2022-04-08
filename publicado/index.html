@@ -74,7 +74,7 @@
           <li><a href="#" id="ayuda">Ayuda</a>
             <ul>
               <li><a href="#" id="controles">Controles y consejos</a></li>
-              <li><a href="#" id="creditos" class="disabled">Créditos</a></li>
+              <li><a href="#" id="creditos">Créditos</a></li>
             </ul>
           </li>
         </ul>
@@ -218,8 +218,7 @@
         </div>
       </div>
 
-      <div id="help-window">
-
+      <div id="help-window" class="window-help-modal">
         <span id="help-window-cerrar" class="close-btn-help">🞭</span>
         <h4 id="help-controles">Controles:</h4>
         <div style="clear:both;"></div>
@@ -234,6 +233,22 @@
         </ul>
       </div>
 
+      <div id="credits-window" class="window-help-modal">
+        <span id="credits-window-cerrar" class="close-btn-help">🞭</span>
+        <h2><img src="annie-web.png">-Web</h2>
+        <h4 class="derecha"><span id="credits-version">Versión</span> <i class="math">e<sup>2iπ</sup></i> (2022) - Luis G. López</h4>
+        <div style="clear:both;"></div>
+        <h4 id="credits-agradecimientos">Agradecimientos:</h4>
+        <div style="clear:both;"></div>
+        <ul>
+          <li><span id="credits-uno">a A.J. Pickles et al. (1998), por sus magníficos espectros de referencia.</span><sup>[1]</sup> </li>
+          <li id="credits-dos">a Diego Guberman, por sus generosas y precisas sugerencias.</li>
+        </ul>
+
+        <div class="sub">
+          <sub id="credits-nota-uno">[1] A fin de mantener la presente aplicación dentro del menor tamaño posible, los espectros originales se limitaron a las clases OBAFGKM, y sólo presentan datos en el intervalo 3800Å - 7500Å.</sub>
+        </div>
+      </div>
 
       <!-- Para abrir un archivo fits -->
       <input type="file" id="open-fits"></input>

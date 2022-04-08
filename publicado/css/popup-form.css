@@ -80,6 +80,9 @@ fieldset {
   margin-right: .2em;
   cursor: pointer;
 }
+.x:hover {
+  text-shadow: 0px 0px 12px red;
+}
 
 fieldset legend {
   font-weight: bold;
