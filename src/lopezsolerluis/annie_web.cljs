@@ -61,8 +61,9 @@
 (def language-selector (gdom/getElement "language"))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
+(def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
-      (str "calc( 100vh - " (.-offsetHeight menu-principal) "px - " (.-offsetHeight tabs) "px )"))
+      (str "calc( 100vh - "  alto-header  "px )"))
 
 (defn get-perfil-activo-key []
   (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
@@ -514,7 +515,7 @@
       [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
-      [:> rvis/DiscreteColorLegend {:style {:position "absolute" :left 120 :top 10}
+      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)}
                                     :items (mapv (fn [name] {:title name}) (keys perfiles-pestaña-activa))}]
       (doall (for [[id perfil] perfiles-pestaña-activa]
                ^{:key (str id)} [:> rvis/LineSeries {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
