@@ -516,11 +516,13 @@
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
       [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)}
-                                    :items (mapv (fn [name] {:title name}) (keys perfiles-pestaña-activa))}]
+                                    :items (mapv (fn [[name perfil]] (conj {:title name} (if false [:color "2"])))
+                                                 perfiles-pestaña-activa)}]
       (doall (for [[id perfil] perfiles-pestaña-activa]
-               ^{:key (str id)} [:> rvis/LineSeries {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
-                                                     :strokeWidth 1
-                                                     :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}]))]
+               ^{:key (str id)} [:> rvis/LineSeries (conj {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
+                                                            :strokeWidth 1
+                                                            :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}
+                                                            (if false [:color 2]))]))]
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
            inc-y (:inc-y (get-perfil-activo))]
         (mapcat (fn [[id {:keys [x y texto]}]]
