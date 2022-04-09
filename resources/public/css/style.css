@@ -119,6 +119,10 @@ input[type=file] {
 #credits-window {
   display: none;
 }
+.inner-modal {
+  overflow-y: auto;
+  max-height: 40vh;
+}
 .window-help-modal {
   position: absolute;
   border-radius: 1rem;
@@ -126,8 +130,6 @@ input[type=file] {
   margin-top: 20vh;
   margin-left: 30vw;
   width: 40vw;
-  max-height: 60vh;
-  overflow-y: auto;
   font-size: 110%;
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
@@ -148,6 +150,7 @@ input[type=file] {
 }
 .window-help-modal ul {
   padding-left: 1em;
+  margin-left: 1em;
   list-style-image: url('estrellita.png');
   margin-top: .8em;
 }
