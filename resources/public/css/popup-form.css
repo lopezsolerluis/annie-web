@@ -81,7 +81,8 @@ fieldset {
   cursor: pointer;
 }
 .x:hover {
-  text-shadow: 0px 0px 12px red;
+  color: crimson;
+  text-shadow: 0px 0px 12px crimson;
 }
 
 fieldset legend {
