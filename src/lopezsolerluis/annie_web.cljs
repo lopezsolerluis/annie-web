@@ -543,7 +543,13 @@
                 (:etiquetas perfil-activo))))]))
 
 (defn pestaña-activa? [nombre]
-  (= nombre (:pestaña-activa @pestañas)))
+  (= nombre @pestaña-activa))
+
+(defn cerrar-pestaña [nombre]
+  (when (confirmar-operación (app-tr @lang :confirmar-borrar-pestaña))
+    (swap! pestañas update-in [:pestañas] dissoc nombre)
+    (when-let [pestañas-restantes (keys (:pestañas @pestañas))]
+      (swap! pestañas assoc :pestaña-activa (first pestañas-restantes)))))         
 
 (defn crear-botones []
  [:div
@@ -552,9 +558,12 @@
       (doall (for [nombre (keys (:pestañas @pestañas))]
                ^{:key (str "pestaña-" nombre)}
                [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
-                         :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
+                         :on-click (fn [] (swap! pestañas assoc :pestaña-activa nombre))}
                         nombre
-                        [:span.close-tab "🞭"]])))])
+                        [:span.close-tab {:on-click (fn [e]
+                                                      (cerrar-pestaña nombre)
+                                                      (.stopPropagation e))}
+                                         "🞭"]])))])
 
 (ratom/run!
   (if @pestaña-activa

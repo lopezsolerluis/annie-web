@@ -78,6 +78,7 @@
         :perfil-no-calibrado-no-admite-pegado "An uncalibrated profile can't accept a pasted profile."
         :portapapeles-vacío "The clipboard is empty."
         :perfil-copiado "The profile has been copied to the clipboard."
+        :confirmar-borrar-pestaña "Do you really want to delete this tab? This can't be undone..."
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -151,6 +152,7 @@
         :perfil-no-calibrado-no-admite-pegado "No puede pegarse un perfil en una pestaña no calibrada."
         :portapapeles-vacío "El portapapeles está vacío."
         :perfil-copiado "El perfil ha sido copiado al portapapeles."
+        :confirmar-borrar-pestaña "¿Realmente desea borrar esta pestaña? Esta acción no puede deshacerse..."
    }
   })
 
