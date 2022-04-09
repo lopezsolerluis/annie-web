@@ -553,7 +553,8 @@
                ^{:key (str "pestaña-" nombre)}
                [:button {:id (str "pestaña-" nombre) :className (if (pestaña-activa? nombre) "active")
                          :on-click (fn[] (swap! pestañas assoc :pestaña-activa nombre))}
-                        nombre])))])
+                        nombre
+                        [:span.close-tab "🞭"]])))])
 
 (ratom/run!
   (if @pestaña-activa
