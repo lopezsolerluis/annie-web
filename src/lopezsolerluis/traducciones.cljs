@@ -83,7 +83,7 @@
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
               :crear-perfil-desde-dat "Crear perfil desde archivo DAT..."
               :abrir-pestaña-annie "Abrir pestaña AnNIE"
-              :grabar-pestaña-annie "Grabar pestaña annie"
+              :grabar-pestaña-annie "Grabar pestaña AnNIE"
               :exportar-como "Exportar pestaña AnNIE como..."
               :cerrar-pestaña "Cerrar pestaña"
             :edicion "Edición"
