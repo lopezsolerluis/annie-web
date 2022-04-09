@@ -548,8 +548,9 @@
 (defn cerrar-pestaña [nombre]
   (when (confirmar-operación (app-tr @lang :confirmar-borrar-pestaña))
     (swap! pestañas update-in [:pestañas] dissoc nombre)
-    (when-let [pestañas-restantes (keys (:pestañas @pestañas))]
-      (swap! pestañas assoc :pestaña-activa (first pestañas-restantes)))))         
+    (when (= nombre @pestaña-activa)
+      (when-let [pestañas-restantes (keys (:pestañas @pestañas))]
+        (swap! pestañas assoc :pestaña-activa (first pestañas-restantes))))))
 
 (defn crear-botones []
  [:div
