@@ -48,8 +48,9 @@
                             :espectros-label "Enter a spectrum class:"
                             :ok-espectros "Ok"
                             :cancel-espectros "Cancel"}
-        :ventana-zoom-etc {:perfil-activo "Active profile"
-                           :desplazar "Move"}
+        :ventana-zoom-etc {:perfil-activo "Active profile:"
+                           :desplazar "Move"
+                           :escalar "Scale"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
                       :help-texto-etiquetas "To change the text of the labels or delete them: "
                       :help-mover-etiquetas "To move the labels: "
@@ -120,8 +121,9 @@
                             :espectros-label "Ingrese una clase espectral:"
                             :ok-espectros "Ok"
                             :cancel-espectros "Cancelar"}
-        :ventana-zoom-etc {:perfil-activo "Perfil activo"
-                           :desplazar "Desplazar"}
+        :ventana-zoom-etc {:perfil-activo "Perfil activo:"
+                           :desplazar "Desplazar"
+                           :escalar "Escalar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "

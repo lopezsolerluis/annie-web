@@ -109,7 +109,7 @@
 (defn traducir
   ([] (traducir @lang))
   ([lang]
-   (gdom/setTextContent (gdom/getElement "perfiles-label") (str (app-tr lang :ventana-zoom-etc/perfil-activo) ":"))
+   (gdom/setTextContent (gdom/getElement "perfiles-label") (app-tr lang :ventana-zoom-etc/perfil-activo))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
@@ -162,7 +162,7 @@
    (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                           {:data-vis data-para-vis :calibración calibración :inc-y 0 :etiquetas {}})
+                           {:data-vis data-para-vis :calibración calibración :inc-y 0 :fact-y 1 :etiquetas {}})
      (swap! pestañas assoc :pestaña-activa nombre))))
 
 (defn procesar-archivo-fits [fits-file]
@@ -246,8 +246,9 @@
 (defn obtener-data [perfil]
   (if (calibrado? perfil)
       (let [[a b] (:calibración perfil)
-            inc-y (:inc-y perfil)]
-        (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y (+ y inc-y)}) (:data-vis perfil)))
+            inc-y (:inc-y perfil)
+            fact-y (:fact-y perfil)]
+        (mapv (fn [{:keys [x y]}] {:x (+ (* a x) b) :y (+ (* y fact-y) inc-y)}) (:data-vis perfil)))
       (:data-vis perfil)))
 (defn calcular-x-calibrado [perfil x]
   (if (calibrado? perfil)
@@ -275,12 +276,17 @@
 
 (defn subir-perfil-activo []
   (swap! pestañas update-in (conj (get-perfil-activo-key) :inc-y) #(+ % 0.05)))
-  ;(desplazar-perfil-y (get-perfil-activo-key) 0.05))
 (defn bajar-perfil-activo []
   (swap! pestañas update-in (conj (get-perfil-activo-key) :inc-y) #(- % 0.05)))
-  ;(desplazar-perfil-y (get-perfil-activo-key) -0.05))
 (defn reset-y-perfil-activo []
   (swap! pestañas assoc-in (conj (get-perfil-activo-key) :inc-y) 0))
+
+(defn expandir-y-perfil-activo []
+  (swap! pestañas update-in (conj (get-perfil-activo-key) :fact-y) #(* % 1.05)))
+(defn comprimir-y-perfil-activo []
+  (swap! pestañas update-in (conj (get-perfil-activo-key) :fact-y) #(* % 0.95)))
+(defn reset-fact-y-perfil-activo []
+  (swap! pestañas assoc-in (conj (get-perfil-activo-key) :fact-y) 1))
 
 (defn abrir-ventana-calibración []
   (let [perfil-activo (get-perfil-activo)]
@@ -385,6 +391,9 @@
       (gevents/listen (gdom/getElement "desplazar-y-abajo") "click" bajar-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-reset") "click" reset-y-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-arriba") "click" subir-perfil-activo)
+      (gevents/listen (gdom/getElement "expandir-y") "click" expandir-y-perfil-activo)
+      (gevents/listen (gdom/getElement "fact-y-reset") "click" reset-fact-y-perfil-activo)
+      (gevents/listen (gdom/getElement "comprimir-y") "click" comprimir-y-perfil-activo)
       (gevents/listen language-selector "change" update-language)
       (gevents/listen (gdom/getElement "controles") "click" (fn [] (change-ventana help-window "block" fondo-gris)))
       (gevents/listen (gdom/getElement "help-window-cerrar") "click" (fn [] (change-ventana help-window "none" fondo-gris)))
@@ -455,10 +464,11 @@
 (defn colocar-etiqueta []
   (let [perfil (get-perfil-activo)
         inc-y (:inc-y perfil)
+        fact-y (:fact-y perfil)
         baricentro (mn/calcular-baricentro (obtener-data perfil) ; Tiene la forma {:x x :y y}
                                            (nearest-x nearest-xy-0) (nearest-x nearest-xy))
         baricentro-no-calibrado (assoc baricentro :x (calcular-x-no-calibrado perfil (:x baricentro)))
-        baricentro-no-calibrado (update baricentro-no-calibrado :y #(- % inc-y))
+        baricentro-no-calibrado (update baricentro-no-calibrado :y #(/ (- % inc-y) fact-y))
         nombre-etiqueta (elegir-nombre (keys (:etiquetas perfil)) "etiqueta" true)
         etiqueta (assoc baricentro-no-calibrado :texto [] :pos [0 18])
         key (conj (get-perfil-activo-key) :etiquetas nombre-etiqueta)]
@@ -524,11 +534,12 @@
                                                             :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}
                                                             (if false [:color 2]))]))]
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
-           inc-y (:inc-y (get-perfil-activo))]
+           inc-y (:inc-y (get-perfil-activo))
+           fact-y (:fact-y (get-perfil-activo))]
         (mapcat (fn [[id {:keys [x y texto]}]]
                    (let [xc (calcular-x-calibrado perfil-activo x)
                          texto-a-mostrar (concat [(.toFixed xc 1)] (if (calibrado? perfil-activo) texto))]
-                     (crear-etiqueta id xc (+ y inc-y) texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
+                     (crear-etiqueta id xc (+ (* y fact-y) inc-y) texto-a-mostrar (conj pestaña-perfil-etiqueta-nombre id))))
                 (:etiquetas perfil-activo))))]))
 
 (defn pestaña-activa? [nombre]
