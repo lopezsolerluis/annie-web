@@ -82,7 +82,7 @@ fieldset {
 }
 .x:hover {
   color: crimson;
-  text-shadow: 0px 0px 12px crimson;
+  /* text-shadow: 0px 0px 12px crimson; */
 }
 
 fieldset legend {
