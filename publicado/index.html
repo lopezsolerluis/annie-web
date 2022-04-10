@@ -34,7 +34,6 @@
               <li><a href="#" id="svg" class="disabled">SVG</a></li>
             </ul>
             </li>
-            <li><a href="#" id="cerrar-pestaña" class="disabled">Cerrar pestaña</a></li>
           </ul>
         </li>
         <li><a href="#" id="edicion">Edición</a>
@@ -99,7 +98,8 @@
       </div>
 
       <!-- Acá van los botones de las pestañas -->
-      <div id="tabs"></div>
+      <div id="tabs"><button type="button" class="boton-vacio">Vacío</button></div>
+
       <div style="clear:both;"></div>
 
       <!-- Acá dentro va lo que el gráfico, etc. -->
@@ -214,12 +214,22 @@
          </span>
         </fieldset>
 
+        <fieldset>
+        <legend id="escalar">&nbsp;Escalar&nbsp;</legend>
+        <span>
+          <button type="button" id="comprimir-y" class="boton uni"><img src="shrink.png"></button>
+          <button type="button" id="fact-y-reset" class="boton uni">Reset</button>
+          <button type="button" id="expandir-y" class="boton uni"><img src="expand.png"></button>
+        </span>
+       </fieldset>
+
           <div style="clear:both;"></div>
         </div>
       </div>
 
       <div id="help-window" class="window-help-modal">
         <span id="help-window-cerrar" class="close-btn-help">🞭</span>
+        <div class="inner-modal">
         <h4 id="help-controles">Controles:</h4>
         <div style="clear:both;"></div>
         <ul>
@@ -232,22 +242,27 @@
           <li id="help-consejo-grabar">Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉</li>
         </ul>
       </div>
+      </div>
 
       <div id="credits-window" class="window-help-modal">
+
         <span id="credits-window-cerrar" class="close-btn-help">🞭</span>
         <h2><img src="annie-web.png">-Web</h2>
         <h4 class="derecha"><span id="credits-version">Versión</span> <i class="math">e<sup>2iπ</sup></i> (2022) - Luis G. López</h4>
         <div style="clear:both;"></div>
+        <div class="inner-modal">
         <h4 id="credits-agradecimientos">Agradecimientos:</h4>
         <div style="clear:both;"></div>
         <ul>
           <li><span id="credits-uno">a A.J. Pickles et al. (1998), por sus magníficos espectros de referencia.</span><sup>[1]</sup> </li>
           <li id="credits-dos">a Diego Guberman, por sus generosas y precisas sugerencias.</li>
+          <!-- <li><a href="https://iconscout.com/icons/shrink" target="_blank">Shrink Icon</a> on <a href="https://iconscout.com">Iconscout</a></li> -->
         </ul>
 
         <div class="sub">
           <sub id="credits-nota-uno">[1] A fin de mantener la presente aplicación dentro del menor tamaño posible, los espectros originales se limitaron a las clases OBAFGKM, y sólo presentan datos en el intervalo 3800Å - 7500Å.</sub>
         </div>
+      </div>
       </div>
 
       <!-- Para abrir un archivo fits -->

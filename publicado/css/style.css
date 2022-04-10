@@ -119,6 +119,10 @@ input[type=file] {
 #credits-window {
   display: none;
 }
+.inner-modal {
+  overflow-y: auto;
+  max-height: 40vh;
+}
 .window-help-modal {
   position: absolute;
   border-radius: 1rem;
@@ -126,8 +130,6 @@ input[type=file] {
   margin-top: 20vh;
   margin-left: 30vw;
   width: 40vw;
-  max-height: 60vh;
-  overflow-y: auto;
   font-size: 110%;
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
@@ -148,6 +150,7 @@ input[type=file] {
 }
 .window-help-modal ul {
   padding-left: 1em;
+  margin-left: 1em;
   list-style-image: url('estrellita.png');
   margin-top: .8em;
 }
@@ -180,10 +183,9 @@ input[type=file] {
     font-weight: bold;
     cursor: pointer;
 }
-.close-btn-help:hover {
-    /* color: inherit; */
-  /* box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);   */
-  text-shadow: 0px 0px 14px darkcyan;
+.close-btn-help:hover {  
+  color: crimson;
+  /* text-shadow: 0px 0px 12px crimson; */
 }
 
 .tecla {
@@ -198,4 +200,14 @@ input[type=file] {
 i.math {
   font-family: freeserif, "times new roman", serif;
   font-size: 140%;
+}
+
+.close-tab {
+  float: right;
+  margin-left: 1em;
+  color: gray;
+  font-size: 1.2em;
+}
+.close-tab:hover {
+  color: crimson;
 }
