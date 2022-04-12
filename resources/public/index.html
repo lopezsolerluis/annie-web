@@ -227,6 +227,39 @@
         </div>
       </div>
 
+      <!-- Cambiar perfil -->
+      <div class="form-popup" id="ventana-cambiar-perfil">
+        <div class="form-container cambiar-perfil-container">
+
+          <div id="cerrar-ventana-cambiar-perfil" class="x">🞭</div>
+          <!-- <div style="clear:both;"></div> -->
+
+          <h3 id="perfil-activo-cambiar">Perfil activo:</h3>
+
+          <div class="varias-lineas">
+          <label for="cambiar-nombre-perfil" id="cambiar-nombre-perfil-label">Nombre:</label>
+          <input type="text" name="cambiar-nombre-perfil"></input>
+          <button type="button" id="boton-cambiar-nombre-perfil">Cambiar</button>
+          </div>
+
+          <div class="una-linea">
+          <label for="cambiar-color-perfil" id="cambiar-color-perfil-label">Color: </label>
+          <input type="color" name="cambiar-color-perfil"></input>
+          </div>
+
+          <div class="una-linea">
+            <label for="cambiar-estilo-perfil" id="cambiar-estilo-perfil-label">Estilo: </label>
+          <select name="cambiar-estilo-perfil" id="cambiar-estilo-perfil-id">
+            <option value="nil"><svg width="30" height="10"><line x1="0" y1="0" x2="30" y2="10" style="stroke:rgb(255,0,0);stroke-width:2" /></svg></option>
+            <option value="5,5">- . -</option>
+            <option value="10,10">- - -</option>
+            <option value="20,10,5,5,5,10">- - -</option>
+          </select>
+        </div>
+
+        </div>
+      </div>
+
       <div id="help-window" class="window-help-modal">
         <span id="help-window-cerrar" class="close-btn-help">🞭</span>
         <div class="inner-modal">
