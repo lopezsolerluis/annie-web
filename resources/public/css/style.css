@@ -121,7 +121,7 @@ input[type=file] {
 }
 .inner-modal {
   overflow-y: auto;
-  max-height: 40vh;
+  max-height: 70vh;
 }
 .window-help-modal {
   position: absolute;
@@ -183,7 +183,7 @@ input[type=file] {
     font-weight: bold;
     cursor: pointer;
 }
-.close-btn-help:hover {  
+.close-btn-help:hover {
   color: crimson;
   /* text-shadow: 0px 0px 12px crimson; */
 }
