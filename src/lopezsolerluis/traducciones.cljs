@@ -51,6 +51,11 @@
         :ventana-zoom-etc {:perfil-activo "Active profile:"
                            :desplazar "Move"
                            :escalar "Scale"}
+        :ventana-cambiar-perfil {:perfil-activo-cambiar "Active profile:"
+                                 :cambiar-nombre-perfil-label "Name:"
+                                 :boton-cambiar-nombre-perfil "Change"
+                                 :cambiar-color-perfil-label "Color:"
+                                 :cambiar-estilo-perfil-label "Style:"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
                       :help-texto-etiquetas "To change the text of the labels or delete them: "
                       :help-mover-etiquetas "To move the labels: "
@@ -125,6 +130,11 @@
         :ventana-zoom-etc {:perfil-activo "Perfil activo:"
                            :desplazar "Desplazar"
                            :escalar "Escalar"}
+        :ventana-cambiar-perfil {:perfil-activo-cambiar "Perfil activo:"
+                                 :cambiar-nombre-perfil-label "Nombre:"
+                                 :boton-cambiar-nombre-perfil "Cambiar"
+                                 :cambiar-color-perfil-label "Color:"
+                                 :cambiar-estilo-perfil-label "Estilo:"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "
