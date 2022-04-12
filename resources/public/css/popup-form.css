@@ -84,8 +84,16 @@
 .cambiar-perfil-container .una-linea:not(span) {
   padding-top: 1.2em;
 }
+.cambiar-perfil-container fieldset {
+  margin-top: 1.2em;
+  align-items: flex-start;
+}
+
 .cambiar-perfil-container label {
   margin-right: .5em;
+}
+.cambiar-perfil-container svg {
+  margin-left: .5em;
 }
 .cambiar-perfil-container input[type=text] {
   margin-right: .5em;
