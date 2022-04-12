@@ -570,7 +570,7 @@
       [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
-      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)}
+      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)} :width 250
                                     :items (mapv (fn [[name perfil]] (conj {:title name} (if-let [color (:color perfil)] [:color color])
                                                                                          (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
                                                  perfiles-pestaña-activa)}]
