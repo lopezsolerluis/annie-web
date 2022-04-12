@@ -365,6 +365,7 @@
 
 (defn actualizar-ventana-cambiar-perfil []
   (let [perfil-activo (get-perfil-activo)]
+    (set! (.-value cambiar-nombre-perfil) (get-perfil-activo-nombre))
     (set! (.-value cambiar-color-perfil) (or (:color perfil-activo) "#000"))
     (set! (.-checked (gdom/getElement (or (:dasharray perfil-activo) "solid"))) true)
     ))
@@ -374,6 +375,16 @@
 
 (defn cambiar-color-perfil-fn []
   (swap! pestañas assoc-in (conj (get-perfil-activo-key) :color) (.-value cambiar-color-perfil)))
+
+(defn cambiar-nombre-perfil-fn []
+  (let [nombre (.-value cambiar-nombre-perfil)
+        nombre-viejo (get-perfil-activo-nombre)]
+    (if-not (= -1 (.indexOf (keys (:perfiles (get-pestaña-activa))) nombre))
+            (alert (app-tr @lang :el-nombre-pertenece-a-un-perfil-de-la-pestaña))
+            (do (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
+                (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] clojure.set/rename-keys {nombre-viejo nombre})
+  ))))
+;(.querySelector js/document "input[name=\"estilo-perfil\"]:checked")
 
 (defn cambiar-perfil-activo [nombre]
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
@@ -425,7 +436,9 @@
       (gevents/listen (gdom/getElement "help-window-cerrar") "click" (fn [] (change-ventana help-window "none" fondo-gris)))
       (gevents/listen (gdom/getElement "creditos") "click" (fn [] (change-ventana credits-window "block" fondo-gris)))
       (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
-      (gevents/listen cambiar-color-perfil "change" cambiar-color-perfil-fn)
+      (gevents/listen cambiar-color-perfil "input" cambiar-color-perfil-fn)
+      (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
+      ;(gevents/listen (.getElementsByName js/document "estilo-perfil") "change" (fn [e] (js/console.log "Hola")))
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
