@@ -63,6 +63,7 @@
 (def ventana-cambiar-perfil (gdom/getElement "ventana-cambiar-perfil"))
 (def cambiar-nombre-perfil (gdom/getElement "cambiar-nombre-perfil"))
 (def cambiar-color-perfil (gdom/getElement "cambiar-color-perfil"))
+(def estilos-perfil (array-seq (.getElementsByName js/document "estilo-perfil")))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
@@ -382,9 +383,12 @@
     (if-not (= -1 (.indexOf (keys (:perfiles (get-pestaña-activa))) nombre))
             (alert (app-tr @lang :el-nombre-pertenece-a-un-perfil-de-la-pestaña))
             (do (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
-                (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] clojure.set/rename-keys {nombre-viejo nombre})
-  ))))
+                (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] clojure.set/rename-keys {nombre-viejo nombre})))))
 ;(.querySelector js/document "input[name=\"estilo-perfil\"]:checked")
+
+(defn cambiar-estilo-perfil-fn []
+  (let [estilo (.-value (.querySelector js/document "input[name=\"estilo-perfil\"]:checked"))]
+    (swap! pestañas assoc-in (conj (get-perfil-activo-key) :dasharray) (if-not (= estilo "nil") estilo))))
 
 (defn cambiar-perfil-activo [nombre]
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
@@ -392,7 +396,7 @@
 
 (defn do-optizoom []
    (reset! plot-height 10) ; No estoy seguro de si esto es necesario;
-   (reset! plot-width 10)  ; ni siquiera si es útil
+   (reset! plot-width 10)  ; ni siquiera de si es útil
    (reset! plot-width  (.-offsetWidth app))
    (reset! plot-height (.-offsetHeight app)))
 
@@ -438,7 +442,8 @@
       (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
       (gevents/listen cambiar-color-perfil "input" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
-      ;(gevents/listen (.getElementsByName js/document "estilo-perfil") "change" (fn [e] (js/console.log "Hola")))
+      (doseq [radio estilos-perfil]
+        (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
@@ -566,14 +571,17 @@
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
       [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)}
-                                    :items (mapv (fn [[name perfil]] (conj {:title name} (if-let [color (:color perfil)] [:color color])))
+                                    :items (mapv (fn [[name perfil]] (conj {:title name} (if-let [color (:color perfil)] [:color color])
+                                                                                         (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
                                                  perfiles-pestaña-activa)}]
       (doall (for [[id perfil] perfiles-pestaña-activa]
                ^{:key (str id)} [:> rvis/LineSeries (conj {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
                                                             :strokeWidth 1
                                                             :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}
                                                             (if-let [color (:color perfil)]
-                                                              [:color color]))]))]
+                                                              [:color color])
+                                                            (if-let [estilo (:dasharray perfil)]
+                                                              [:strokeDasharray estilo]))]))]
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
            inc-y (:inc-y (get-perfil-activo))
            fact-y (:fact-y (get-perfil-activo))]
