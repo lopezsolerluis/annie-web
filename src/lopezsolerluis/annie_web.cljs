@@ -59,7 +59,8 @@
 (def help-window (gdom/getElement "help-window"))
 (def credits-window (gdom/getElement "credits-window"))
 (def language-selector (gdom/getElement "language"))
-
+(def cambiar-perfil-ventana-menu (gdom/getElement "cambiar-perfil"))
+(def ventana-cambiar-perfil (gdom/getElement "ventana-cambiar-perfil"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -355,6 +356,11 @@
         (set! (.. ventana-zoom-etc -style -display) "block")
         (set! (.. boton-zoom-etc -style -borderStyle) "inset"))))
 
+(defn abrir-ventana-cambiar-perfil []
+  (set! (.. ventana-cambiar-perfil -style -display) "block"))
+(defn cerrar-ventana-cambiar-perfil []
+    (set! (.. ventana-cambiar-perfil -style -display) "none"))
+
 (defn do-optizoom []
    (reset! plot-height 10) ; No estoy seguro de si esto es necesario;
    (reset! plot-width 10)  ; ni siquiera si es útil
@@ -372,6 +378,8 @@
       (gevents/listen espectros-boton-ok "click" espectros-ok)
       (gevents/listen espectros-boton-cancel "click" espectros-cancel)
       (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click" grabar-pestaña-annie)
+      (gevents/listen cambiar-perfil-ventana-menu "click" abrir-ventana-cambiar-perfil)
+      (gevents/listen (gdom/getElement "cerrar-ventana-cambiar-perfil") "click" cerrar-ventana-cambiar-perfil)
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
       (gevents/listen etiqueta-cancel "click" cancelar-texto-etiqueta)
       (gevents/listen etiqueta-delete "click" borrar-etiqueta)

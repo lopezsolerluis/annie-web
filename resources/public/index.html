@@ -40,9 +40,10 @@
           <ul>
             <li><a href="#" id="copiar-perfil">Copiar perfil</a></li>
             <li><a href="#" id="pegar-perfil">Pegar perfil</a></li>
-            <li><a href="#" id="cambiar-nombre" class="disabled">Cambiar nombre...</a></li>
+            <li><a href="#" id="cambiar-perfil">Modificar perfil...</a></li>
+            <!-- <li><a href="#" id="cambiar-nombre" class="disabled">Cambiar nombre...</a></li>
             <li><a href="#" id="cambiar-color" class="disabled">Cambiar color...</a></li>
-            <li><a href="#" id="cambiar-diseño-linea" class="disabled">Cambiar diseño de línea...</a></li>
+            <li><a href="#" id="cambiar-diseño-linea" class="disabled">Cambiar diseño de línea...</a></li> -->
             <li><a href="#" id="borrar-perfil" class="disabled">Borrar perfil...</a></li>
             <li><a href="#" id="borrar-etiquetas" class="disabled">Borrar etiquetas...</a></li>
           </ul>
@@ -238,8 +239,12 @@
 
           <div class="varias-lineas">
           <label for="cambiar-nombre-perfil" id="cambiar-nombre-perfil-label">Nombre:</label>
+          <!-- <div class="una-linea"> -->
+          <span class="una-linea">
           <input type="text" name="cambiar-nombre-perfil"></input>
           <button type="button" id="boton-cambiar-nombre-perfil">Cambiar</button>
+        </span>
+        <!-- </div> -->
           </div>
 
           <div class="una-linea">
@@ -250,7 +255,7 @@
           <div class="una-linea">
             <label for="cambiar-estilo-perfil" id="cambiar-estilo-perfil-label">Estilo: </label>
           <select name="cambiar-estilo-perfil" id="cambiar-estilo-perfil-id">
-            <option value="nil"><svg width="30" height="10"><line x1="0" y1="0" x2="30" y2="10" style="stroke:rgb(255,0,0);stroke-width:2" /></svg></option>
+            <option value="nil">----</option>
             <option value="5,5">- . -</option>
             <option value="10,10">- - -</option>
             <option value="20,10,5,5,5,10">- - -</option>

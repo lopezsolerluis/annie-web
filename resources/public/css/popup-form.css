@@ -1,4 +1,4 @@
-#ventana-cambiar-perfil {display: block;}
+/* #ventana-cambiar-perfil {display: block;} */
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -66,11 +66,14 @@
   margin-top: .8em;
 }
 
+.cambiar-perfil-container button {
+  padding: .1em .5em;
+}
+
 .cambiar-perfil-container .varias-lineas {
   padding-top: 1em;
 }
 .cambiar-perfil-container .una-linea {
-  padding-top: 1em;
   display: -ms-flex;
   display: -webkit-flex;
   display: flex;
@@ -78,13 +81,16 @@
   -webkit-align-items: center;
   align-items: center;
 }
-
+.cambiar-perfil-container .una-linea:not(span) {
+  padding-top: 1.2em;
+}
 .cambiar-perfil-container label {
   margin-right: .5em;
 }
 .cambiar-perfil-container input[type=text] {
   margin-right: .5em;
-  /* width: auto; */
+  flex-shrink: 3;
+  min-width: 5em;
 }
 
 fieldset {
