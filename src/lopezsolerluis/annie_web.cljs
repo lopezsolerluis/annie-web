@@ -61,15 +61,19 @@
 (def language-selector (gdom/getElement "language"))
 (def cambiar-perfil-ventana-menu (gdom/getElement "cambiar-perfil"))
 (def ventana-cambiar-perfil (gdom/getElement "ventana-cambiar-perfil"))
+(def cambiar-nombre-perfil (gdom/getElement "cambiar-nombre-perfil"))
+(def cambiar-color-perfil (gdom/getElement "cambiar-color-perfil"))
+
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
       (str "calc( 100vh - "  alto-header  "px )"))
 
+(defn get-perfil-activo-nombre []
+  (get-in @pestañas [:pestañas @pestaña-activa :perfil-activo]))
+
 (defn get-perfil-activo-key []
-  (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
-        perfil-activo-nombre (get-in @pestañas [:pestañas pestaña-activa-nombre :perfil-activo])]
-    [:pestañas pestaña-activa-nombre :perfiles perfil-activo-nombre]))
+  [:pestañas @pestaña-activa :perfiles (get-perfil-activo-nombre)])
 
 (defn get-perfil-activo []
   (get-in @pestañas (get-perfil-activo-key)))
@@ -164,7 +168,7 @@
    (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                           {:data-vis data-para-vis :calibración calibración :inc-y 0 :fact-y 1 :etiquetas {}})
+                              {:data-vis data-para-vis :color nil :dasharray nil :calibración calibración :inc-y 0 :fact-y 1 :etiquetas {}})
      (swap! pestañas assoc :pestaña-activa nombre))))
 
 (defn procesar-archivo-fits [fits-file]
@@ -345,9 +349,6 @@
     (alert (app-tr @lang :no-pestaña-activa-para-grabar))
     (write-pestaña @pestaña-activa (get-pestaña-activa))))
 
-(defn cambiar-perfil-activo [nombre]
-  (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre))
-
 (defn change-ventana-zoom-etc []
   (if (= (.. ventana-zoom-etc -style -display) "block")
       (do
@@ -358,9 +359,25 @@
         (set! (.. boton-zoom-etc -style -borderStyle) "inset"))))
 
 (defn abrir-ventana-cambiar-perfil []
-  (set! (.. ventana-cambiar-perfil -style -display) "block"))
+  (if-not @pestaña-activa
+    (alert (app-tr @lang :no-hay-perfil-que-modificar))
+    (set! (.. ventana-cambiar-perfil -style -display) "block")))
+
+(defn actualizar-ventana-cambiar-perfil []
+  (let [perfil-activo (get-perfil-activo)]
+    (set! (.-value cambiar-color-perfil) (or (:color perfil-activo) "#000"))
+    (set! (.-checked (gdom/getElement (or (:dasharray perfil-activo) "solid"))) true)
+    ))
+
 (defn cerrar-ventana-cambiar-perfil []
     (set! (.. ventana-cambiar-perfil -style -display) "none"))
+
+(defn cambiar-color-perfil-fn []
+  (swap! pestañas assoc-in (conj (get-perfil-activo-key) :color) (.-value cambiar-color-perfil)))
+
+(defn cambiar-perfil-activo [nombre]
+  (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
+  (actualizar-ventana-cambiar-perfil))
 
 (defn do-optizoom []
    (reset! plot-height 10) ; No estoy seguro de si esto es necesario;
@@ -408,6 +425,7 @@
       (gevents/listen (gdom/getElement "help-window-cerrar") "click" (fn [] (change-ventana help-window "none" fondo-gris)))
       (gevents/listen (gdom/getElement "creditos") "click" (fn [] (change-ventana credits-window "block" fondo-gris)))
       (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
+      (gevents/listen cambiar-color-perfil "change" cambiar-color-perfil-fn)
       (doseq [popup popup-forms]
         (gevents/listen popup "mousedown" (fn [e] (reset! mouse {:isDown true
                                                                  :offset {:x (- (.-offsetLeft popup) (.-clientX e))
@@ -535,13 +553,14 @@
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
       [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)}
-                                    :items (mapv (fn [[name perfil]] (conj {:title name} (if false [:color "2"])))
+                                    :items (mapv (fn [[name perfil]] (conj {:title name} (if-let [color (:color perfil)] [:color color])))
                                                  perfiles-pestaña-activa)}]
       (doall (for [[id perfil] perfiles-pestaña-activa]
                ^{:key (str id)} [:> rvis/LineSeries (conj {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
                                                             :strokeWidth 1
                                                             :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}
-                                                            (if false [:color 2]))]))]
+                                                            (if-let [color (:color perfil)]
+                                                              [:color color]))]))]
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
            inc-y (:inc-y (get-perfil-activo))
            fact-y (:fact-y (get-perfil-activo))]
@@ -579,6 +598,7 @@
   (if @pestaña-activa
       (do
         (crear-lista-de-perfiles)
+        (actualizar-ventana-cambiar-perfil)
         (set! (.. menu-perfil-activo -style -display) "flex"))
       (set! (.. menu-perfil-activo -style -display) "none")))
 

@@ -84,6 +84,7 @@
         :portapapeles-vacío "The clipboard is empty."
         :perfil-copiado "The profile has been copied to the clipboard."
         :confirmar-borrar-pestaña "Do you really want to delete this tab? This can't be undone..."
+        :no-hay-perfil-que-modificar "There is no profile to modify."
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -163,6 +164,7 @@
         :portapapeles-vacío "El portapapeles está vacío."
         :perfil-copiado "El perfil ha sido copiado al portapapeles."
         :confirmar-borrar-pestaña "¿Realmente desea borrar esta pestaña? Esta acción no puede deshacerse..."
+        :no-hay-perfil-que-modificar "No hay perfil que modificar."
    }
   })
 
