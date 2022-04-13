@@ -61,6 +61,7 @@
 
 .cambiar-perfil-container {
   padding-right: .5em;
+  width: 350px;
 }
 .cambiar-perfil-container h3 {
   margin-top: .8em;
@@ -88,7 +89,9 @@
   margin-top: 1.2em;
   align-items: flex-start;
 }
-
+.cambiar-perfil-container #o-por-defecto{
+  padding: 0 .5em;
+}
 .cambiar-perfil-container label {
   margin-right: .5em;
 }
