@@ -58,7 +58,7 @@
             <li><a href="#" id="para-un-perfil">Para 1 perfil</a>
               <ul>
                 <li><a href="#" id="normalizacion">Normalización</a></li>
-                <li><a href="#" id="sumar-uno" class="disabled">Sumar...</a></li>
+                <li><a href="#" id="sumar-uno">Sumar...</a></li>
                 <li><a href="#" id="multiplicar-uno" class="disabled">Multiplicar...</a></li>
               </ul>
             </li>
@@ -162,6 +162,20 @@
 
           <button type="button" id="ok-calibración" class="btn">Ok</button>
           <button type="button" id="cancel-calibración" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para sumar un escalar -->
+      <div class="form-popup" id="ventana-sumar-uno">
+        <div class="form-container suma-uno-container">
+          <h3 id="perfil-activo-suma-uno-título">Sumar al perfil activo:</h3>
+
+          <input type="number" id="sumar-uno-input" value="0" step="0.01">
+          <div style="clear:both;"></div>
+
+          <button type="button" id="ok-sumar-uno" class="btn">Ok</button>
+          <button type="button" id="cancel-sumar-uno" class="btn cancel">Cancelar</button>
           <div style="clear:both;"></div>
         </div>
       </div>

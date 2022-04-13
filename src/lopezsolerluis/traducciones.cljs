@@ -57,6 +57,8 @@
                                  :cambiar-color-perfil-label "Color:"
                                  :cambiar-estilo-perfil-label "Style:"
                                  :o-por-defecto "or default value"}
+        :ventana-sumar-uno {:perfil-activo-suma-uno-título "Add to active profile:"
+                            :cancel-sumar-uno "Cancel"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
                       :help-texto-etiquetas "To change the text of the labels or delete them: "
                       :help-mover-etiquetas "To move the labels: "
@@ -88,6 +90,8 @@
         :no-hay-perfil-que-modificar "There is no profile to modify."
         :el-nombre-pertenece-a-un-perfil-de-la-pestaña "The name chosen already belongs to one of this tab's profiles."
         :normalizado "-normalized"
+        :debe-ingresarse-un-número "The input must be a number."
+        :suma-escalar "-scalar.add"
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -140,6 +144,8 @@
                                  :cambiar-color-perfil-label "Color:"
                                  :cambiar-estilo-perfil-label "Estilo:"
                                  :o-por-defecto "o por defecto"}
+        :ventana-sumar-uno {:perfil-activo-suma-uno-título "Sumar al perfil activo:"
+                            :cancel-sumar-uno "Cancelar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "
@@ -171,6 +177,8 @@
         :no-hay-perfil-que-modificar "No hay perfil que modificar."
         :el-nombre-pertenece-a-un-perfil-de-la-pestaña "El nombre ingresado ya pertenece a un perfil de esta pestaña."
         :normalizado "-normalizado"
+        :debe-ingresarse-un-número "Debe ingresarse un número."
+        :suma-escalar "-suma.escalar"
    }
   })
 

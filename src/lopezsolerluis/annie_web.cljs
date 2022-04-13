@@ -65,6 +65,8 @@
 (def cambiar-color-perfil (gdom/getElement "cambiar-color-perfil"))
 (def color-por-defecto-checkbox (gdom/getElement "color-por-defecto"))
 (def estilos-perfil (array-seq (.getElementsByName js/document "estilo-perfil")))
+(def ventana-sumar-uno (gdom/getElement "ventana-sumar-uno"))
+(def sumar-uno-input (gdom/getElement "sumar-uno-input"))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
@@ -118,7 +120,7 @@
   ([lang]
    (gdom/setTextContent (gdom/getElement "perfiles-label") (app-tr lang :ventana-zoom-etc/perfil-activo))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc
-                  :ventana-cambiar-perfil :help-window :credits-window]]
+                  :ventana-cambiar-perfil :ventana-sumar-uno :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
@@ -419,6 +421,27 @@
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
       (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))))
 
+(defn abrir-ventana-sumar-uno []
+  (if-not @pestaña-activa
+    (alert (app-tr @lang :no-hay-perfil-que-modificar))
+    (change-ventana ventana-sumar-uno "block")))
+
+(defn sumar-uno-data-vis [data-vis numero]
+  (let [nuevos-y (map (fn [punto] (+ numero (:y punto))) data-vis)]
+    (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))
+
+(defn sumar-uno-perfil-activo []
+  (let [numero (js/parseFloat (.-value sumar-uno-input))]
+    (if (js/isNaN numero)
+        (alert (app-tr @lang :debe-ingresarse-un-número)))
+        (let [perfil-activo (get-perfil-activo)
+              data-vis-nuevo (sumar-uno-data-vis (:data-vis perfil-activo) numero)
+              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :suma-escalar))
+              nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
+              nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
+      (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
+      (change-ventana ventana-sumar-uno "none"))))
+
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
       (gevents/listen open-annie "change" (fn [this] (abrir-archivo this :annie)))
@@ -461,6 +484,9 @@
       (gevents/listen color-por-defecto-checkbox "change" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
       (gevents/listen (gdom/getElement "normalizacion") "click" normalizar-perfil-activo)
+      (gevents/listen (gdom/getElement "sumar-uno") "click" abrir-ventana-sumar-uno)
+      (gevents/listen (gdom/getElement "ok-sumar-uno") "click" sumar-uno-perfil-activo)
+      (gevents/listen (gdom/getElement "cancel-sumar-uno") "click" (fn [] (change-ventana ventana-sumar-uno "none")))
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
