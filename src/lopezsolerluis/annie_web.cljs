@@ -63,6 +63,7 @@
 (def ventana-cambiar-perfil (gdom/getElement "ventana-cambiar-perfil"))
 (def cambiar-nombre-perfil (gdom/getElement "cambiar-nombre-perfil"))
 (def cambiar-color-perfil (gdom/getElement "cambiar-color-perfil"))
+(def color-por-defecto-checkbox (gdom/getElement "color-por-defecto"))
 (def estilos-perfil (array-seq (.getElementsByName js/document "estilo-perfil")))
 
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
@@ -368,14 +369,15 @@
   (let [perfil-activo (get-perfil-activo)]
     (set! (.-value cambiar-nombre-perfil) (get-perfil-activo-nombre))
     (set! (.-value cambiar-color-perfil) (or (:color perfil-activo) "#000"))
-    (set! (.-checked (gdom/getElement (or (:dasharray perfil-activo) "solid"))) true)
-    ))
+    (set! (.-checked color-por-defecto-checkbox) (not (:color perfil-activo)))
+    (set! (.-checked (gdom/getElement (or (:dasharray perfil-activo) "solid"))) true)))
 
 (defn cerrar-ventana-cambiar-perfil []
     (set! (.. ventana-cambiar-perfil -style -display) "none"))
 
 (defn cambiar-color-perfil-fn []
-  (swap! pestañas assoc-in (conj (get-perfil-activo-key) :color) (.-value cambiar-color-perfil)))
+  (swap! pestañas assoc-in (conj (get-perfil-activo-key) :color) (if-not (.-checked color-por-defecto-checkbox)
+                                                                         (.-value cambiar-color-perfil))))
 
 (defn cambiar-nombre-perfil-fn []
   (let [nombre (.-value cambiar-nombre-perfil)
@@ -441,6 +443,7 @@
       (gevents/listen (gdom/getElement "creditos") "click" (fn [] (change-ventana credits-window "block" fondo-gris)))
       (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
       (gevents/listen cambiar-color-perfil "input" cambiar-color-perfil-fn)
+      (gevents/listen color-por-defecto-checkbox "change" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
