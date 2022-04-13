@@ -158,7 +158,7 @@
   "Converts a vector of values ([x1 x2 x3...]) in the interval [0,1]"
   [perfil-2d]
   (let [{mínimo :min máximo :max} (mn/calcular-extremos perfil-2d)
-        [a b] (calcular-calibración mínimo máximo 0 1)] ;el algoritmo para cacular la calibración es el mismo: una función lineal
+        [a b] (calcular-calibración mínimo máximo 0 1)] ;el algoritmo para calcular la calibración es el mismo: una función lineal
     (map (fn [n] (+ (* a n) b)) perfil-2d)))
 
 (defn crear-data-para-vis [perfil-2d]
@@ -233,7 +233,7 @@
                       nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
                       nombre (elegir-nombre nombres-en-pestaña nombre-copiado false)
                       perfil-pegado (second @portapapeles)]
-                  (agregar-perfil-en-pestaña nombre perfil-pegado))))))                  
+                  (agregar-perfil-en-pestaña nombre perfil-pegado))))))
 
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
@@ -406,6 +406,19 @@
 
 (def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
 
+;; Aritmética de 1 perfil
+(defn normalizar-data-vis [data-vis]
+  (let [nuevos-y (normalizar-perfil-2d (map :y data-vis))]
+    (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))    
+
+(defn normalizar-perfil-activo []
+  (let [perfil-activo (get-perfil-activo)
+        data-vis-nuevo (normalizar-data-vis (:data-vis perfil-activo))
+        nombre-actual (str (get-perfil-activo-nombre) "-normalizado")
+        nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
+        nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
+      (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))))
+
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
       (gevents/listen open-annie "change" (fn [this] (abrir-archivo this :annie)))
@@ -447,6 +460,7 @@
       (gevents/listen cambiar-color-perfil "input" cambiar-color-perfil-fn)
       (gevents/listen color-por-defecto-checkbox "change" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
+      (gevents/listen (gdom/getElement "normalizacion") "click" normalizar-perfil-activo)
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
