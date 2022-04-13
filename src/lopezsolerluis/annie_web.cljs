@@ -220,18 +220,20 @@
                         (reset! portapapeles [perfil-activo-nombre perfil-activo])
                         (alert (app-tr @lang :perfil-copiado))))))))
 
+(defn agregar-perfil-en-pestaña [nombre perfil]
+  (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfiles nombre] perfil))
+
 (defn pegar-perfil []
   (if (empty? @portapapeles)
       (alert (app-tr @lang :portapapeles-vacío))
       (let [perfil-activo (get-perfil-activo)]
         (if-not (calibrado? perfil-activo)
                 (alert (app-tr @lang :perfil-no-calibrado-no-admite-pegado))
-                (let [pestaña-activa-nombre (:pestaña-activa @pestañas)
-                      nombre-copiado (first @portapapeles)
+                (let [nombre-copiado (first @portapapeles)
                       nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
-                      nombre (elegir-nombre  nombres-en-pestaña nombre-copiado false)
+                      nombre (elegir-nombre nombres-en-pestaña nombre-copiado false)
                       perfil-pegado (second @portapapeles)]
-                  (swap! pestañas assoc-in [:pestañas pestaña-activa-nombre :perfiles nombre] perfil-pegado))))))
+                  (agregar-perfil-en-pestaña nombre perfil-pegado))))))                  
 
 (defn agregar-texto-etiqueta []
   (let [perfil-activo (get-perfil-activo)]
@@ -605,7 +607,7 @@
     (swap! pestañas update-in [:pestañas] dissoc nombre)
     (when (= nombre @pestaña-activa)
       (swap! pestañas assoc :pestaña-activa (if-let [pestañas-restantes (keys (:pestañas @pestañas))]
-                                              (first pestañas-restantes))))))        
+                                              (first pestañas-restantes))))))
 
 (defn crear-botones []
  [:div
