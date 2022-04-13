@@ -399,8 +399,8 @@
 (defn do-optizoom []
    (reset! plot-height 10) ; No estoy seguro de si esto es necesario;
    (reset! plot-width 10)  ; ni siquiera de si es útil
-   (reset! plot-width  (.-offsetWidth app))
-   (reset! plot-height (.-offsetHeight app)))
+   (reset! plot-width nil); (.-offsetWidth app))
+   (reset! plot-height nil));(.-offsetHeight app)))
 
 (def mouse (atom {:isDown false :offset {:x 0 :y 0}}))
 
@@ -427,10 +427,10 @@
       (gevents/listen boton-zoom-etc "click" change-ventana-zoom-etc)
       (gevents/listen (gdom/getElement "cerrar-ventana-zoom-etc") "click" change-ventana-zoom-etc)
       (gevents/listen (gdom/getElement "optizoom") "click" do-optizoom)
-      (gevents/listen (gdom/getElement "zoom-x-menos") "click" (fn [] (swap! plot-width * 0.9)))
-      (gevents/listen (gdom/getElement "zoom-x-más") "click" (fn [] (swap! plot-width * 1.1)))
-      (gevents/listen (gdom/getElement "zoom-y-menos") "click" (fn [] (swap! plot-height * 0.9)))
-      (gevents/listen (gdom/getElement "zoom-y-más") "click" (fn [] (swap! plot-height * 1.1)))
+      (gevents/listen (gdom/getElement "zoom-x-menos") "click" (fn [] (reset! plot-width (* (or @plot-width (.-offsetWidth app)) 0.9))))
+      (gevents/listen (gdom/getElement "zoom-x-más") "click" (fn [] (reset! plot-width (* (or @plot-width (.-offsetWidth app)) 1.1))))
+      (gevents/listen (gdom/getElement "zoom-y-menos") "click" (fn [] (reset! plot-height (* (or @plot-height (.-offsetHeight app)) 0.9))))
+      (gevents/listen (gdom/getElement "zoom-y-más") "click" (fn [] (reset! plot-height (* (or @plot-height (.-offsetHeight app)) 1.1))))
       (gevents/listen (gdom/getElement "desplazar-y-abajo") "click" bajar-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-reset") "click" reset-y-perfil-activo)
       (gevents/listen (gdom/getElement "desplazar-y-arriba") "click" subir-perfil-activo)
@@ -545,8 +545,8 @@
                         :fill "#333"}})
 
 (defn line-chart []
-  (let [width (or @plot-width 0)
-        height (or @plot-height 0)
+  (let [width (or @plot-width (.-offsetWidth app))
+        height (or @plot-height (.-offsetHeight app))
         perfil-activo (get-perfil-activo)
         perfiles-pestaña-activa (:perfiles (get-pestaña-activa))
         x-min (calcular-x-calibrado perfil-activo (:x (first (:data-vis perfil-activo))))
