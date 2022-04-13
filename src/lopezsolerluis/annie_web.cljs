@@ -409,12 +409,12 @@
 ;; Aritmética de 1 perfil
 (defn normalizar-data-vis [data-vis]
   (let [nuevos-y (normalizar-perfil-2d (map :y data-vis))]
-    (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))    
+    (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))
 
 (defn normalizar-perfil-activo []
   (let [perfil-activo (get-perfil-activo)
         data-vis-nuevo (normalizar-data-vis (:data-vis perfil-activo))
-        nombre-actual (str (get-perfil-activo-nombre) "-normalizado")
+        nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :normalizado))
         nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
       (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))))

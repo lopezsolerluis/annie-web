@@ -87,6 +87,7 @@
         :confirmar-borrar-pestaña "Do you really want to delete this tab? This can't be undone..."
         :no-hay-perfil-que-modificar "There is no profile to modify."
         :el-nombre-pertenece-a-un-perfil-de-la-pestaña "The name chosen already belongs to one of this tab's profiles."
+        :normalizado "-normalized"
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -169,6 +170,7 @@
         :confirmar-borrar-pestaña "¿Realmente desea borrar esta pestaña? Esta acción no puede deshacerse..."
         :no-hay-perfil-que-modificar "No hay perfil que modificar."
         :el-nombre-pertenece-a-un-perfil-de-la-pestaña "El nombre ingresado ya pertenece a un perfil de esta pestaña."
+        :normalizado "-normalizado"
    }
   })
 
