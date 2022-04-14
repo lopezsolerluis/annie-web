@@ -189,7 +189,8 @@
 
 (defn actualizar-dispersión-span []
   (gdom/setTextContent dispersión-span (str (or (if-let [dispersión (calcular-dispersión (get-perfil-activo))]
-                                                    (.toFixed dispersión 1)) "—"))))
+                                                    (.toFixed dispersión 1))
+                                                "—"))))
 
 (defn crear-pestaña
   ([nombre-posible data-para-vis] (crear-pestaña nombre-posible data-para-vis []))
