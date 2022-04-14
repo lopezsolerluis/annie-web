@@ -459,34 +459,24 @@
   (let [nuevos-y (map (fn [punto] (función numero (:y punto))) data-vis)]
     (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))
 
-(defn sumar-uno-perfil-activo []
+(defn operar-escalar-perfil-activo [función tag]
   (let [numero (js/parseFloat (.-value operar-uno-input))]
     (if (js/isNaN numero)
         (alert (app-tr @lang :debe-ingresarse-un-número))
         (let [perfil-activo (get-perfil-activo)
-              data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) + numero)
-              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :suma-escalar))
+              data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) función numero)
+              etiquetas (:etiquetas perfil-activo)
+              etiquetas-nuevas (into {} (map (fn [[k v]] [k (update-in v [:y] (fn [y] (función numero y)))]) etiquetas))
+              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag))
               nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
-              nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
-          (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
-          (change-ventana ventana-operar-uno "none")))))
-
-(defn multiplicar-uno-perfil-activo []
-  (let [numero (js/parseFloat (.-value operar-uno-input))]
-    (if (js/isNaN numero)
-        (alert (app-tr @lang :debe-ingresarse-un-número))
-        (let [perfil-activo (get-perfil-activo)
-              data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) * numero)
-              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :producto-escalar))
-              nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
-              nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
-          (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
+              nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
+          (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo :etiquetas etiquetas-nuevas))
           (change-ventana ventana-operar-uno "none")))))
 
 (defn operar-uno-perfil-activo []
   (let [título-operación (gdom/getTextContent perfil-activo-operar-uno-título)]
-    (cond (= título-operación (app-tr @lang :sumar-uno-título)) (sumar-uno-perfil-activo)
-          (= título-operación (app-tr @lang :multiplicar-uno-título)) (multiplicar-uno-perfil-activo))))
+    (cond (= título-operación (app-tr @lang :sumar-uno-título)) (operar-escalar-perfil-activo + :suma-escalar)
+          (= título-operación (app-tr @lang :multiplicar-uno-título)) (operar-escalar-perfil-activo * :producto-escalar))))
 
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
