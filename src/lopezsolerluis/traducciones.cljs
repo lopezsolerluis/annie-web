@@ -89,6 +89,7 @@
         :portapapeles-vacío "The clipboard is empty."
         :perfil-copiado "The profile has been copied to the clipboard."
         :confirmar-borrar-pestaña "Do you really want to delete this tab? This can't be undone..."
+        :confirmar-borrar-perfil  "Do you really want to delete this profile? This can't be undone..."
         :no-hay-perfil-que-modificar "There is no profile to modify."
         :el-nombre-pertenece-a-un-perfil-de-la-pestaña "The name chosen already belongs to one of this tab's profiles."
         :normalizado "-normalized"
@@ -151,7 +152,7 @@
         :ventana-sumar-uno {:perfil-activo-suma-uno-título "Sumar al perfil activo:"
                             :cancel-sumar-uno "Cancelar"}
         :ventana-borrar-perfil {:perfiles-lista-label "Elija un perfil para borrar:"
-                                :cancel-perfiles-borrar "Cancelar"}                                                
+                                :cancel-perfiles-borrar "Cancelar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "
@@ -180,6 +181,7 @@
         :portapapeles-vacío "El portapapeles está vacío."
         :perfil-copiado "El perfil ha sido copiado al portapapeles."
         :confirmar-borrar-pestaña "¿Realmente desea borrar esta pestaña? Esta acción no puede deshacerse..."
+        :confirmar-borrar-perfil  "¿Realmente desea borrar este perfil? Esta acción no puede deshacerse..."
         :no-hay-perfil-que-modificar "No hay perfil que modificar."
         :el-nombre-pertenece-a-un-perfil-de-la-pestaña "El nombre ingresado ya pertenece a un perfil de esta pestaña."
         :normalizado "-normalizado"
