@@ -455,8 +455,8 @@
               :else nil)
         (.focus operar-uno-input))))
 
-(defn sumar-uno-data-vis [data-vis numero]
-  (let [nuevos-y (map (fn [punto] (+ numero (:y punto))) data-vis)]
+(defn operar-uno-data-vis [data-vis función numero]
+  (let [nuevos-y (map (fn [punto] (función numero (:y punto))) data-vis)]
     (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))
 
 (defn sumar-uno-perfil-activo []
@@ -464,12 +464,29 @@
     (if (js/isNaN numero)
         (alert (app-tr @lang :debe-ingresarse-un-número))
         (let [perfil-activo (get-perfil-activo)
-              data-vis-nuevo (sumar-uno-data-vis (:data-vis perfil-activo) numero)
+              data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) + numero)
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :suma-escalar))
               nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
               nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
           (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
           (change-ventana ventana-operar-uno "none")))))
+
+(defn multiplicar-uno-perfil-activo []
+  (let [numero (js/parseFloat (.-value operar-uno-input))]
+    (if (js/isNaN numero)
+        (alert (app-tr @lang :debe-ingresarse-un-número))
+        (let [perfil-activo (get-perfil-activo)
+              data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) * numero)
+              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :producto-escalar))
+              nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
+              nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
+          (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
+          (change-ventana ventana-operar-uno "none")))))
+
+(defn operar-uno-perfil-activo []
+  (let [título-operación (gdom/getTextContent perfil-activo-operar-uno-título)]
+    (cond (= título-operación (app-tr @lang :sumar-uno-título)) (sumar-uno-perfil-activo)
+          (= título-operación (app-tr @lang :multiplicar-uno-título)) (multiplicar-uno-perfil-activo))))
 
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
@@ -528,7 +545,8 @@
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
       (gevents/listen (gdom/getElement "normalizacion") "click" normalizar-perfil-activo)
       (gevents/listen (gdom/getElement "sumar-uno") "click" (fn [] (abrir-ventana-operar-uno :sumar-uno)))
-      (gevents/listen (gdom/getElement "ok-operar-uno") "click" sumar-uno-perfil-activo)
+      (gevents/listen (gdom/getElement "multiplicar-uno") "click" (fn [] (abrir-ventana-operar-uno :multiplicar-uno)))
+      (gevents/listen (gdom/getElement "ok-operar-uno") "click" operar-uno-perfil-activo)
       (gevents/listen (gdom/getElement "cancel-operar-uno") "click" (fn [] (change-ventana ventana-operar-uno "none")))
       (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
       (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)

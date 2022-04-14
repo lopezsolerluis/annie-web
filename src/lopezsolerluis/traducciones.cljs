@@ -59,6 +59,7 @@
                                  :o-por-defecto "or default value"}
         :ventana-operar-uno {:cancel-operar-uno "Cancel"}
         :sumar-uno-título "Add to the active profile:"
+        :multiplicar-uno-título "Multiply to the active profile:"
         :ventana-borrar-perfil {:perfiles-lista-label "Choose a profile to delete:"
                                 :cancel-perfiles-borrar "Cancel"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
@@ -95,6 +96,7 @@
         :normalizado "-normalized"
         :debe-ingresarse-un-número "The input must be a number."
         :suma-escalar "-scalar.add"
+        :producto-escalar "-escalar.product"
         :no-hay-perfiles-que-borrar "There are no profiles to delete."
         :el-perfil-activo-no-puede-borrarse "The active profile cannot be deleted. If you wish, you can delete the entire tab."
         :dispersión "Dispersion:"
@@ -153,6 +155,7 @@
                                  :o-por-defecto "o por defecto"}
         :ventana-operar-uno {:cancel-operar-uno "Cancelar"}
         :sumar-uno-título "Sumar al perfil activo:"
+        :multiplicar-uno-título "Multiplicar el perfil activo:"
         :ventana-borrar-perfil {:perfiles-lista-label "Elija un perfil para borrar:"
                                 :cancel-perfiles-borrar "Cancelar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
@@ -189,6 +192,7 @@
         :normalizado "-normalizado"
         :debe-ingresarse-un-número "Debe ingresarse un número."
         :suma-escalar "-suma.escalar"
+        :producto-escalar "-producto.escalar"
         :no-hay-perfiles-que-borrar "No hay perfiles que borrar."
         :el-perfil-activo-no-puede-borrarse "El perfil activo no puede borrarse. Si así lo desea, puede borrar la pestaña completa."
         :dispersión "Dispersión:"
