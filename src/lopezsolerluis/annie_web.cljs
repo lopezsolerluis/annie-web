@@ -137,6 +137,13 @@
 (traducir)
 ;; end of translation functions
 
+;; Para encontrar todos los valores asociados a una misma clave (https://stackoverflow.com/questions/28091305/find-value-of-specific-key-in-nested-map/28097404)
+(defn find-all-nested
+  [m k]
+  (->> (tree-seq map? vals m)
+       (filter map?)
+       (keep k)))
+
 (defn alert [mensaje]
   (js/alert mensaje))
 
@@ -170,6 +177,20 @@
 (defn crear-data-para-vis [perfil-2d]
   (mapv (fn [x y] {:x x :y y}) (range) perfil-2d))
 
+(defn calibrado? [perfil]
+  (seq (:calibración perfil)))
+
+(defn calcular-dispersión [perfil]
+  (if (calibrado? perfil)
+      (let [data-vis (:data-vis perfil)
+            delta-x (- (:x (second data-vis)) (:x (first data-vis)))
+            a (first (:calibración perfil))]
+        (* a delta-x))))
+
+(defn actualizar-dispersión-span []
+  (gdom/setTextContent dispersión-span (str (or (if-let [dispersión (calcular-dispersión (get-perfil-activo))]
+                                                    (.toFixed dispersión 1)) "—"))))
+
 (defn crear-pestaña
   ([nombre-posible data-para-vis] (crear-pestaña nombre-posible data-para-vis []))
   ([nombre-posible data-para-vis calibración]
@@ -201,9 +222,6 @@
             (swap! pestañas assoc-in [:pestañas nombre] pestaña)
             (swap! pestañas assoc :pestaña-activa nombre)))
   (encender-espera false))
-
-(defn calibrado? [perfil]
-  (seq (:calibración perfil)))
 
 (defn change-ventana
   ([ventana state]  ; state es "block" o "none"
@@ -400,12 +418,9 @@
   (let [estilo (.-value (.querySelector js/document "input[name=\"estilo-perfil\"]:checked"))]
     (swap! pestañas assoc-in (conj (get-perfil-activo-key) :dasharray) (if-not (= estilo "nil") estilo))))
 
-(defn calcular-dispersión [perfil]
-  (if (calibrado? perfil) 2))
-
 (defn cambiar-perfil-activo [nombre]
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
-  (gdom/setTextContent dispersión-span "Luis")
+  (actualizar-dispersión-span)
   (actualizar-ventana-cambiar-perfil))
 
 (defn do-optizoom []
@@ -692,6 +707,7 @@
   (if @pestaña-activa
       (do
         (crear-lista-de-perfiles perfil-activo-select true)
+        (actualizar-dispersión-span)
         (actualizar-ventana-cambiar-perfil)
         (set! (.. menu-perfil-activo -style -display) "flex"))
       (set! (.. menu-perfil-activo -style -display) "none")))
