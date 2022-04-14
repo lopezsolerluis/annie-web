@@ -32,7 +32,7 @@
 }
 
 .rv-discrete-color-legend-item__title {
-  margin-left: 10px;
+  margin-left: 20px; /* Era 10; pero es necesario para agrandar las legendas...*/
 }
 
 .rv-discrete-color-legend-item.disabled {
