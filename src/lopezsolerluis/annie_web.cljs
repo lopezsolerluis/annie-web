@@ -67,7 +67,8 @@
 (def estilos-perfil (array-seq (.getElementsByName js/document "estilo-perfil")))
 (def ventana-sumar-uno (gdom/getElement "ventana-sumar-uno"))
 (def sumar-uno-input (gdom/getElement "sumar-uno-input"))
-
+(def ventana-borrar-perfil (gdom/getElement "ventana-borrar-perfil"))
+(def borrar-perfiles-select (gdom/getElement "borrar-perfiles-select"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -94,17 +95,17 @@
 
 (crear-lista-de-espectros)
 
-(defn crear-lista-de-perfiles []
+(defn crear-lista-de-perfiles [select-element con-perfil-activo?]
   (let [pestaña-activa (get-pestaña-activa)
-        perfiles-nombres (keys (:perfiles pestaña-activa))
-        perfil-activo-nombre (:perfil-activo pestaña-activa)]
-    (gdom/removeChildren perfil-activo-select)
+        perfil-activo-nombre (:perfil-activo pestaña-activa)
+        perfiles-nombres (remove #{(if-not con-perfil-activo? perfil-activo-nombre)} (keys (:perfiles pestaña-activa)))]
+    (gdom/removeChildren select-element)
     (doseq [nombre perfiles-nombres]
       (let [option (.createElement js/document "option")]
         (set! (.-value option) nombre)
         (set! (.-innerHTML option) nombre)
-        (.appendChild perfil-activo-select option)))
-    (set! (.-value perfil-activo-select) perfil-activo-nombre)))
+        (.appendChild select-element option)))
+    (if con-perfil-activo? (set! (.-value select-element) perfil-activo-nombre))))
 
 (defn encender-espera [on] ; true or false
   (set! (.. icono-espera -style -display) (if on "block" "none"))
@@ -120,7 +121,7 @@
   ([lang]
    (gdom/setTextContent (gdom/getElement "perfiles-label") (app-tr lang :ventana-zoom-etc/perfil-activo))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc
-                  :ventana-cambiar-perfil :ventana-sumar-uno :help-window :credits-window]]
+                  :ventana-cambiar-perfil :ventana-sumar-uno :ventana-borrar-perfil :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
@@ -442,6 +443,16 @@
       (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
       (change-ventana ventana-sumar-uno "none"))))
 
+(defn populate-lista-borrar-perfiles []
+  )
+
+(defn abrir-ventana-borrar-perfil []
+  (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
+    (cond (= 0 numero-de-perfiles) (alert (app-tr @lang :no-hay-perfiles-que-borrar))
+          (= 1 numero-de-perfiles) (alert (app-tr @lang :el-perfil-activo-no-puede-borrarse))
+          :else (do (crear-lista-de-perfiles borrar-perfiles-select false)
+                    (change-ventana ventana-borrar-perfil "block")))))
+
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
       (gevents/listen open-annie "change" (fn [this] (abrir-archivo this :annie)))
@@ -487,6 +498,7 @@
       (gevents/listen (gdom/getElement "sumar-uno") "click" abrir-ventana-sumar-uno)
       (gevents/listen (gdom/getElement "ok-sumar-uno") "click" sumar-uno-perfil-activo)
       (gevents/listen (gdom/getElement "cancel-sumar-uno") "click" (fn [] (change-ventana ventana-sumar-uno "none")))
+      (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
@@ -666,7 +678,7 @@
 (ratom/run!
   (if @pestaña-activa
       (do
-        (crear-lista-de-perfiles)
+        (crear-lista-de-perfiles perfil-activo-select true)
         (actualizar-ventana-cambiar-perfil)
         (set! (.. menu-perfil-activo -style -display) "flex"))
       (set! (.. menu-perfil-activo -style -display) "none")))

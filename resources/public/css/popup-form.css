@@ -1,4 +1,4 @@
-/* #ventana-sumar-uno {display: block;} */
+/* #ventana-borrar-perfil {display: block;} */
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -102,6 +102,10 @@
   margin-right: .5em;
   flex-shrink: 3;
   min-width: 5em;
+}
+
+#ventana-borrar-perfil select {
+  margin: .5em 0 1em 0;
 }
 
 #sumar-uno-input {

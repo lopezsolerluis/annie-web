@@ -59,6 +59,8 @@
                                  :o-por-defecto "or default value"}
         :ventana-sumar-uno {:perfil-activo-suma-uno-título "Add to active profile:"
                             :cancel-sumar-uno "Cancel"}
+        :ventana-borrar-perfil {:perfiles-lista-label "Choose a profile to delete:"
+                                :cancel-perfiles-borrar "Cancel"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
                       :help-texto-etiquetas "To change the text of the labels or delete them: "
                       :help-mover-etiquetas "To move the labels: "
@@ -92,6 +94,8 @@
         :normalizado "-normalized"
         :debe-ingresarse-un-número "The input must be a number."
         :suma-escalar "-scalar.add"
+        :no-hay-perfiles-que-borrar "There are no profiles to delete."
+        :el-perfil-activo-no-puede-borrarse "The active profile cannot be deleted. If you wish, you can delete the entire tab."
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -146,6 +150,8 @@
                                  :o-por-defecto "o por defecto"}
         :ventana-sumar-uno {:perfil-activo-suma-uno-título "Sumar al perfil activo:"
                             :cancel-sumar-uno "Cancelar"}
+        :ventana-borrar-perfil {:perfiles-lista-label "Elija un perfil para borrar:"
+                                :cancel-perfiles-borrar "Cancelar"}                                                
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "
@@ -179,6 +185,8 @@
         :normalizado "-normalizado"
         :debe-ingresarse-un-número "Debe ingresarse un número."
         :suma-escalar "-suma.escalar"
+        :no-hay-perfiles-que-borrar "No hay perfiles que borrar."
+        :el-perfil-activo-no-puede-borrarse "El perfil activo no puede borrarse. Si así lo desea, puede borrar la pestaña completa."
    }
   })
 

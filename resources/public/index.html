@@ -44,7 +44,7 @@
             <!-- <li><a href="#" id="cambiar-nombre" class="disabled">Cambiar nombre...</a></li>
             <li><a href="#" id="cambiar-color" class="disabled">Cambiar color...</a></li>
             <li><a href="#" id="cambiar-diseño-linea" class="disabled">Cambiar diseño de línea...</a></li> -->
-            <li><a href="#" id="borrar-perfil" class="disabled">Borrar perfil...</a></li>
+            <li><a href="#" id="borrar-perfil">Borrar perfil...</a></li>
             <li><a href="#" id="borrar-etiquetas" class="disabled">Borrar etiquetas...</a></li>
           </ul>
         </li>
@@ -192,6 +192,19 @@
 
           <button type="button" id="ok-espectros" class="btn">Ok</button>
           <button type="button" id="cancel-espectros" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para borrar un perfil -->
+      <div class="form-popup" id="ventana-borrar-perfil">
+        <div class="form-container borrar-perfil-container">
+
+          <label for="perfiles-lista" id="perfiles-lista-label">Elija un perfil para borrar:</label>
+          <select id="borrar-perfiles-select" name="perfiles-lista"></select>
+          <br>
+          <button type="button" id="ok-perfiles-borrar" class="btn">Ok</button>
+          <button type="button" id="cancel-perfiles-borrar" class="btn cancel">Cancelar</button>
           <div style="clear:both;"></div>
         </div>
       </div>
