@@ -457,14 +457,14 @@
 (defn sumar-uno-perfil-activo []
   (let [numero (js/parseFloat (.-value sumar-uno-input))]
     (if (js/isNaN numero)
-        (alert (app-tr @lang :debe-ingresarse-un-número)))
+        (alert (app-tr @lang :debe-ingresarse-un-número))
         (let [perfil-activo (get-perfil-activo)
               data-vis-nuevo (sumar-uno-data-vis (:data-vis perfil-activo) numero)
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang :suma-escalar))
               nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
               nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
-      (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
-      (change-ventana ventana-sumar-uno "none"))))
+          (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
+          (change-ventana ventana-sumar-uno "none")))))
 
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
