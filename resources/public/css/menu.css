@@ -62,6 +62,18 @@ ul, ol {
   margin-right: .3em;
 }
 
+#dispersión {
+  margin: 0 .2em 0 1em;
+}
+#xpixel {
+  margin: 0 1em 0 .2em;
+}
+#valor-dispersión {
+  border-style: inset;
+  border-width: thin;
+  padding: 0 .5em;
+}
+
 .menu-2 {
     margin: 0 .1em;
     align-items: center;

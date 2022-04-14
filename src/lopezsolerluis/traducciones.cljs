@@ -97,6 +97,8 @@
         :suma-escalar "-scalar.add"
         :no-hay-perfiles-que-borrar "There are no profiles to delete."
         :el-perfil-activo-no-puede-borrarse "The active profile cannot be deleted. If you wish, you can delete the entire tab."
+        :dispersión "Dispersion:"
+        :xpixel "/pixel"
    }
    :es {:menu {:archivo "Archivo"
               :crear-perfil-desde-fits "Crear perfil desde archivo FITS..."
@@ -189,6 +191,8 @@
         :suma-escalar "-suma.escalar"
         :no-hay-perfiles-que-borrar "No hay perfiles que borrar."
         :el-perfil-activo-no-puede-borrarse "El perfil activo no puede borrarse. Si así lo desea, puede borrar la pestaña completa."
+        :dispersión "Dispersión:"
+        :xpixel "/pixel"
    }
   })
 

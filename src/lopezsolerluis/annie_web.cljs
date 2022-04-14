@@ -69,6 +69,7 @@
 (def sumar-uno-input (gdom/getElement "sumar-uno-input"))
 (def ventana-borrar-perfil (gdom/getElement "ventana-borrar-perfil"))
 (def borrar-perfiles-select (gdom/getElement "borrar-perfiles-select"))
+(def dispersión-span (gdom/getElement "valor-dispersión"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -120,6 +121,8 @@
   ([] (traducir @lang))
   ([lang]
    (gdom/setTextContent (gdom/getElement "perfiles-label") (app-tr lang :ventana-zoom-etc/perfil-activo))
+   (gdom/setTextContent (gdom/getElement "dispersión") (app-tr lang :dispersión))
+   (gdom/setTextContent (gdom/getElement "xpixel") (app-tr lang :xpixel))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc
                   :ventana-cambiar-perfil :ventana-sumar-uno :ventana-borrar-perfil :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
@@ -397,8 +400,12 @@
   (let [estilo (.-value (.querySelector js/document "input[name=\"estilo-perfil\"]:checked"))]
     (swap! pestañas assoc-in (conj (get-perfil-activo-key) :dasharray) (if-not (= estilo "nil") estilo))))
 
+(defn calcular-dispersión [perfil]
+  (if (calibrado? perfil) 2))
+
 (defn cambiar-perfil-activo [nombre]
   (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
+  (gdom/setTextContent dispersión-span "Luis")
   (actualizar-ventana-cambiar-perfil))
 
 (defn do-optizoom []
