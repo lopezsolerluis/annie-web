@@ -443,15 +443,19 @@
       (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
       (change-ventana ventana-sumar-uno "none"))))
 
-(defn populate-lista-borrar-perfiles []
-  )
-
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
     (cond (= 0 numero-de-perfiles) (alert (app-tr @lang :no-hay-perfiles-que-borrar))
           (= 1 numero-de-perfiles) (alert (app-tr @lang :el-perfil-activo-no-puede-borrarse))
           :else (do (crear-lista-de-perfiles borrar-perfiles-select false)
                     (change-ventana ventana-borrar-perfil "block")))))
+
+(defn borrar-perfil []
+  (if (confirmar-operación (app-tr @lang :confirmar-borrar-perfil))
+      (let [perfil-a-borrar (.-value borrar-perfiles-select)]
+        (js/console.log (pr-str perfil-a-borrar))
+        (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] dissoc perfil-a-borrar)))
+  (change-ventana ventana-borrar-perfil "none"))
 
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
@@ -499,6 +503,8 @@
       (gevents/listen (gdom/getElement "ok-sumar-uno") "click" sumar-uno-perfil-activo)
       (gevents/listen (gdom/getElement "cancel-sumar-uno") "click" (fn [] (change-ventana ventana-sumar-uno "none")))
       (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
+      (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)
+      (gevents/listen (gdom/getElement "cancel-perfiles-borrar") "click" (fn [] (change-ventana ventana-borrar-perfil "none")))
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
