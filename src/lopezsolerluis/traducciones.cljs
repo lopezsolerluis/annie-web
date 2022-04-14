@@ -57,8 +57,8 @@
                                  :cambiar-color-perfil-label "Color:"
                                  :cambiar-estilo-perfil-label "Style:"
                                  :o-por-defecto "or default value"}
-        :ventana-sumar-uno {:perfil-activo-suma-uno-título "Add to active profile:"
-                            :cancel-sumar-uno "Cancel"}
+        :ventana-operar-uno {:cancel-operar-uno "Cancel"}
+        :sumar-uno-título "Add to the active profile:"
         :ventana-borrar-perfil {:perfiles-lista-label "Choose a profile to delete:"
                                 :cancel-perfiles-borrar "Cancel"}
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
@@ -151,8 +151,8 @@
                                  :cambiar-color-perfil-label "Color:"
                                  :cambiar-estilo-perfil-label "Estilo:"
                                  :o-por-defecto "o por defecto"}
-        :ventana-sumar-uno {:perfil-activo-suma-uno-título "Sumar al perfil activo:"
-                            :cancel-sumar-uno "Cancelar"}
+        :ventana-operar-uno {:cancel-operar-uno "Cancelar"}
+        :sumar-uno-título "Sumar al perfil activo:"
         :ventana-borrar-perfil {:perfiles-lista-label "Elija un perfil para borrar:"
                                 :cancel-perfiles-borrar "Cancelar"}
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "

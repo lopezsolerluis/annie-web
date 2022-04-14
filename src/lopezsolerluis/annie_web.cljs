@@ -65,11 +65,12 @@
 (def cambiar-color-perfil (gdom/getElement "cambiar-color-perfil"))
 (def color-por-defecto-checkbox (gdom/getElement "color-por-defecto"))
 (def estilos-perfil (array-seq (.getElementsByName js/document "estilo-perfil")))
-(def ventana-sumar-uno (gdom/getElement "ventana-sumar-uno"))
-(def sumar-uno-input (gdom/getElement "sumar-uno-input"))
+(def ventana-operar-uno (gdom/getElement "ventana-operar-uno"))
+(def operar-uno-input (gdom/getElement "operar-uno-input"))
 (def ventana-borrar-perfil (gdom/getElement "ventana-borrar-perfil"))
 (def borrar-perfiles-select (gdom/getElement "borrar-perfiles-select"))
 (def dispersión-span (gdom/getElement "valor-dispersión"))
+(def perfil-activo-operar-uno-título (gdom/getElement "perfil-activo-operar-uno-título"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -124,7 +125,7 @@
    (gdom/setTextContent (gdom/getElement "dispersión") (app-tr lang :dispersión))
    (gdom/setTextContent (gdom/getElement "xpixel") (app-tr lang :xpixel))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc
-                  :ventana-cambiar-perfil :ventana-sumar-uno :ventana-borrar-perfil :help-window :credits-window]]
+                  :ventana-cambiar-perfil :ventana-operar-uno :ventana-borrar-perfil :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
@@ -445,17 +446,21 @@
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
       (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))))
 
-(defn abrir-ventana-sumar-uno []
+(defn abrir-ventana-operar-uno [operación]
   (if-not @pestaña-activa
     (alert (app-tr @lang :no-hay-perfil-que-modificar))
-    (change-ventana ventana-sumar-uno "block")))
+    (do (change-ventana ventana-operar-uno "block")
+        (cond (= operación :sumar-uno) (gdom/setTextContent perfil-activo-operar-uno-título (app-tr @lang :sumar-uno-título))
+              (= operación :multiplicar-uno) (gdom/setTextContent perfil-activo-operar-uno-título (app-tr @lang :multiplicar-uno-título))
+              :else nil)
+        (.focus operar-uno-input))))
 
 (defn sumar-uno-data-vis [data-vis numero]
   (let [nuevos-y (map (fn [punto] (+ numero (:y punto))) data-vis)]
     (mapv (fn [x y] {:x x :y y}) (map :x data-vis) nuevos-y)))
 
 (defn sumar-uno-perfil-activo []
-  (let [numero (js/parseFloat (.-value sumar-uno-input))]
+  (let [numero (js/parseFloat (.-value operar-uno-input))]
     (if (js/isNaN numero)
         (alert (app-tr @lang :debe-ingresarse-un-número))
         (let [perfil-activo (get-perfil-activo)
@@ -464,7 +469,7 @@
               nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
               nombre  (elegir-nombre nombres-en-pestaña nombre-actual false)]
           (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
-          (change-ventana ventana-sumar-uno "none")))))
+          (change-ventana ventana-operar-uno "none")))))
 
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
@@ -522,9 +527,9 @@
       (gevents/listen color-por-defecto-checkbox "change" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
       (gevents/listen (gdom/getElement "normalizacion") "click" normalizar-perfil-activo)
-      (gevents/listen (gdom/getElement "sumar-uno") "click" abrir-ventana-sumar-uno)
-      (gevents/listen (gdom/getElement "ok-sumar-uno") "click" sumar-uno-perfil-activo)
-      (gevents/listen (gdom/getElement "cancel-sumar-uno") "click" (fn [] (change-ventana ventana-sumar-uno "none")))
+      (gevents/listen (gdom/getElement "sumar-uno") "click" (fn [] (abrir-ventana-operar-uno :sumar-uno)))
+      (gevents/listen (gdom/getElement "ok-operar-uno") "click" sumar-uno-perfil-activo)
+      (gevents/listen (gdom/getElement "cancel-operar-uno") "click" (fn [] (change-ventana ventana-operar-uno "none")))
       (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
       (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)
       (gevents/listen (gdom/getElement "cancel-perfiles-borrar") "click" (fn [] (change-ventana ventana-borrar-perfil "none")))
