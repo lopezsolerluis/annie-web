@@ -72,6 +72,8 @@
                          :credits-agradecimientos "Acknowledgments:"
                          :credits-uno "To A.J. Pickles et al. (1998), for their magnificents reference spectra."
                          :credits-dos "To Diego Guberman, for his generous and precises suggestions."
+                         :descargar-annie "The manual (in spanish) of the original version of this program can be obtained"
+                         :enlace-annie "here"
                          :credits-nota-uno "[1] In order to get this application into the smallest possible size, the spectra were limited to the classes OBAFGKM, and in the 3800Å - 7500Å range."}
         :la-clase-es-desconocida "This is not an available reference spectral class"
         :confirmar-borrar-etiqueta "Do you really want to delete this label?"
@@ -168,6 +170,8 @@
                          :credits-agradecimientos "Agradecimientos:"
                          :credits-uno "a A.J. Pickles et al. (1998), por sus magníficos espectros de referencia."
                          :credits-dos "a Diego Guberman, por sus generosas y precisas sugerencias."
+                         :descargar-annie "El manual de la versión original de este programa puede descargarse"
+                         :enlace-annie "aquí"
                          :credits-nota-uno "[1] A fin de mantener la presente aplicación dentro del menor tamaño posible, los espectros originales se limitaron a las clases OBAFGKM, y sólo presentan datos en el intervalo 3800Å - 7500Å."}
         :la-clase-es-desconocida "No se encuentra entre las clases espectrales de referencia."
         :confirmar-borrar-etiqueta "¿Realmente desea borrar esta etiqueta?"
