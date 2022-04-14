@@ -44,7 +44,7 @@
             <!-- <li><a href="#" id="cambiar-nombre" class="disabled">Cambiar nombre...</a></li>
             <li><a href="#" id="cambiar-color" class="disabled">Cambiar color...</a></li>
             <li><a href="#" id="cambiar-diseño-linea" class="disabled">Cambiar diseño de línea...</a></li> -->
-            <li><a href="#" id="borrar-perfil" class="disabled">Borrar perfil...</a></li>
+            <li><a href="#" id="borrar-perfil">Borrar perfil...</a></li>
             <li><a href="#" id="borrar-etiquetas" class="disabled">Borrar etiquetas...</a></li>
           </ul>
         </li>
@@ -58,8 +58,8 @@
             <li><a href="#" id="para-un-perfil">Para 1 perfil</a>
               <ul>
                 <li><a href="#" id="normalizacion">Normalización</a></li>
-                <li><a href="#" id="sumar-uno" class="disabled">Sumar...</a></li>
-                <li><a href="#" id="multiplicar-uno" class="disabled">Multiplicar...</a></li>
+                <li><a href="#" id="sumar-uno">Sumar...</a></li>
+                <li><a href="#" id="multiplicar-uno">Multiplicar...</a></li>
               </ul>
             </li>
             <li><a href="#" id="para-dos-perfiles">Para 2 perfiles</a>
@@ -92,6 +92,9 @@
           <label for="perfiles-lista" id="perfiles-label">Perfil activo:</label>
           <select id="perfil-activo-select" name="perfiles-lista">
           </select>
+            <span id="dispersión">Dispersión:</span>
+            <span id="valor-dispersión">5.0</span>
+            <span id="xpixel">/pixel</span>
           <button type="button" id="boton-zoom-etc">🔍</button>
        </div>
 
@@ -166,6 +169,20 @@
         </div>
       </div>
 
+      <!-- Para operar con un escalar -->
+      <div class="form-popup" id="ventana-operar-uno">
+        <div class="form-container operar-uno-container">
+          <h3 id="perfil-activo-operar-uno-título"></h3>
+
+          <input type="number" id="operar-uno-input" value="0" step="0.01">
+          <div style="clear:both;"></div>
+
+          <button type="button" id="ok-operar-uno" class="btn">Ok</button>
+          <button type="button" id="cancel-operar-uno" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
       <!-- Para elegir un espectro de referencia -->
       <div class="form-popup" id="ventana-espectros">
         <div class="form-container espectros-container">
@@ -178,6 +195,19 @@
 
           <button type="button" id="ok-espectros" class="btn">Ok</button>
           <button type="button" id="cancel-espectros" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para borrar un perfil -->
+      <div class="form-popup" id="ventana-borrar-perfil">
+        <div class="form-container borrar-perfil-container">
+
+          <label for="perfiles-lista" id="perfiles-lista-label">Elija un perfil para borrar:</label>
+          <select id="borrar-perfiles-select" name="perfiles-lista"></select>
+          <br>
+          <button type="button" id="ok-perfiles-borrar" class="btn">Ok</button>
+          <button type="button" id="cancel-perfiles-borrar" class="btn cancel">Cancelar</button>
           <div style="clear:both;"></div>
         </div>
       </div>

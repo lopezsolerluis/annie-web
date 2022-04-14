@@ -201,13 +201,3 @@ i.math {
   font-family: freeserif, "times new roman", serif;
   font-size: 140%;
 }
-
-.close-tab {
-  float: right;
-  margin-left: 1em;
-  color: gray;
-  font-size: 1.2em;
-}
-.close-tab:hover {
-  color: crimson;
-}
