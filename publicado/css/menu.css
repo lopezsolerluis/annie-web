@@ -85,6 +85,11 @@ ul, ol {
   text-align: center;
 }
 
+#menuprincipal img {
+  /* height: 40px; */
+  margin: 0 .2em 0 .6em;
+  float: right;
+}
 #boton-zoom-etc {
   padding: 2px .7em;
   margin: 0 .5em;
