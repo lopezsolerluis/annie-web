@@ -71,6 +71,10 @@
 (def borrar-perfiles-select (gdom/getElement "borrar-perfiles-select"))
 (def dispersión-span (gdom/getElement "valor-dispersión"))
 (def perfil-activo-operar-uno-título (gdom/getElement "perfil-activo-operar-uno-título"))
+(def ventana-operar-dos (gdom/getElement "ventana-operar-dos"))
+(def perfil-activo-operar-dos-nombre (gdom/getElement "perfil-activo-operar-dos-nombre"))
+(def operación-dos (gdom/getElement "operación-dos"))
+(def operar-dos-select (gdom/getElement "operar-dos-select"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -125,7 +129,8 @@
    (gdom/setTextContent (gdom/getElement "dispersión") (app-tr lang :dispersión))
    (gdom/setTextContent (gdom/getElement "xpixel") (app-tr lang :xpixel))
    (doseq [key-1 [:menu :ventana-etiqueta :ventana-calibración :ventana-espectros :ventana-zoom-etc
-                  :ventana-cambiar-perfil :ventana-operar-uno :ventana-borrar-perfil :help-window :credits-window]]
+                  :ventana-cambiar-perfil :ventana-operar-uno :ventana-operar-dos :ventana-borrar-perfil
+                  :help-window :credits-window]]
      (doseq [key-2 (-> translations :es key-1 keys)]
        (let [el (gdom/getElement (name key-2))]
          (gdom/setTextContent el (app-tr lang (keyword (name key-1) key-2))))))))
@@ -483,6 +488,23 @@
     (cond (= título-operación (app-tr @lang :sumar-uno-título)) (operar-escalar-perfil-activo + :suma-escalar)
           (= título-operación (app-tr @lang :multiplicar-uno-título)) (operar-escalar-perfil-activo * :producto-escalar))))
 
+;; Aritmética de dos perfiles
+(defn abrir-ventana-operar-dos [operación]
+  (if-not @pestaña-activa
+    (alert (app-tr @lang :no-hay-perfil-que-modificar))
+    (let [perfiles (:perfiles (get-pestaña-activa))]
+      (if (< (count perfiles) 2)
+          (alert (app-tr @lang :debe-haber-al-menos-dos-perfiles))
+          (do (change-ventana ventana-operar-dos "block")
+              (gdom/setTextContent perfil-activo-operar-dos-nombre (get-perfil-activo-nombre))
+              (crear-lista-de-perfiles operar-dos-select false)
+              (cond (= operación :sumar-dos) (gdom/setTextContent operación-dos "+")
+                    (= operación :restar-dos) (gdom/setTextContent operación-dos "−")
+                    (= operación :multiplicar-dos) (gdom/setTextContent operación-dos "×")
+                    (= operación :dividir-dos) (gdom/setTextContent operación-dos "÷")
+                    :else nil)
+              (.focus operar-dos-select))))))
+
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
     (cond (= 0 numero-de-perfiles) (alert (app-tr @lang :no-hay-perfiles-que-borrar))
@@ -544,6 +566,11 @@
       (gevents/listen (gdom/getElement "multiplicar-uno") "click" (fn [] (abrir-ventana-operar-uno :multiplicar-uno)))
       (gevents/listen (gdom/getElement "ok-operar-uno") "click" operar-uno-perfil-activo)
       (gevents/listen (gdom/getElement "cancel-operar-uno") "click" (fn [] (change-ventana ventana-operar-uno "none")))
+      (gevents/listen (gdom/getElement "sumar-dos") "click" (fn [] (abrir-ventana-operar-dos :sumar-dos)))
+      (gevents/listen (gdom/getElement "restar-dos") "click" (fn [] (abrir-ventana-operar-dos :restar-dos)))
+      (gevents/listen (gdom/getElement "multiplicar-dos") "click" (fn [] (abrir-ventana-operar-dos :multiplicar-dos)))
+      (gevents/listen (gdom/getElement "dividir-dos") "click" (fn [] (abrir-ventana-operar-dos :dividir-dos)))
+      (gevents/listen (gdom/getElement "cancel-operar-dos") "click" (fn [] (change-ventana ventana-operar-dos "none")))
       (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
       (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)
       (gevents/listen (gdom/getElement "cancel-perfiles-borrar") "click" (fn [] (change-ventana ventana-borrar-perfil "none")))
