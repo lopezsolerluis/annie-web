@@ -2,14 +2,27 @@
    (:require
      [clojure.edn]))
 
-(defn write-pestaña [nombre pestaña]
-  (let [data-blob (js/Blob. #js [(pr-str {nombre pestaña})] #js {:type "application/text"})
+(defn write-object [nombre objeto tipo]
+  (let [data-blob (js/Blob. #js [objeto] #js {:type tipo})
              link (.createElement js/document "a")]
     (set! (.-href link) (.createObjectURL js/URL data-blob))
-    (.setAttribute link "download" (str nombre ".annie"))
+    (.setAttribute link "download" nombre)
     (.appendChild (.-body js/document) link)
     (.click link)
     (.removeChild (.-body js/document) link)))
+
+(defn write-pestaña [nombre pestaña]
+  (write-object (str nombre ".annie") (pr-str {nombre pestaña}) "application/text"))
+
+(defn write-svg [nombre]
+  )
+  ; (let [data-blob (js/Blob. #js [(pr-str {nombre pestaña})] #js {:type "application/text"})
+  ;            link (.createElement js/document "a")]
+  ;   (set! (.-href link) (.createObjectURL js/URL data-blob))
+  ;   (.setAttribute link "download" (str nombre ".annie"))
+  ;   (.appendChild (.-body js/document) link)
+  ;   (.click link)
+  ;   (.removeChild (.-body js/document) link)))
 
 (defn read-pestaña [file callback]
   (let [js-file-reader (js/FileReader.)]
