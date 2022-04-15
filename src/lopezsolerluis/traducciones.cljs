@@ -65,9 +65,10 @@
         :help-window {:help-baricentro "To obtain the barycenter of a line: "
                       :help-texto-etiquetas "To change the text of the labels or delete them: "
                       :help-mover-etiquetas "To move the labels: "
-                      :help-consejo "Tip:"
+                      :help-consejo "Tips:"
                       :help-controles "Controls:"
-                      :help-consejo-grabar "To save a tab with a name of your choice, configure your browser to ask for the place to download files. 😉"}
+                      :help-consejo-grabar "To save a tab with a name of your choice, configure your browser to ask for the place to download files. 😉"
+                      :help-consejo-exportar "Up to now, to get an image with the results of your work, I have to suggest you take a screenshot...😳"}
         :credits-window {:credits-version "Version"
                          :credits-agradecimientos "Acknowledgments:"
                          :credits-uno "To A.J. Pickles et al. (1998), for their magnificents reference spectra."
@@ -163,9 +164,10 @@
         :help-window {:help-baricentro "Para determinar el baricentro de una línea: "
                       :help-texto-etiquetas "Para cambiar el texto de las etiquetas o borrarlas: "
                       :help-mover-etiquetas "Para mover las etiquetas: "
-                      :help-consejo "Consejo:"
+                      :help-consejo "Consejos:"
                       :help-controles "Controles:"
-                      :help-consejo-grabar "Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉"}
+                      :help-consejo-grabar "Si querés grabar las pestañas con el nombre que elijas, configurá tu navegador para que te pregunte siempre dónde debe descargar los archivos. 😉"
+                      :help-consejo-exportar "Por ahora, para obtener una imagen del fruto de tu trabajo, debo sugerirte que hagas una captura de pantalla...😳"}
         :credits-window {:credits-version "Versión"
                          :credits-agradecimientos "Agradecimientos:"
                          :credits-uno "a A.J. Pickles et al. (1998), por sus magníficos espectros de referencia."

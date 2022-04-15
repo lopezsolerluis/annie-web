@@ -205,3 +205,6 @@ i.math {
   font-family: freeserif, "times new roman", serif;
   font-size: 140%;
 }
+canvas {
+  display: none;
+}

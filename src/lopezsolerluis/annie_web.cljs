@@ -11,7 +11,7 @@
    [lopezsolerluis.fits :as fits]
    [lopezsolerluis.espectros-sec-ppal :as espectros :refer [espectros-referencia espectros-referencia-nombres]]
    [lopezsolerluis.metodos-numericos :as mn]
-   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña]]))
+   [lopezsolerluis.save-load-file :as save :refer [write-pestaña read-pestaña write-svg]]))
 
 (set! *print-level* nil)
 
@@ -379,6 +379,11 @@
     (alert (app-tr @lang :no-pestaña-activa-para-grabar))
     (write-pestaña @pestaña-activa (get-pestaña-activa))))
 
+(defn grabar-pestaña-svg []
+  (if-not @pestaña-activa
+    (alert (app-tr @lang :no-pestaña-activa-para-grabar))
+    (write-svg @pestaña-activa)))
+
 (defn change-ventana-zoom-etc []
   (if (= (.. ventana-zoom-etc -style -display) "block")
       (do
@@ -501,6 +506,7 @@
       (gevents/listen espectros-boton-ok "click" espectros-ok)
       (gevents/listen espectros-boton-cancel "click" espectros-cancel)
       (gevents/listen (gdom/getElement "grabar-pestaña-annie") "click" grabar-pestaña-annie)
+      ; (gevents/listen (gdom/getElement "svg") "click" grabar-pestaña-svg)
       (gevents/listen cambiar-perfil-ventana-menu "click" abrir-ventana-cambiar-perfil)
       (gevents/listen (gdom/getElement "cerrar-ventana-cambiar-perfil") "click" cerrar-ventana-cambiar-perfil)
       (gevents/listen etiqueta-ok "click" agregar-texto-etiqueta)
