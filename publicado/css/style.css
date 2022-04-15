@@ -173,7 +173,11 @@ input[type=file] {
   height: auto;
 }
 .sub {
-  margin-top: 4em;
+  margin-top: 3em;
+}
+.window-help-modal .comentario {
+  margin-top: 2em;
+  display: inline-block;
 }
 
 .close-btn-help {
@@ -200,4 +204,7 @@ input[type=file] {
 i.math {
   font-family: freeserif, "times new roman", serif;
   font-size: 140%;
+}
+canvas {
+  display: none;
 }
