@@ -425,7 +425,6 @@
             (alert (app-tr @lang :el-nombre-pertenece-a-un-perfil-de-la-pestaña))
             (do (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfil-activo] nombre)
                 (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] clojure.set/rename-keys {nombre-viejo nombre})))))
-;(.querySelector js/document "input[name=\"estilo-perfil\"]:checked")
 
 (defn cambiar-estilo-perfil-fn []
   (let [estilo (.-value (.querySelector js/document "input[name=\"estilo-perfil\"]:checked"))]
