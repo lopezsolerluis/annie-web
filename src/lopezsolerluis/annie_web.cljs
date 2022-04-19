@@ -153,6 +153,13 @@
        (filter map?)
        (keep k)))
 
+(defn change-ventana
+ ([ventana state]  ; state es "block" o "none"
+   (change-ventana ventana state fondo-transparente))
+ ([ventana state fondo] ; fondo-transparente o fondo-gris (u otro...)
+   (set! (.. ventana -style -display) state)
+   (set! (.. fondo -style -display) state)))
+
 (defn alert [mensaje]
   (gdom/setTextContent mensaje-alert mensaje)
   (change-ventana alert-window "block" fondo-gris))
@@ -234,13 +241,6 @@
             (swap! pestañas assoc-in [:pestañas nombre] pestaña)
             (swap! pestañas assoc :pestaña-activa nombre)))
   (encender-espera false))
-
-(defn change-ventana
-  ([ventana state]  ; state es "block" o "none"
-    (change-ventana ventana state fondo-transparente))
-  ([ventana state fondo] ; fondo-transparente o fondo-gris (u otro...)
-    (set! (.. ventana -style -display) state)
-    (set! (.. fondo -style -display) state)))
 
 (defn confirmar-operación [texto]
   (js/window.confirm texto))
