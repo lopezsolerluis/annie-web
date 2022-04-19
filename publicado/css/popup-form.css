@@ -1,4 +1,4 @@
-/* #ventana-borrar-perfil {display: block;} */
+/* #ventana-operar-uno {display: block;} */
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -39,10 +39,11 @@
 .form-container .btn {
   background-color: #04AA6D;
   color: white;
-  padding: 16px 20px;
+  padding: 16px 0px;
   border: none;
   cursor: pointer;
   width: 30%;
+  max-width: 7em;
   margin-bottom:4px;
   opacity: 0.8;
   float: right;
@@ -105,7 +106,26 @@
 }
 
 #ventana-borrar-perfil select {
-  margin: .5em 0 1em 0;
+  margin: 1.3em 0;
+}
+
+#ventana-operar-dos h3 {
+  margin-bottom: .5em;
+}
+#operación-dos {
+  font-weight: bold;
+  font-size: 1.5em;
+  margin: 0 .7em;
+  align-self: stretch;
+}
+.operar-dos-container {
+  width: auto;
+}
+.línea-centrada {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1em 0;
 }
 
 #operar-uno-input {
@@ -195,6 +215,14 @@ fieldset legend {
 
 .calibración-container input[type=number] {
   width: 6em;
+}
+
+.una-línea-derecha {
+  margin-bottom: 1em;
+  float: right;
+}
+.operar-uno-container label {
+  font-weight: normal;
 }
 
 .espectros-container h3 {

@@ -45,7 +45,7 @@
             <li><a href="#" id="cambiar-color" class="disabled">Cambiar color...</a></li>
             <li><a href="#" id="cambiar-diseño-linea" class="disabled">Cambiar diseño de línea...</a></li> -->
             <li><a href="#" id="borrar-perfil">Borrar perfil...</a></li>
-            <li><a href="#" id="borrar-etiquetas" class="disabled">Borrar etiquetas...</a></li>
+            <li><a href="#" id="borrar-etiquetas">Borrar etiquetas...</a></li>
           </ul>
         </li>
         <li><a href="#" id="calibracion">Calibración</a>
@@ -64,10 +64,10 @@
             </li>
             <li><a href="#" id="para-dos-perfiles">Para 2 perfiles</a>
               <ul>
-                <li><a href="#" id="sumar-dos" class="disabled">Sumar...</a></li>
-                <li><a href="#" id="restar-dos" class="disabled">Restar...</a></li>
-                <li><a href="#" id="multiplicar-dos" class="disabled">Multiplicar...</a></li>
-                <li><a href="#" id="dividir-dos" class="disabled">Dividir...</a></li>
+                <li><a href="#" id="sumar-dos">Sumar...</a></li>
+                <li><a href="#" id="restar-dos">Restar...</a></li>
+                <li><a href="#" id="multiplicar-dos">Multiplicar...</a></li>
+                <li><a href="#" id="dividir-dos">Dividir...</a></li>
               </ul>
             </li>
           </ul></li>
@@ -176,13 +176,37 @@
       <!-- Para operar con un escalar -->
       <div class="form-popup" id="ventana-operar-uno">
         <div class="form-container operar-uno-container">
-          <h3 id="perfil-activo-operar-uno-título"></h3>
+          <h3 id="perfil-activo-operar-uno-título">Luis</h3>
 
           <input type="number" id="operar-uno-input" value="0" step="0.01">
           <div style="clear:both;"></div>
 
+          <div class="una-línea-derecha">
+          <label for="conservar-etiquetas-uno" id="conservar-etiquetas-label">¿Heredar etiquetas?</label>
+          <input type="checkbox" id="conservar-etiquetas-checkbox" name="conservar-etiquetas-uno" checked>
+          </div>
+          <div style="clear:both;"></div>
           <button type="button" id="ok-operar-uno" class="btn">Ok</button>
           <button type="button" id="cancel-operar-uno" class="btn cancel">Cancelar</button>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <!-- Para operar con dos perfiles-->
+      <div class="form-popup" id="ventana-operar-dos">
+        <div class="form-container operar-dos-container">
+          <h3 id="perfil-activo-operar-dos-título">Operar con dos perfiles</h3>
+
+          <div class="línea-centrada">
+            <span id="perfil-activo-operar-dos-nombre">perfil</span> <!-- − × ÷ -->
+            <span id="operación-dos">+</span> <!-- − × ÷ -->
+            <select id="operar-dos-select" name="perfiles-operar-lista">
+            </select>
+          </div>
+
+          <div style="clear:both;"></div>
+          <button type="button" id="ok-operar-dos" class="btn">Ok</button>
+          <button type="button" id="cancel-operar-dos" class="btn cancel">Cancelar</button>
           <div style="clear:both;"></div>
         </div>
       </div>
@@ -207,9 +231,10 @@
       <div class="form-popup" id="ventana-borrar-perfil">
         <div class="form-container borrar-perfil-container">
 
-          <label for="perfiles-lista" id="perfiles-lista-label">Elija un perfil para borrar:</label>
-          <select id="borrar-perfiles-select" name="perfiles-lista"></select>
+          <label for="perfiles-borrar-lista" id="perfiles-lista-label">Elija un perfil para borrar:</label>
+          <select id="borrar-perfiles-select" name="perfiles-borrar-lista"></select>
           <br>
+          <div style="clear:both;"></div>
           <button type="button" id="ok-perfiles-borrar" class="btn">Ok</button>
           <button type="button" id="cancel-perfiles-borrar" class="btn cancel">Cancelar</button>
           <div style="clear:both;"></div>
