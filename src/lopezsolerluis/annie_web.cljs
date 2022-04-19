@@ -76,6 +76,8 @@
 (def operación-dos (gdom/getElement "operación-dos"))
 (def operar-dos-select (gdom/getElement "operar-dos-select"))
 (def conservar-etiquetas-checkbox (gdom/getElement "conservar-etiquetas-checkbox"))
+(def alert-window (gdom/getElement "alert-window"))
+(def mensaje-alert (gdom/getElement "mensaje-alert"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -152,7 +154,9 @@
        (keep k)))
 
 (defn alert [mensaje]
-  (js/alert mensaje))
+  (gdom/setTextContent mensaje-alert mensaje)
+  (change-ventana alert-window "block" fondo-gris))
+  ; (js/alert mensaje))
 
 (defn elegir-nombre [nombres-usados nombre-posible con-numero-siempre?]
    (let [nombres-set (set nombres-usados)]
@@ -606,6 +610,7 @@
       (gevents/listen (gdom/getElement "help-window-cerrar") "click" (fn [] (change-ventana help-window "none" fondo-gris)))
       (gevents/listen (gdom/getElement "creditos") "click" (fn [] (change-ventana credits-window "block" fondo-gris)))
       (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
+      (gevents/listen (gdom/getElement "ok-alert") "click" (fn [] (change-ventana alert-window "none" fondo-gris)))
       (gevents/listen cambiar-color-perfil "input" cambiar-color-perfil-fn)
       (gevents/listen color-por-defecto-checkbox "change" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)

@@ -36,7 +36,7 @@
 }
 
 /* Set a style for the submit/login button */
-.form-container .btn {
+.btn {
   background-color: #04AA6D;
   color: white;
   padding: 16px 0px;
@@ -187,7 +187,7 @@ fieldset legend {
 }
 
 /* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
+.btn:hover, .open-button:hover {
   opacity: 1;
 }
 
