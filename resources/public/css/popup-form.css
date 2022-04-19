@@ -1,4 +1,4 @@
-/* #ventana-operar-dos {display: block;} */
+/* #ventana-operar-uno {display: block;} */
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -215,6 +215,14 @@ fieldset legend {
 
 .calibración-container input[type=number] {
   width: 6em;
+}
+
+.una-línea-derecha {
+  margin-bottom: 1em;
+  float: right;
+}
+.operar-uno-container label {
+  font-weight: normal;
 }
 
 .espectros-container h3 {

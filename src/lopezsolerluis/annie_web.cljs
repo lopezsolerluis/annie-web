@@ -75,6 +75,7 @@
 (def perfil-activo-operar-dos-nombre (gdom/getElement "perfil-activo-operar-dos-nombre"))
 (def operación-dos (gdom/getElement "operación-dos"))
 (def operar-dos-select (gdom/getElement "operar-dos-select"))
+(def conservar-etiquetas-checkbox (gdom/getElement "conservar-etiquetas-checkbox"))
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -480,7 +481,9 @@
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag))
               nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
               nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
-          (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo :etiquetas etiquetas-nuevas))
+          (agregar-perfil-en-pestaña nombre (assoc perfil-activo
+                                                   :data-vis data-vis-nuevo
+                                                   :etiquetas (if (.-checked conservar-etiquetas-checkbox) etiquetas-nuevas)))
           (change-ventana ventana-operar-uno "none")))))
 
 (defn operar-uno-perfil-activo []
@@ -514,12 +517,12 @@
         segundo-data (obtener-data segundo-perfil) ; data en formato en {:x lambda :y intensidad}
         segundo-data-x (:data-vis segundo-perfil) ; data en formato en {:x x :y intensidad}
         [a-dos b-dos] (:calibración segundo-perfil)
-        lambda-0-dos (:x (first segundo-data))
         delta (- (:x (second segundo-data-x)) (:x (first segundo-data-x))) ; "paso" en x
         aux (* a-dos delta)
+        lambda-0-dos (:x (first segundo-data))
         perfil-activo (get-perfil-activo)
-        data-perfil-activo-encajado (filtrar-data perfil-activo lambda-0-dos (:x (last segundo-data))) ; data-vis en {:x x :y intensidad}
         [a b] (:calibración perfil-activo)
+        data-perfil-activo-encajado (filtrar-data perfil-activo lambda-0-dos (:x (last segundo-data))) ; data-vis en {:x x :y intensidad}
         data-vis-nuevo (mapv (fn [{x :x y :y}]
                                (let [lambda (+ (* a x) b)
                                      j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
@@ -536,7 +539,7 @@
         nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select))
         nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
-    (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
+    (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo :etiquetas {}))
     (change-ventana ventana-operar-dos "none")))
 
 (defn operar-dos-perfiles []
