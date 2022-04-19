@@ -505,6 +505,49 @@
                     :else nil)
               (.focus operar-dos-select))))))
 
+(defn filtrar-data [perfil lambda-min lambda-max]
+  (let [[a b] (:calibración perfil)]
+    (filter (fn [punto] (< lambda-min (+ (* a (:x punto)) b)  lambda-max)) (:data-vis perfil))))
+
+(defn operar-dos-perfil-activo [función tag]
+  (let [segundo-perfil (get-in @pestañas [:pestañas @pestaña-activa :perfiles (.-value operar-dos-select)])
+        segundo-data (obtener-data segundo-perfil) ; data formato en {:x lambda :y intensidad}
+        [a-dos b-dos] (:calibración segundo-perfil)
+        lambda-0-dos (:x (first segundo-data))
+        delta (- (:x (second segundo-data)) lambda-0-dos) ; "paso" en lambda
+        aux (* a-dos delta)
+        perfil-activo (get-perfil-activo)
+        data-perfil-activo-encajado (filtrar-data perfil-activo lambda-0-dos (:x (last segundo-data))) ; data-vis en {:x x :y intensidad}
+        [a b] (:calibración perfil-activo)
+        data-vis-nuevo (map (fn [{x :x y :y}]
+                              (let [lambda (+ (* a x) b)
+                                    j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
+                                    j0 (dec j1)
+                                    lambda-1 (+ (* a-dos j1) b-dos)
+                                    lambda-0 (+ (* a-dos j0) b-dos)
+                                    y0 (:y (get segundo-data j0))
+                                    y1 (:y (get segundo-data j1))
+                                    intensidad (cond (= lambda-0 lambda) y0
+                                                     (= lambda-1 lambda) y1
+                                                     :else (+ y0 (* (- lambda lambda-0)
+                                                                    (/ (- y1 y0)
+                                                                       (- lambda-1 lambda-0)))))]
+                                  {:x x :y (función y intensidad)})))
+        nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select) "-")
+        nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
+        nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
+    (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
+    (change-ventana ventana-operar-dos "none")))
+
+(defn operar-dos-perfiles []
+  (let [operación (gdom/getTextContent operación-dos)]
+    (cond (= operación "+") (operar-dos-perfil-activo + :suma-dos-perfiles)
+          (= operación "−") (operar-dos-perfil-activo - :diferencia-dos-perfiles)
+          (= operación "×") (operar-dos-perfil-activo * :producto-dos-perfiles)
+          (= operación "÷") (operar-dos-perfil-activo / :cociente-dos-perfiles))))
+
+;;; Fin Aritmética
+
 (defn abrir-ventana-borrar-perfil []
   (let [numero-de-perfiles (count (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))]
     (cond (= 0 numero-de-perfiles) (alert (app-tr @lang :no-hay-perfiles-que-borrar))
