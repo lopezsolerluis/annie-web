@@ -1,8 +1,6 @@
 # annie-web
 
-Welcome to the amazing ***A****nálisis* ***N****umérico de la* ***I****nformación* ***E****spectral* Web App.
-
-One <font size="1">-more-</font> app in a zillion.
+Welcome to the amazing ***A****nálisis* ***N****umérico de la* ***I****nformación* ***E****spectral* Web App: one <font size="1">-more-</font> app in a zillion.
 
 Try it at <https://lopezsolerluis.github.io/annie-web/publicado/>
 
