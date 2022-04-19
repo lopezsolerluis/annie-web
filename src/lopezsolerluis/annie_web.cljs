@@ -252,7 +252,7 @@
                         (alert (app-tr @lang :perfil-copiado))))))))
 
 (defn agregar-perfil-en-pestaña [nombre perfil]
-  (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfiles nombre] perfil))
+  (swap! pestañas assoc-in [:pestañas @pestaña-activa :perfiles nombre] (assoc perfil :color nil :dasharray nil)))
 
 (defn pegar-perfil []
   (if (empty? @portapapeles)
@@ -478,7 +478,7 @@
               etiquetas (:etiquetas perfil-activo)
               etiquetas-nuevas (into {} (map (fn [[k v]] [k (update-in v [:y] (fn [y] (función numero y)))]) etiquetas))
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag))
-              nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
+              nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
               nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
           (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo :etiquetas etiquetas-nuevas))
           (change-ventana ventana-operar-uno "none")))))
@@ -531,16 +531,11 @@
                                                       :else (+ y0 (* (- lambda lambda-0)
                                                                      (/ (- y1 y0)
                                                                         (- lambda-1 lambda-0)))))]
-                                  (js/console.log lambda lambda-0 lambda-1 (- lambda-1 lambda) lambda-0-dos j0 j1)
                                    {:x x :y (función y intensidad)}))
                              data-perfil-activo-encajado)
         nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select))
-        nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
+        nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
-    ; (js/console.log (pr-str segundo-data))
-    ; (js/console.log (pr-str data-perfil-activo-encajado))
-    ; (js/console.log a b a-dos b-dos)
-    ; (js/console.log (pr-str data-vis-nuevo))
     (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
     (change-ventana ventana-operar-dos "none")))
 
