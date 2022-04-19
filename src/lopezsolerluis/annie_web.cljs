@@ -523,8 +523,8 @@
                                (let [lambda (+ (* a x) b)
                                      j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
                                      j0 (dec j1)
-                                     lambda-1 (+ (* a-dos j1) b-dos)
-                                     lambda-0 (+ (* a-dos j0) b-dos)
+                                     lambda-1 (+ (* a-dos (:x (get segundo-data j1))) b-dos)
+                                     lambda-0 (+ (* a-dos (:x (get segundo-data j0))) b-dos)
                                      y0 (:y (get segundo-data j0))
                                      y1 (:y (get segundo-data j1))
                                      intensidad (cond (= lambda-0 lambda) y0
