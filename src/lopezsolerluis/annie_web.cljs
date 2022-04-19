@@ -511,10 +511,11 @@
 
 (defn operar-dos-perfil-activo [función tag]
   (let [segundo-perfil (get-in @pestañas [:pestañas @pestaña-activa :perfiles (.-value operar-dos-select)])
-        segundo-data (obtener-data segundo-perfil) ; data formato en {:x lambda :y intensidad}
+        segundo-data (obtener-data segundo-perfil) ; data en formato en {:x lambda :y intensidad}
+        segundo-data-x (:data-vis segundo-perfil) ; data en formato en {:x x :y intensidad}
         [a-dos b-dos] (:calibración segundo-perfil)
         lambda-0-dos (:x (first segundo-data))
-        delta (- (:x (second segundo-data)) lambda-0-dos) ; "paso" en lambda
+        delta (- (:x (second segundo-data-x)) (:x (first segundo-data-x))) ; "paso" en x
         aux (* a-dos delta)
         perfil-activo (get-perfil-activo)
         data-perfil-activo-encajado (filtrar-data perfil-activo lambda-0-dos (:x (last segundo-data))) ; data-vis en {:x x :y intensidad}
@@ -523,16 +524,14 @@
                                (let [lambda (+ (* a x) b)
                                      j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
                                      j0 (dec j1)
-                                     lambda-1 (+ (* a-dos (:x (get segundo-data j1))) b-dos)
-                                     lambda-0 (+ (* a-dos (:x (get segundo-data j0))) b-dos)
-                                     y0 (:y (get segundo-data j0))
-                                     y1 (:y (get segundo-data j1))
-                                     intensidad (cond (= lambda-0 lambda) y0
-                                                      (= lambda-1 lambda) y1
+                                     {lambda-0 :x y0 :y} (get segundo-data j0)
+                                     {lambda-1 :x y1 :y} (get segundo-data j1)
+                                     intensidad (cond (= lambda-0 lambda) y0  ; ¿Quizá sea mejor usar directamente el caso general ':else'..?
+                                                      (= lambda-1 lambda) y1  ;
                                                       :else (+ y0 (* (- lambda lambda-0)
                                                                      (/ (- y1 y0)
                                                                         (- lambda-1 lambda-0)))))]
-                                  (js/console.log lambda lambda-0 lambda-1 (- lambda-1 lambda) a-dos b-dos lambda-0-dos j0 j1)
+                                  (js/console.log lambda lambda-0 lambda-1 (- lambda-1 lambda) lambda-0-dos j0 j1)
                                    {:x x :y (función y intensidad)}))
                              data-perfil-activo-encajado)
         nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select))
