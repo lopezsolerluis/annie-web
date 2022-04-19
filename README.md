@@ -4,7 +4,11 @@ Welcome to the amazing ***A****nálisis* ***N****umérico de la* ***IN****formac
 
 Try it at <https://lopezsolerluis.github.io/annie-web/publicado/>
 
-## Development
+## Contact
+
+I'm absolutely sure you have no time at all for sending suggestions, advices or comments; not even for threatens. But, who knows? In any case, here is my email: `llopez at cnba uba ar`.
+
+## Development (for *casi-hackers* only)
 
 To get an interactive development environment run:
 
@@ -19,9 +23,6 @@ To create a production build run:
 	rm -rf target/public
 	clojure -A:fig:min
 
-## Contact
-
-I'm absolutely sure you have no time at all for sending suggestions, advices or comments; not even for threatens. But, who knows? In any case, here is my email: `llopez at cnba uba ar`.
 
 ## License
 
