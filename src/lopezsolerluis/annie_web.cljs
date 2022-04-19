@@ -519,23 +519,29 @@
         perfil-activo (get-perfil-activo)
         data-perfil-activo-encajado (filtrar-data perfil-activo lambda-0-dos (:x (last segundo-data))) ; data-vis en {:x x :y intensidad}
         [a b] (:calibración perfil-activo)
-        data-vis-nuevo (map (fn [{x :x y :y}]
-                              (let [lambda (+ (* a x) b)
-                                    j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
-                                    j0 (dec j1)
-                                    lambda-1 (+ (* a-dos j1) b-dos)
-                                    lambda-0 (+ (* a-dos j0) b-dos)
-                                    y0 (:y (get segundo-data j0))
-                                    y1 (:y (get segundo-data j1))
-                                    intensidad (cond (= lambda-0 lambda) y0
-                                                     (= lambda-1 lambda) y1
-                                                     :else (+ y0 (* (- lambda lambda-0)
-                                                                    (/ (- y1 y0)
-                                                                       (- lambda-1 lambda-0)))))]
-                                  {:x x :y (función y intensidad)})))
-        nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select) "-")
+        data-vis-nuevo (mapv (fn [{x :x y :y}]
+                               (let [lambda (+ (* a x) b)
+                                     j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
+                                     j0 (dec j1)
+                                     lambda-1 (+ (* a-dos j1) b-dos)
+                                     lambda-0 (+ (* a-dos j0) b-dos)
+                                     y0 (:y (get segundo-data j0))
+                                     y1 (:y (get segundo-data j1))
+                                     intensidad (cond (= lambda-0 lambda) y0
+                                                      (= lambda-1 lambda) y1
+                                                      :else (+ y0 (* (- lambda lambda-0)
+                                                                     (/ (- y1 y0)
+                                                                        (- lambda-1 lambda-0)))))]
+                                  (js/console.log lambda lambda-0 lambda-1 (- lambda-1 lambda) a-dos b-dos lambda-0-dos j0 j1)
+                                   {:x x :y (función y intensidad)}))
+                             data-perfil-activo-encajado)
+        nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select))
         nombres-en-pestaña (keys (get-in @pestañas (butlast (get-perfil-activo-key))))
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
+    ; (js/console.log (pr-str segundo-data))
+    ; (js/console.log (pr-str data-perfil-activo-encajado))
+    ; (js/console.log a b a-dos b-dos)
+    ; (js/console.log (pr-str data-vis-nuevo))
     (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo))
     (change-ventana ventana-operar-dos "none")))
 
@@ -558,7 +564,6 @@
 (defn borrar-perfil []
   (if (confirmar-operación (app-tr @lang :confirmar-borrar-perfil))
       (let [perfil-a-borrar (.-value borrar-perfiles-select)]
-        (js/console.log (pr-str perfil-a-borrar))
         (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] dissoc perfil-a-borrar)))
   (change-ventana ventana-borrar-perfil "none"))
 
@@ -613,6 +618,7 @@
       (gevents/listen (gdom/getElement "restar-dos") "click" (fn [] (abrir-ventana-operar-dos :restar-dos)))
       (gevents/listen (gdom/getElement "multiplicar-dos") "click" (fn [] (abrir-ventana-operar-dos :multiplicar-dos)))
       (gevents/listen (gdom/getElement "dividir-dos") "click" (fn [] (abrir-ventana-operar-dos :dividir-dos)))
+      (gevents/listen (gdom/getElement "ok-operar-dos") "click" operar-dos-perfiles)
       (gevents/listen (gdom/getElement "cancel-operar-dos") "click" (fn [] (change-ventana ventana-operar-dos "none")))
       (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
       (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)
