@@ -564,6 +564,10 @@
         (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] dissoc perfil-a-borrar)))
   (change-ventana ventana-borrar-perfil "none"))
 
+(defn borrar-etiquetas []
+  (if (confirmar-operación (app-tr @lang :confirmar-borrar-etiquetas))
+    (swap! pestañas update-in (get-perfil-activo-key) assoc :etiquetas {})))
+
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
       (gevents/listen open-annie "change" (fn [this] (abrir-archivo this :annie)))
@@ -620,6 +624,7 @@
       (gevents/listen (gdom/getElement "borrar-perfil") "click" abrir-ventana-borrar-perfil)
       (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)
       (gevents/listen (gdom/getElement "cancel-perfiles-borrar") "click" (fn [] (change-ventana ventana-borrar-perfil "none")))
+      (gevents/listen (gdom/getElement "borrar-etiquetas") "click" borrar-etiquetas)
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
