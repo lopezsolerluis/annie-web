@@ -144,8 +144,9 @@ input[type=file] {
 
 .alert-window {
     background-color: #AFD8E9;
-    color: darkblue;
+    color: midnightblue;
     display: none;
+    font-weight: bold;
 }
 #mensaje-alert {
   margin-bottom: 1em;
