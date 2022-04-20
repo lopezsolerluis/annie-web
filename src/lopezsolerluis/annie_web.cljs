@@ -530,8 +530,8 @@
                                (let [lambda (+ (* a x) b)
                                      j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
                                      j0 (dec j1)
-                                     {lambda-0 :x y0 :y} (get segundo-data j0)
-                                     {lambda-1 :x y1 :y} (get segundo-data j1)
+                                     {lambda-0 :x y0 :y} (segundo-data j0)
+                                     {lambda-1 :x y1 :y} (segundo-data j1)
                                      intensidad (cond (= lambda-0 lambda) y0  ; ¿Quizá sea mejor usar directamente el caso general ':else'..?
                                                       (= lambda-1 lambda) y1  ;
                                                       :else (+ y0 (* (- lambda lambda-0)
