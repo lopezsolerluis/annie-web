@@ -519,8 +519,8 @@
   (let [segundo-perfil (get-in @pestañas [:pestañas @pestaña-activa :perfiles (.-value operar-dos-select)])
         segundo-data (obtener-data segundo-perfil) ; data en formato en {:x lambda :y intensidad}
         segundo-data-x (:data-vis segundo-perfil) ; data en formato en {:x x :y intensidad}
-        [a-dos b-dos] (:calibración segundo-perfil)
         delta (- (:x (second segundo-data-x)) (:x (first segundo-data-x))) ; "paso" en x
+        [a-dos b-dos] (:calibración segundo-perfil)
         aux (* a-dos delta)
         lambda-0-dos (:x (first segundo-data))
         perfil-activo (get-perfil-activo)
