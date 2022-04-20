@@ -480,7 +480,7 @@
         (let [perfil-activo (get-perfil-activo)
               data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) función numero)
               etiquetas (:etiquetas perfil-activo)
-              etiquetas-nuevas (into {} (map (fn [[k v]] [k (update-in v [:y] (fn [y] (función numero y)))]) etiquetas))
+              etiquetas-nuevas (into {} (map (fn [[k v]] [k (update v :y (fn [y] (función numero y)))]) etiquetas))
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag))
               nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
               nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
