@@ -4,9 +4,11 @@ Welcome to the amazing ***A****nálisis* ***N****umérico de la* ***IN****formac
 
 Try it at <https://lopezsolerluis.github.io/annie-web/publicado/>
 
+![Captura de pantalla](https://github.com/lopezsolerluis/annie-web/blob/main/annie-web.png?raw=true)
+
 ## Contact
 
-I'm absolutely sure you have no time at all for sending suggestions, advices or comments; not even for threatens. But, who knows? In any case, here is my email: `llopez at cnba uba ar`.
+I'm absolutely sure you have no time at all for sending suggestions, advices nor comments; not even threatens. But, who knows? In any case, here is my email: `llopez at cnba uba ar`.
 
 ## Development (for *casi-hackers* only)
 
