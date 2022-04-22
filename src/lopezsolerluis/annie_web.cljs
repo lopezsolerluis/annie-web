@@ -79,6 +79,10 @@
 (def conservar-etiquetas-checkbox (gdom/getElement "conservar-etiquetas-checkbox"))
 (def alert-window (gdom/getElement "alert-window"))
 (def mensaje-alert (gdom/getElement "mensaje-alert"))
+(def confirmar-window (gdom/getElement "confirmar-window"))
+(def mensaje-confirmar (gdom/getElement "mensaje-confirmar"))
+(def ok-confirmar (gdom/getElement "ok-confirmar"))
+
 ;; Para que el gráfico pueda hacer "scroll" dentro de un div fijo... casi hacker!
 (def alto-header (+ (.-offsetHeight menu-principal) (.-offsetHeight tabs)))
 (set! (.. app -style -height)
@@ -244,8 +248,12 @@
             (swap! pestañas assoc :pestaña-activa nombre)))
   (encender-espera false))
 
-(defn confirmar-operación [texto]
-  (js/window.confirm texto))
+(defn confirmar-operación [texto operación]
+  (gdom/setTextContent mensaje-confirmar texto)
+  (change-ventana confirmar-window "block" fondo-gris)
+  (gevents/listen ok-confirmar "click" (fn [] (operación)
+                                              (change-ventana confirmar-window "none" fondo-gris))))
+  ; (js/window.confirm texto))
 
 (defn copiar-perfil []
   (let [perfil-activo (get-perfil-activo)]
@@ -282,8 +290,7 @@
 (defn cancelar-texto-etiqueta []
   (change-ventana ventana-elementos "none"))
 (defn borrar-etiqueta []
-  (when (confirmar-operación (app-tr @lang :confirmar-borrar-etiqueta))
-    (swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
+  (confirmar-operación (app-tr @lang :confirmar-borrar-etiqueta) #(swap! pestañas update-in (pop @etiqueta-activa) dissoc (last @etiqueta-activa)))
   (change-ventana ventana-elementos "none"))
 
 (defn filtrar-dominio [data x-min x-max]
@@ -570,14 +577,14 @@
                     (change-ventana ventana-borrar-perfil "block")))))
 
 (defn borrar-perfil []
-  (if (confirmar-operación (app-tr @lang :confirmar-borrar-perfil))
-      (let [perfil-a-borrar (.-value borrar-perfiles-select)]
-        (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] dissoc perfil-a-borrar)))
+  (confirmar-operación (app-tr @lang :confirmar-borrar-perfil)
+                       #(let [perfil-a-borrar (.-value borrar-perfiles-select)]
+                           (swap! pestañas update-in [:pestañas @pestaña-activa :perfiles] dissoc perfil-a-borrar)))
   (change-ventana ventana-borrar-perfil "none"))
 
 (defn borrar-etiquetas []
-  (if (confirmar-operación (app-tr @lang :confirmar-borrar-etiquetas))
-    (swap! pestañas update-in (get-perfil-activo-key) assoc :etiquetas {})))
+  (confirmar-operación (app-tr @lang :confirmar-borrar-etiquetas)
+                       #(swap! pestañas update-in (get-perfil-activo-key) assoc :etiquetas {})))
 
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
@@ -638,6 +645,7 @@
       (gevents/listen (gdom/getElement "ok-perfiles-borrar") "click" borrar-perfil)
       (gevents/listen (gdom/getElement "cancel-perfiles-borrar") "click" (fn [] (change-ventana ventana-borrar-perfil "none")))
       (gevents/listen (gdom/getElement "borrar-etiquetas") "click" borrar-etiquetas)
+      (gevents/listen (gdom/getElement "cancel-confirmar") "click" (fn [] (change-ventana confirmar-window "none" fondo-gris)))
       (doseq [radio estilos-perfil]
         (gevents/listen radio "change" cambiar-estilo-perfil-fn))
       (doseq [popup popup-forms]
@@ -794,8 +802,7 @@
 
 (defn cerrar-pestaña
   ([nombre]
-    (when (confirmar-operación (app-tr @lang :confirmar-borrar-pestaña))
-      (cerrar-pestaña nombre true)))
+    (confirmar-operación (app-tr @lang :confirmar-borrar-pestaña) #(cerrar-pestaña nombre true)))
   ([nombre forced]
     (swap! pestañas update-in [:pestañas] dissoc nombre)
     (when (= nombre @pestaña-activa)

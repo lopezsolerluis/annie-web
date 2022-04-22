@@ -1,4 +1,4 @@
-/* #ventana-cambiar-perfil {display: block;} */
+/* #confirm-window {display: block;} */
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -179,7 +179,7 @@ fieldset legend {
   margin: .3em;
 }
 /* Add a red background color to the cancel button */
-.form-container .cancel {
+.cancel {
   background-color: gray;
 }
 /* Add a red background color to the cancel button */
