@@ -767,7 +767,7 @@
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
       [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)} :width 250
-                                    :items (mapv (fn [[name perfil]] (conj {:title name :strokeWidth (or (:width perfil) 1)} 
+                                    :items (mapv (fn [[name perfil]] (conj {:title name :strokeWidth (or (:width perfil) 1)}
                                                                            (if-let [color (:color perfil)] [:color color])
                                                                            (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
                                                  perfiles-pestaña-activa)}]
@@ -814,7 +814,7 @@
                         [:span.close-tab {:on-click (fn [e]
                                                       (cerrar-pestaña nombre)
                                                       (.stopPropagation e))}
-                                         "🞭"]])))])
+                                         (goog.string/unescapeEntities "&times;")]])))])
 
 (ratom/run!
   (if @pestaña-activa
