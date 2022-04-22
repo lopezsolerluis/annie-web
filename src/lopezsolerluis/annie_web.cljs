@@ -480,7 +480,7 @@
         (let [perfil-activo (get-perfil-activo)
               data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) función numero)
               etiquetas (:etiquetas perfil-activo)
-              etiquetas-nuevas (into {} (map (fn [[k v]] [k (update-in v [:y] (fn [y] (función numero y)))]) etiquetas))
+              etiquetas-nuevas (into {} (map (fn [[k v]] [k (update v :y (fn [y] (función numero y)))]) etiquetas))
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag))
               nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
               nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
@@ -519,8 +519,8 @@
   (let [segundo-perfil (get-in @pestañas [:pestañas @pestaña-activa :perfiles (.-value operar-dos-select)])
         segundo-data (obtener-data segundo-perfil) ; data en formato en {:x lambda :y intensidad}
         segundo-data-x (:data-vis segundo-perfil) ; data en formato en {:x x :y intensidad}
-        [a-dos b-dos] (:calibración segundo-perfil)
         delta (- (:x (second segundo-data-x)) (:x (first segundo-data-x))) ; "paso" en x
+        [a-dos b-dos] (:calibración segundo-perfil)
         aux (* a-dos delta)
         lambda-0-dos (:x (first segundo-data))
         perfil-activo (get-perfil-activo)
@@ -530,8 +530,8 @@
                                (let [lambda (+ (* a x) b)
                                      j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
                                      j0 (dec j1)
-                                     {lambda-0 :x y0 :y} (get segundo-data j0)
-                                     {lambda-1 :x y1 :y} (get segundo-data j1)
+                                     {lambda-0 :x y0 :y} (segundo-data j0)
+                                     {lambda-1 :x y1 :y} (segundo-data j1)
                                      intensidad (cond (= lambda-0 lambda) y0  ; ¿Quizá sea mejor usar directamente el caso general ':else'..?
                                                       (= lambda-1 lambda) y1  ;
                                                       :else (+ y0 (* (- lambda lambda-0)
