@@ -148,7 +148,16 @@ input[type=file] {
     display: none;
     font-weight: bold;
 }
+.confirm-window {
+    background-color: #FFD7F7;
+    color: #58003C;
+    display: none;
+    font-weight: bold;
+}
 #mensaje-alert {
+  margin-bottom: 1em;
+}
+#mensaje-confirmar {
   margin-bottom: 1em;
 }
 @-webkit-keyframes animatetop {
