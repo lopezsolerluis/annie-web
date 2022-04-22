@@ -426,7 +426,7 @@
                                                                          (.-value cambiar-color-perfil))))
 
 (defn cambiar-ancho-perfil-fn []
-  (let [valor (js/parseInt (.-value cambiar-ancho-perfil))]  
+  (let [valor (js/parseInt (.-value cambiar-ancho-perfil))]
     (if-not (js/isNaN valor)
       (swap! pestañas assoc-in (conj (get-perfil-activo-key) :width) valor))))
 
@@ -767,8 +767,9 @@
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
       [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)} :width 250
-                                    :items (mapv (fn [[name perfil]] (conj {:title name} (if-let [color (:color perfil)] [:color color])
-                                                                                         (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
+                                    :items (mapv (fn [[name perfil]] (conj {:title name :strokeWidth (or (:width perfil) 1)} 
+                                                                           (if-let [color (:color perfil)] [:color color])
+                                                                           (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
                                                  perfiles-pestaña-activa)}]
       (doall (for [[id perfil] perfiles-pestaña-activa]
                ^{:key (str id)} [:> rvis/LineSeries (conj {:data (filtrar-dominio (obtener-data perfil) x-min x-max)
