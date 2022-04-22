@@ -1,4 +1,4 @@
-/* #ventana-operar-uno {display: block;} */
+/* #ventana-cambiar-perfil {display: block;} */
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
@@ -36,11 +36,12 @@
 }
 
 /* Set a style for the submit/login button */
-.form-container .btn {
+.btn {
   background-color: #04AA6D;
   color: white;
   padding: 16px 0px;
   border: none;
+  border-radius: 20em;
   cursor: pointer;
   width: 30%;
   max-width: 7em;
@@ -85,6 +86,9 @@
 }
 .cambiar-perfil-container .una-linea:not(span) {
   padding-top: 1.2em;
+}
+.cambiar-perfil-container input[type=number] {
+  width: 4em;
 }
 .cambiar-perfil-container fieldset {
   margin-top: 1.2em;
@@ -186,7 +190,7 @@ fieldset legend {
 }
 
 /* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
+.btn:hover, .open-button:hover {
   opacity: 1;
 }
 

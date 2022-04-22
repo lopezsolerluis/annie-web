@@ -123,6 +123,7 @@ input[type=file] {
   overflow-y: auto;
   max-height: 70vh;
 }
+
 .window-help-modal {
   position: absolute;
   border-radius: 1rem;
@@ -139,6 +140,16 @@ input[type=file] {
   color: darkcyan;
   box-shadow: .1em .1em 1em .1em rgba(100,100,100,.9);
   z-index: 10000;
+}
+
+.alert-window {
+    background-color: #AFD8E9;
+    color: midnightblue;
+    display: none;
+    font-weight: bold;
+}
+#mensaje-alert {
+  margin-bottom: 1em;
 }
 @-webkit-keyframes animatetop {
     from {top:-50vh; opacity:0}
@@ -184,7 +195,7 @@ input[type=file] {
     float: right;
     /* color: gray; */
     font-size: 24px;
-    font-weight: bold;
+    font-weight: bolder;
     cursor: pointer;
 }
 .close-btn-help:hover {
