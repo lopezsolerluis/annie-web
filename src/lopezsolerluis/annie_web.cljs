@@ -64,6 +64,7 @@
 (def cambiar-nombre-perfil (gdom/getElement "cambiar-nombre-perfil"))
 (def cambiar-color-perfil (gdom/getElement "cambiar-color-perfil"))
 (def color-por-defecto-checkbox (gdom/getElement "color-por-defecto"))
+(def cambiar-ancho-perfil (gdom/getElement "cambiar-ancho-perfil"))
 (def estilos-perfil (array-seq (.getElementsByName js/document "estilo-perfil")))
 (def ventana-operar-uno (gdom/getElement "ventana-operar-uno"))
 (def operar-uno-input (gdom/getElement "operar-uno-input"))
@@ -216,7 +217,8 @@
    (let [nombre (elegir-nombre (keys (:pestañas @pestañas)) nombre-posible false)]
      (swap! pestañas assoc-in [:pestañas nombre] {:perfil-activo nombre})
      (swap! pestañas assoc-in [:pestañas nombre :perfiles nombre]  ; pestaña perfil
-                              {:data-vis data-para-vis :color nil :dasharray nil :calibración calibración :inc-y 0 :fact-y 1 :etiquetas {}})
+                              {:data-vis data-para-vis :color nil :dasharray nil :width 1
+                               :calibración calibración :inc-y 0 :fact-y 1 :etiquetas {}})
      (swap! pestañas assoc :pestaña-activa nombre))))
 
 (defn procesar-archivo-fits [fits-file]
@@ -412,6 +414,7 @@
   (let [perfil-activo (get-perfil-activo)]
     (set! (.-value cambiar-nombre-perfil) (get-perfil-activo-nombre))
     (set! (.-value cambiar-color-perfil) (or (:color perfil-activo) "#000"))
+    (set! (.-value cambiar-ancho-perfil) (or (:width perfil-activo) "1"))
     (set! (.-checked color-por-defecto-checkbox) (not (:color perfil-activo)))
     (set! (.-checked (gdom/getElement (or (:dasharray perfil-activo) "solid"))) true)))
 
@@ -421,6 +424,11 @@
 (defn cambiar-color-perfil-fn []
   (swap! pestañas assoc-in (conj (get-perfil-activo-key) :color) (if-not (.-checked color-por-defecto-checkbox)
                                                                          (.-value cambiar-color-perfil))))
+
+(defn cambiar-ancho-perfil-fn []
+  (let [valor (js/parseInt (.-value cambiar-ancho-perfil))]  
+    (if-not (js/isNaN valor)
+      (swap! pestañas assoc-in (conj (get-perfil-activo-key) :width) valor))))
 
 (defn cambiar-nombre-perfil-fn []
   (let [nombre (.-value cambiar-nombre-perfil)
@@ -612,6 +620,7 @@
       (gevents/listen (gdom/getElement "credits-window-cerrar") "click" (fn [] (change-ventana credits-window "none" fondo-gris)))
       (gevents/listen (gdom/getElement "ok-alert") "click" (fn [] (change-ventana alert-window "none" fondo-gris)))
       (gevents/listen cambiar-color-perfil "input" cambiar-color-perfil-fn)
+      (gevents/listen cambiar-ancho-perfil "input" cambiar-ancho-perfil-fn)
       (gevents/listen color-por-defecto-checkbox "change" cambiar-color-perfil-fn)
       (gevents/listen (gdom/getElement "boton-cambiar-nombre-perfil") "click" cambiar-nombre-perfil-fn)
       (gevents/listen (gdom/getElement "normalizacion") "click" normalizar-perfil-activo)
@@ -762,12 +771,13 @@
                                                                                          (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
                                                  perfiles-pestaña-activa)}]
       (doall (for [[id perfil] perfiles-pestaña-activa]
-               ^{:key (str id)} [:> rvis/LineSeries (conj {:data (filtrar-dominio (obtener-data perfil) x-min x-max) :style {:fill "none"}
-                                                            :strokeWidth 1
-                                                            :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}
-                                                            (if-let [color (:color perfil)]
+               ^{:key (str id)} [:> rvis/LineSeries (conj {:data (filtrar-dominio (obtener-data perfil) x-min x-max)
+                                                              :style {:fill "none" :strokeLinejoin "round"}
+                                                           :strokeWidth (or (:width perfil) 1)
+                                                           :onNearestX (fn [e] (reset! nearest-xy (js->clj e)))}
+                                                           (if-let [color (:color perfil)]
                                                               [:color color])
-                                                            (if-let [estilo (:dasharray perfil)]
+                                                           (if-let [estilo (:dasharray perfil)]
                                                               [:strokeDasharray estilo]))]))]
      (let [pestaña-perfil-etiqueta-nombre (conj (get-perfil-activo-key) :etiquetas)
            inc-y (:inc-y (get-perfil-activo))

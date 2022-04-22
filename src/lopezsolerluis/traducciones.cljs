@@ -55,6 +55,7 @@
                                  :cambiar-nombre-perfil-label "Name:"
                                  :boton-cambiar-nombre-perfil "Change"
                                  :cambiar-color-perfil-label "Color:"
+                                 :cambiar-ancho-perfil-label "Width:"
                                  :cambiar-estilo-perfil-label "Style:"
                                  :o-por-defecto "or default value"}
         :ventana-operar-uno {:cancel-operar-uno "Cancel"}
@@ -162,6 +163,7 @@
                                  :cambiar-nombre-perfil-label "Nombre:"
                                  :boton-cambiar-nombre-perfil "Cambiar"
                                  :cambiar-color-perfil-label "Color:"
+                                 :cambiar-ancho-perfil-label "Ancho:"
                                  :cambiar-estilo-perfil-label "Estilo:"
                                  :o-por-defecto "o por defecto"}
         :ventana-operar-uno {:cancel-operar-uno "Cancelar"}
