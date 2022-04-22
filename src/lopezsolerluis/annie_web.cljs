@@ -496,7 +496,7 @@
               data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) función numero)
               etiquetas (:etiquetas perfil-activo)
               etiquetas-nuevas (into {} (map (fn [[k v]] [k (update v :y (fn [y] (función numero y)))]) etiquetas))
-              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag))
+              nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) "(" numero ")")
               nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
               nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
           (agregar-perfil-en-pestaña nombre (assoc perfil-activo
@@ -776,7 +776,7 @@
       [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
-      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)} :width 250
+      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)} 
                                     :items (mapv (fn [[name perfil]] (conj {:title name :strokeWidth (or (:width perfil) 1)}
                                                                            (if-let [color (:color perfil)] [:color color])
                                                                            (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))
