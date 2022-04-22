@@ -583,8 +583,10 @@
   (change-ventana ventana-borrar-perfil "none"))
 
 (defn borrar-etiquetas []
-  (confirmar-operación (app-tr @lang :confirmar-borrar-etiquetas)
-                       #(swap! pestañas update-in (get-perfil-activo-key) assoc :etiquetas {})))
+  (if-not (seq (:etiquetas (get-perfil-activo)))
+          (alert (app-tr @lang :no-hay-etiquetas-que-borrar))
+          (confirmar-operación (app-tr @lang :confirmar-borrar-etiquetas)
+                               #(swap! pestañas update-in (get-perfil-activo-key) assoc :etiquetas {}))))
 
 (defonce is-initialized?
   (do (gevents/listen open-fits "change" (fn [this] (abrir-archivo this :fits)))
