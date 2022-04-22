@@ -157,6 +157,9 @@ input[type=file] {
 #mensaje-alert {
   margin-bottom: 1em;
 }
+#mensaje-confirmar {
+  margin-bottom: 1em;
+}
 @-webkit-keyframes animatetop {
     from {top:-50vh; opacity:0}
     to {top:0; opacity:1}

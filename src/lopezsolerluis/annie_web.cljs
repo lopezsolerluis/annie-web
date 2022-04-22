@@ -251,8 +251,9 @@
 (defn confirmar-operación [texto operación]
   (gdom/setTextContent mensaje-confirmar texto)
   (change-ventana confirmar-window "block" fondo-gris)
+  (gevents/removeAll ok-confirmar "click")
   (gevents/listen ok-confirmar "click" (fn [] (operación)
-                                              (change-ventana confirmar-window "none" fondo-gris))))  
+                                              (change-ventana confirmar-window "none" fondo-gris))))
 
 (defn copiar-perfil []
   (let [perfil-activo (get-perfil-activo)]
