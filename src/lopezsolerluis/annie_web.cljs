@@ -521,11 +521,11 @@
           (do (change-ventana ventana-operar-dos "block")
               (gdom/setTextContent perfil-activo-operar-dos-nombre (get-perfil-activo-nombre))
               (crear-lista-de-perfiles operar-dos-select false)
-              (cond (= operación :sumar-dos) (gdom/setTextContent operación-dos "+")
-                    (= operación :restar-dos) (gdom/setTextContent operación-dos "−")
-                    (= operación :multiplicar-dos) (gdom/setTextContent operación-dos "×")
-                    (= operación :dividir-dos) (gdom/setTextContent operación-dos "÷")
-                    :else nil)
+              (gdom/setTextContent operación-dos (cond (= operación :sumar-dos)       "+"
+                                                       (= operación :restar-dos)      "−"
+                                                       (= operación :multiplicar-dos) "×"
+                                                       (= operación :dividir-dos)     "÷"
+                                                       :else nil))
               (.focus operar-dos-select))))))
 
 (defn filtrar-data [perfil lambda-min lambda-max]
@@ -555,13 +555,12 @@
                                                                      (/ (- y1 y0)
                                                                         (- lambda-1 lambda-0)))))]
                                    {:x x :y (función y intensidad)}))
-        etiquetas (:etiquetas perfil-activo)
+        data-vis-nuevo (mapv función-interpolar data-perfil-activo-encajado)
         etiquetas-nuevas (if (.-checked conservar-etiquetas-dos-checkbox)
                              (into {} (map (fn [[k {:keys [x y] :as v}]]
-                                             (let [new-xy (función-interpolar {:x x :y y})]                                              
+                                             (let [new-xy (función-interpolar {:x x :y y})]
                                                [k (assoc v :y (:y new-xy))]))
-                                           etiquetas)))
-        data-vis-nuevo (mapv función-interpolar data-perfil-activo-encajado)
+                                           (:etiquetas perfil-activo))))
         nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select))
         nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
