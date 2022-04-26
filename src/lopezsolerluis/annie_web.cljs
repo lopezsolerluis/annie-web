@@ -689,6 +689,11 @@
   (let [pos (conj etiqueta :pos)
         [inc-x inc-y] (get-in @pestañas pos)]
    (vector
+     [:> rvis/CustomSVGSeries {:data [{:x x :y y
+                                       :customComponent (fn []
+                                                         (r/as-element [:g {:className "etiqueta cursor-normal"}
+                                                                         [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
+                                                                                     :stroke "black" :fill "none"}]]))}]}]
      [:> rvis/CustomSVGSeries {:onValueMouseOver (fn [d] (reset! etiqueta-activa etiqueta))
                                :onValueMouseOut  (fn [d] (when-not (or @button-cen-pressed?
                                                                        (= "block" (.. ventana-elementos -style -display)))
@@ -702,11 +707,7 @@
                                                                              (map-indexed (fn [i linea]
                                                                                              ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
                                                                                           texto)]]))}]}]
-     [:> rvis/CustomSVGSeries {:data [{:x x :y y
-                                       :customComponent (fn []
-                                                         (r/as-element [:g {:className "etiqueta cursor-normal"}
-                                                                         [:polyline {:points [0 (if (< inc-y 5) -10 5) 0 inc-y inc-x inc-y]
-                                                                                     :stroke "black" :fill "none"}]]))}]}])))
+     )))
 
 (defn open-ventana-elementos [etiqueta]
   (let [perfil-calibrado? (calibrado? (get-perfil-activo))
