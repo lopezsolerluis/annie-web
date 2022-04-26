@@ -76,7 +76,8 @@
 (def perfil-activo-operar-dos-nombre (gdom/getElement "perfil-activo-operar-dos-nombre"))
 (def operación-dos (gdom/getElement "operación-dos"))
 (def operar-dos-select (gdom/getElement "operar-dos-select"))
-(def conservar-etiquetas-checkbox (gdom/getElement "conservar-etiquetas-checkbox"))
+(def conservar-etiquetas-uno-checkbox (gdom/getElement "conservar-etiquetas-uno-checkbox"))
+(def conservar-etiquetas-dos-checkbox (gdom/getElement "conservar-etiquetas-dos-checkbox"))
 (def alert-window (gdom/getElement "alert-window"))
 (def mensaje-alert (gdom/getElement "mensaje-alert"))
 (def confirmar-window (gdom/getElement "confirmar-window"))
@@ -495,13 +496,14 @@
         (let [perfil-activo (get-perfil-activo)
               data-vis-nuevo (operar-uno-data-vis (:data-vis perfil-activo) función numero)
               etiquetas (:etiquetas perfil-activo)
-              etiquetas-nuevas (into {} (map (fn [[k v]] [k (update v :y (fn [y] (función numero y)))]) etiquetas))
+              etiquetas-nuevas (if (.-checked conservar-etiquetas-uno-checkbox)
+                                   (into {} (map (fn [[k v]] [k (update v :y (fn [y] (función numero y)))]) etiquetas)))
               nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) "(" numero ")")
               nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
               nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
           (agregar-perfil-en-pestaña nombre (assoc perfil-activo
                                                    :data-vis data-vis-nuevo
-                                                   :etiquetas (if (.-checked conservar-etiquetas-checkbox) etiquetas-nuevas)))
+                                                   :etiquetas (or etiquetas-nuevas {})))
           (change-ventana ventana-operar-uno "none")))))
 
 (defn operar-uno-perfil-activo []
@@ -541,7 +543,7 @@
         perfil-activo (get-perfil-activo)
         [a b] (:calibración perfil-activo)
         data-perfil-activo-encajado (filtrar-data perfil-activo lambda-0-dos (:x (last segundo-data))) ; data-vis en {:x x :y intensidad}
-        data-vis-nuevo (mapv (fn [{x :x y :y}]
+        función-interpolar (fn [{x :x y :y}]
                                (let [lambda (+ (* a x) b)
                                      j1 (Math/ceil (/ (- lambda lambda-0-dos) aux))
                                      j0 (dec j1)
@@ -553,11 +555,17 @@
                                                                      (/ (- y1 y0)
                                                                         (- lambda-1 lambda-0)))))]
                                    {:x x :y (función y intensidad)}))
-                             data-perfil-activo-encajado)
+        etiquetas (:etiquetas perfil-activo)
+        etiquetas-nuevas (if (.-checked conservar-etiquetas-dos-checkbox)
+                             (into {} (map (fn [[k {:keys [x y] :as v}]]
+                                             (let [new-xy (función-interpolar {:x x :y y})]                                              
+                                               [k (assoc v :y (:y new-xy))]))
+                                           etiquetas)))
+        data-vis-nuevo (mapv función-interpolar data-perfil-activo-encajado)
         nombre-actual (str (get-perfil-activo-nombre) (app-tr @lang tag) (.-value operar-dos-select))
         nombres-en-pestaña (keys (get-in @pestañas [:pestañas @pestaña-activa :perfiles]))
         nombre (elegir-nombre nombres-en-pestaña nombre-actual false)]
-    (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo :etiquetas {}))
+    (agregar-perfil-en-pestaña nombre (assoc perfil-activo :data-vis data-vis-nuevo :etiquetas (or etiquetas-nuevas {})))
     (change-ventana ventana-operar-dos "none")))
 
 (defn operar-dos-perfiles []
@@ -776,7 +784,7 @@
       [:> rvis/Crosshair {:values [{:x (nearest-x nearest-xy-0) :y 0}]
                           :style {:line {:background "black" :opacity (if @button-izq-pressed? 1 0)}}}
          [:div]]
-      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)} 
+      [:> rvis/DiscreteColorLegend {:style {:position "fixed" :left 110 :top (+ alto-header 10)}
                                     :items (mapv (fn [[name perfil]] (conj {:title name :strokeWidth (or (:width perfil) 1)}
                                                                            (if-let [color (:color perfil)] [:color color])
                                                                            (if-let [estilo (:dasharray perfil)] [:strokeDasharray estilo])))

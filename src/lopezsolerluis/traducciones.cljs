@@ -58,8 +58,10 @@
                                  :cambiar-ancho-perfil-label "Width:"
                                  :cambiar-estilo-perfil-label "Style:"
                                  :o-por-defecto "or default value"}
-        :ventana-operar-uno {:cancel-operar-uno "Cancel"}
+        :ventana-operar-uno {:conservar-etiquetas-uno-label "Keep labels?"
+                             :cancel-operar-uno "Cancel"}
         :ventana-operar-dos {:perfil-activo-operar-dos-título "Operate with two profiles"
+                             :conservar-etiquetas-dos-label "Keep labels?"
                              :cancel-operar-dos "Cancel"}
         :debe-haber-al-menos-dos-perfiles "There must be al least two profiles in the tab to operate."
         :sumar-uno-título "Add to the active profile:"
@@ -167,8 +169,10 @@
                                  :cambiar-ancho-perfil-label "Ancho:"
                                  :cambiar-estilo-perfil-label "Estilo:"
                                  :o-por-defecto "o por defecto"}
-        :ventana-operar-uno {:cancel-operar-uno "Cancelar"}
+        :ventana-operar-uno {:conservar-etiquetas-uno-label "¿Heredar etiquetas"
+                             :cancel-operar-uno "Cancelar"}
         :ventana-operar-dos {:perfil-activo-operar-dos-título "Operar con dos perfiles"
+                             :conservar-etiquetas-dos-label "¿Heredar etiquetas"
                              :cancel-operar-dos "Cancelar"}
         :debe-haber-al-menos-dos-perfiles "Debe haber al menos dos perfiles en la pestaña para operar."
         :sumar-uno-título "Sumar al perfil activo:"
