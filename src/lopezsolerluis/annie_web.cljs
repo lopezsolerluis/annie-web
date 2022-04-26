@@ -706,8 +706,7 @@
                                                                            [:text
                                                                              (map-indexed (fn [i linea]
                                                                                              ^{:key linea}[:tspan {:x inc-x :y (+ inc-y (* i 18))} linea])
-                                                                                          texto)]]))}]}]
-     )))
+                                                                                          texto)]]))}]}])))
 
 (defn open-ventana-elementos [etiqueta]
   (let [perfil-calibrado? (calibrado? (get-perfil-activo))
