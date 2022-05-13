@@ -4,7 +4,7 @@ Welcome to the amazing ***An****álisis* ***N****umérico de la* ***I****nformac
 
 Try it at <https://lopezsolerluis.github.io/annie-web/publicado/>
 
-![Captura de pantalla](https://github.com/lopezsolerluis/annie-web/blob/main/annie-web.png?raw=true)
+![Captura de pantalla](https://github.com/lopezsolerluis/annie-web/blob/main/resources/annie-web.png?raw=true)
 
 ## Contact
 
